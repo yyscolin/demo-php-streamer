@@ -12,7 +12,7 @@ echo "
   <link rel='stylesheet' href='/styles/star-box.css'>";
 include('public/html-mid.html');
 
-$count = count(glob("vids/mp4s/$r->id*.mp4"));
+$count = count(glob("media/vids/$r->id*.mp4"));
 echo "
   <h4 class='main-block'>$r->id $r->title</h4>
   <div id='display' class='main-block' value='$r->id'>
