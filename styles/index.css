@@ -1,0 +1,65 @@
+body {
+    background-color: #480445;
+    color: grey;
+    margin: 0;
+    text-align: center;
+}
+h1, h2, h3, h4 , h5, h6, p, div {
+    width: max-content;
+    margin-left: auto;
+    margin-right: auto;
+}
+table {
+    background-color: darkslateblue;
+	border: 2px solid white;
+}
+th, td {
+    padding: 2px 4px;
+}
+td {
+    border: 1px dotted white;
+}
+a {
+    color: yellow;
+    text-decoration: none;
+}
+
+.flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.pageover {
+    background-color: rgba(0, 0, 0, 0.8);
+    height: 100vh;
+    margin: 0;
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    z-index: 1;
+}
+.pageover>* {
+    background-color: #480445;
+	border: 2px solid white;
+	border-radius: 16px;
+	margin: 25vh auto;
+	padding: 32px;
+    position: relative;
+}
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+}
+
+#nav-pages {
+    margin: 24px auto;
+}
+#nav-pages * {
+    font-size: 2vw;
+    margin-left: 1vw;
+    margin-right: 1vw;
+}

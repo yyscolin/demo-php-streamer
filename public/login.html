@@ -1,0 +1,90 @@
+<html>
+    <style>
+        body {
+            margin: 0;
+            background-color: black;
+        }
+        #login-form {
+            background: darkolivegreen;
+            width: 640px;
+            height: 320px;
+            margin: 25vh auto;
+            vertical-align: middle;
+        }
+        #login-form>* {
+            font-size: 48px;
+            text-align: center;
+            margin: 0 auto;
+        }
+        #login-form>h1 {
+            font-weight: normal;
+            padding: 8% 0;
+        }
+        #login-form>p {
+            color: darkred;
+            font-weight: 300;
+            padding: 4% 0;
+        }
+        #login-form>input {
+            margin: 0 80px;
+            width: 480px;
+            text-align: center;
+        }
+        @media screen and (max-width: 640px) {
+            body {
+                background-color: darkolivegreen;
+            }
+            #login-form {
+                height: 50vw;
+                width: 100vw;
+            }
+            #login-form>* {
+                font-size: 7.5vw;
+            }
+            #login-form>input {
+                margin: 0 12.5vw;
+                width: 75vw;
+            }
+        }
+    </style>
+    <script>
+        window.onload = function() {
+            password.select();
+
+            let form = document.getElementById("login-form");
+            form.addEventListener("submit", function(e) {
+                e.preventDefault();
+                
+                let http = new XMLHttpRequest();
+                http.open('POST', '/api/authenticate.php', true);
+                http.setRequestHeader('Content-type','application/x-www-form-urlencoded');
+                http.send(`password=${password.value}`);
+                http.onload = function() {
+                    let box = document.getElementById('msg-box');
+                    switch (http.statusText) {
+                        case 'OK':
+                        location.reload();
+                        case 'Exceed Attempts':
+                        form.removeChild(password);
+                        box.innerHTML = http.response;
+                        break;
+                        default:
+                        password.value = '';
+                        box.innerHTML = http.response;
+                    }
+                };
+            });
+        }
+    </script>
+    <head>
+        <title>Login</title>
+        <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
+    </head>
+    <body>
+        <form id="login-form">
+            <h1>Please Identify Yourself</h1>
+            <input id="password" name='password' type="password">
+            <p id='msg-box'></p>
+        </form>
+    </body>
+</html>

@@ -1,0 +1,19 @@
+</head>
+<body>
+<div id='banner'>
+  <button id='menu-button' onclick='$("body").toggleClass("menu-active")'>☰</button
+  ><img id='banner-icon' onclick="window.location.href='/'" src='/banner.png' title='Go to homepage'
+  ><div id='menu-bar' class='inline'>
+    <a href="/stars">Stars</a
+    ><a href="/vids">Videos</a
+    ><a href="/folders.php">Folders</a
+    ><div id='search-box' class='inline'>
+      <select id='search-type' onchange='searchDatabase()'>
+        <option value='star'>Stars</option>
+        <option value='vid'>Videos</option>
+      </select
+      ><input id='search-field' type="search" oninput='searchDatabase()' placeholder="search...">
+      <div id='search-results' style="display: none;"></div>
+    </div>
+  </div>
+</div>

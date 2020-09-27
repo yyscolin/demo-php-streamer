@@ -1,0 +1,114 @@
+#banner {
+    align-items: center;
+    background-color: darkslateblue;
+    display: flex;
+    justify-content: center;
+    height: 100px;
+    width: 100%;
+}
+#banner>* {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
+}
+#banner-icon {
+    cursor: pointer;
+    height: 70px;
+}
+#menu-button {
+    display: none;
+    left: 5vw;
+    padding: 4px 8px;
+    position: absolute;
+    top: 31.5px;
+}
+#menu-bar>a {
+    padding: 4px;
+}
+.inline {
+    display: inline-block;
+    margin: 0;
+}
+#search-box button {
+    margin: 0 .4vw;
+}
+#search-results {
+    background-color: white;
+    margin: .4vw 0;
+    position: absolute;
+    z-index: 2;
+}
+.search-result {
+    color: black;
+    display: block;
+    text-align: left;
+    text-decoration: none;
+}
+.search-result {
+    font-size: 1.5vw;
+    margin: 0;
+}
+.search-result.x-pic {
+    padding: .8vw;
+}
+.search-result.w-pic {
+    display: flex;
+    align-items: center;
+}
+.search-result.w-pic>img {
+    height: 6vw;
+}
+.search-result.w-pic>span {
+    margin: 0 auto;
+    padding: 0 1.2vw;
+}
+.search-result:hover {
+    background-color: coral;
+}
+
+@media only screen and (max-width: 820px) {
+    #banner {
+        display: block;
+        text-align: center;
+    }
+    #banner-icon {
+        margin-bottom: 11px;
+        margin-top: 15px;
+    }
+    #menu-button {
+        display: inline-block;
+    }
+    #menu-bar {
+        background-color: purple;
+        border-width: 0px;
+        border-style: solid;
+        border-color: aliceblue;
+        display: block;
+        height: 0px;
+        overflow: hidden;
+        position: absolute;
+        transition: height 2s, padding 2s, border-width 2s;
+        width: 100%;
+        z-index: 3;
+    }
+    #menu-bar>* {
+        display: block;
+        margin: 2px auto;
+        padding: 6px 0px;
+        text-align: left;
+        width: 90vw;
+    }
+
+
+    body.menu-active {
+        overflow: hidden;
+    }
+    body.menu-active #menu-bar {
+        border-width: 3px 0px;
+        height: calc(100vh - 138px);
+        padding: 16px 0px;
+    }
+}

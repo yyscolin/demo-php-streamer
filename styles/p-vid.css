@@ -1,0 +1,70 @@
+#display {
+  line-height: 0;
+  position: relative;
+}
+#display>video, #display>img {
+  width: 100%;
+}
+#display>.controls {
+  display: none;
+  position: absolute;
+  z-index: 2;
+}
+#display.active>.controls {
+  display: block;
+}
+#time-info {
+  background-color: darkgrey;
+  bottom: 0;
+  color: black;
+  font-size: 16px;
+  left: 0;
+  line-height: 32px;
+  height: 32px;
+  width: 160px;
+}
+#time-slider {
+  bottom: 0;
+  left: 160px;
+  height: 32px;
+  margin: 0;
+  padding-left: 10px;
+  padding-right: 10px;
+  width: calc(100% - 180px)
+}
+
+.main-block {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 80vw;
+}
+
+#info-table {
+  border-radius: 12px;
+  color: white;
+  margin-top: 24px;
+  margin-bottom: 24px;
+  padding: 12px;
+}
+#info-table td {
+  border: 0;
+  padding: 6px;
+  text-align: left;
+}
+
+#stars-box {
+  max-width: 99vw;
+  overflow-y: auto;
+}
+
+@media only screen and (max-width: 720px) {
+  .main-block {
+    max-width: 95vw;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .main-block {
+    max-width: 99vw;
+  }
+}

@@ -1,0 +1,24 @@
+.star-box {
+    border: 3px solid grey;
+    display: inline-block;
+    margin: .5vw;
+    width: 15vw;
+    min-width: 125px;
+    overflow: hidden;
+}
+.star-box>img {
+    cursor: pointer;
+    width: 100%;
+}
+.star-box>p, .star-box>a {
+    margin: 0 auto;
+    font-size: 1.6vw;
+    height: 2vw;
+}
+
+@media only screen and (max-width: 840px) {
+    .star-box>p, .star-box>a {
+        font-size: 13.5px;
+        height: 16.9px;
+    }
+}
