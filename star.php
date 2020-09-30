@@ -24,7 +24,7 @@ if (!file_exists(".".$img_src)) {
   $img_src = "/media/stars/0.jpg";
 }
 
-echo "<div class='flex' style='width: 100vw; height: 32vw; margin: 8vw 0;overflow: hidden;'>
+echo "<div class='flex' style='width: 100%; height: 32vw; margin: 8vw 0;overflow: hidden;'>
     <img style='z-index: 0; width: 100vw; height: 60vw;' src='/images/frame.png'>
     <div class='flex' style='background-color: grey; margin: 0; width: 50vw; height: 30vw; position: absolute; z-index: -1;'>
         <img src='$img_src' style='width: 25%;'>
