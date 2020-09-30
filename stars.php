@@ -6,10 +6,10 @@ include("public/verifyLogin.php");
 include('public/mysql_connections.php');
 include('public/html-head.html');
 
-echo "
-  <script src='/scripts/toggleStarDisplay.js'></script>
+echo "  <script src='/scripts/toggleStarDisplay.js'></script>
   <link rel='stylesheet' href='/styles/star-box.css'>
-  <link rel='stylesheet' href='/styles/poster.css'>";
+  <link rel='stylesheet' href='/styles/poster.css'>
+  <title>Stars - Demo PHP Streamer</title>";
 include('public/html-mid.html');
 
 /** Determine page number */

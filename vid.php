@@ -5,11 +5,11 @@ session_start();
 include('public/verifyLogin.php');
 include('public/getInfoById.php');
 include('public/html-head.html');
-echo "
-  <script>const id = '$r->id'</script>
+echo "  <script>const id = '$r->id'</script>
   <script src='/scripts/toggleStarDisplay.js'></script>
   <link rel='stylesheet' href='/styles/p-vid.css'>
-  <link rel='stylesheet' href='/styles/star-box.css'>";
+  <link rel='stylesheet' href='/styles/star-box.css'>
+  <title>$r->id - Demo PHP Streamer</title>";
 include('public/html-mid.html');
 
 $count = count(glob("media/vids/$r->id*.mp4"));

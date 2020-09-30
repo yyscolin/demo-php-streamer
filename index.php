@@ -3,8 +3,9 @@ session_start();
 
 include("public/verifyLogin.php");
 include('public/html-head.html');
-echo "<link rel='stylesheet' href='/styles/poster.css'>"
-    ."<link rel='stylesheet' href='/styles/star-box.css'>";
+echo "  <link rel='stylesheet' href='/styles/poster.css'>
+  <link rel='stylesheet' href='/styles/star-box.css'>
+  <title>Demo PHP Streamer</title>";
 include('public/html-mid.html');
 
 /** establish mysql connection */

@@ -3,10 +3,6 @@
 session_start();
 
 include('public/verifyLogin.php');
-include('public/html-head.html');
-echo "\n  <link rel='stylesheet' href='/styles/poster.css'>";
-include('public/html-mid.html');
-
 
 if ($_GET['id'] == 0) {
     $r = new stdClass();
@@ -18,6 +14,11 @@ if ($_GET['id'] == 0) {
 } else {
     include('public/getInfoById.php');
 }
+
+include('public/html-head.html');
+echo "  <link rel='stylesheet' href='/styles/poster.css'>
+  <title>$r->name_j - Demo PHP Streamer</title>";
+include('public/html-mid.html');
 
 $img_src = "/media/stars/$r->id.jpg";
 if (!file_exists(".".$img_src)) {
