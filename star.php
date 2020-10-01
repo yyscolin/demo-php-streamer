@@ -40,7 +40,7 @@ if ($_GET['id'] == 0) {
     $res = $con->query($query);
     echo "</p>";
 } else {
-    $query = "select id from vids where id in (select vid from casts where star = ?) order by release_date desc";
+    $query = "select id from vids where id in (select vid from casts where star = ?) and status=3 order by release_date desc";
     $stmt = $con->prepare($query);
     $stmt->bind_param('s', $r->id);
     $stmt->execute();

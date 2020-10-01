@@ -25,7 +25,9 @@ $query = "select id, name_f, name_l, name_j, dob,
     join vids on vids.id = casts.vid group by stars.id
 ) t1 left join (
     select star, count(star) as count
-    from casts group by star
+    from casts where vid in (
+      select id from vids where status=3
+    ) group by star
 ) t2 on t1.id = t2.star
 order by release_date desc";
 

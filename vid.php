@@ -45,7 +45,10 @@ echo "
 include('public/box-star.php');
 $query = "select id, name_f, name_j, dob, display, count
 from stars join (
-    select star, count(*) as count from casts group by star
+    select star, count(*) as count from casts
+    where vid in (
+      select id from vids where status=3
+    ) group by star
 ) as t on stars.id = t.star
 where id in (
     select star from casts where vid = '$r->id'
