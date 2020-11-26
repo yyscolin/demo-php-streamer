@@ -1,10 +1,11 @@
 #display {
+  background-color: black;
   height: 45vw;
   line-height: 0;
   position: relative;
   width: 100%;
 }
-#display>video, #display>img {
+#display>video, #display>#poster {
   height: 100%;
 }
 #display>.controls {
@@ -33,6 +34,18 @@
   padding-left: 10px;
   padding-right: 10px;
   width: calc(100% - 180px)
+}
+
+#play-btn {
+  background-color: cyan;
+  border-radius: 50%;
+  height: 26.67%;
+  left: 42.5%;
+  padding: 2.5%;
+  position: absolute;
+  top: 30%;
+  width: 15%;
+  z-index: 2;
 }
 
 #main-block {

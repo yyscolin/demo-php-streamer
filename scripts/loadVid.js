@@ -1,125 +1,161 @@
-$('#display').hover(() => {
-  $('#display').addClass('active')
-}, () => {
-  $('#display').removeClass('active')
-})
+function loadVideo(partBtn) {
+  if (partBtn) {
+    var partNo = $(partBtn).attr('part');
 
-// $('#display').on('touchstart', () => {
-//   $('#display').addClass('active')
-  // $('#display').toggleClass('active')
-// })
+    $('#selected').attr('onclick', 'loadVideo(this)');
+    $('#selected').removeAttr('id');
+
+    $(partBtn).removeAttr('onclick');
+    $(partBtn).attr('id', 'selected');
+  } else {
+    var partNo = 1
+  }
   
-function loadVid(e) {
-  let part;
-  if (e) {
-    part = e.getAttribute('part');
-
-    selected.setAttribute('onclick', 'loadVid(this)');
-    selected.removeAttribute('id');
-
-    e.removeAttribute('onclick');
-    e.setAttribute('id', 'selected');
-  } else
-    part = 1;
-  
+  let videoAttributes = isAndroid
+    ? `ontouchstart='videoOntouchstart()' ontouchmove='videoOntouchmove()' ontouchend='videoOntouchend()' ontouchcancel='videoOntouchcancel()' oncanplay='videoOncanplay(this)'`
+    : `onloadedmetadata='this.play()' controls`
   $('#display').html(
-    `<video ondblclick='toggleVideoPlay()' ` +
-    `oncanplay='videoOncanplay($(this))'` +
-    `><source src='/media/vids/${id}_${part}.mp4'>` +
-    '</video>'
+    `<video ${videoAttributes}>` +
+    `<source src='/media/vids/${id}_${partNo}.mp4'>` +
+    `</video>`
   )
 }
 
 let x1 = null                                                      
 let y1 = null
-let directionalCoefficient = null
+let directionalCoefficient = undefined
 let isSeeking = false
 let timeToMoveTo = null
-
-let firstClick = false
-let clickTimeout
+let videoOnclickTimeout = undefined
+let videoOnclickLocked = undefined
 
 function videoOntouchstart() {
   event.preventDefault()
-  isSeeking = true
+  showControls()
   x1 = event.touches[0].clientX
   y1 = event.touches[0].clientY
 }
 
 function videoOntouchmove() {
   event.preventDefault()
+  showControls()
+
+  /** If was already registered as vertical swipe */
+  if (directionalCoefficient === 'vertical') {
+    return
+  }
   
-  let isFirstMove = directionalCoefficient ? false : true
-  if (!isFirstMove) {
-    timeToMoveTo += directionalCoefficient
+  /** If was already registered as horizontal swipe */
+  if (directionalCoefficient) {
+    timeToMoveTo = Math.max(timeToMoveTo + directionalCoefficient, 1)
     $('#time-info-span').html(getFormattedTime(timeToMoveTo))
-    $('#time-slider').val(Math.floor(timeToMoveTo))
+    $('#time-slider').val(timeToMoveTo)
     return
   }
 
-  timeToMoveTo = $('video').get(0).currentTime
+  /** Acknowledge that the touch was at least moved */
+  directionalCoefficient = false
+
   let x2 = event.touches[0].clientX                                    
   let y2 = event.touches[0].clientY
+
   let xDiff = x2 - x1
-  let yDiff = y1 - y2
+  let yDiff = Math.abs(y2 - y1)
 
-  let isVertical = Math.abs(yDiff) > Math.abs(xDiff)
-  if (isVertical)
-    return toggleVideoPlay()
+  let isVertical = yDiff > Math.abs(xDiff)
+  if (isVertical) {
+    let minMovementThreshold = 100
+    if (yDiff >= minMovementThreshold) {
+      directionalCoefficient = 'vertical'
+    }
+  } else {
+    let minMovementThreshold = 20
+    if (Math.abs(xDiff) >= minMovementThreshold) {
+      isSeeking = true
+      timeToMoveTo = Math.floor($('video').get(0).currentTime)
 
-  let isLeft = xDiff < 0
-  if (!isLeft)
-    directionalCoefficient = 1
-  else
-    directionalCoefficient = -1
+      let isRight = xDiff > 0
+      directionalCoefficient = isRight ? 1 : -1
+    }
+  }
 }
 
 function videoOntouchend() {
   event.preventDefault()
-  if (timeToMoveTo)
-    $('video').get(0).currentTime = timeToMoveTo
+  const vid = $('video').get(0)
+
+  /** Vertical swipe */
+  if (directionalCoefficient === 'vertical') {
+    controlVideo('pause')
+  }
+
+  /** Tapping */
+  else if (directionalCoefficient === undefined) {
+    videoOnclick()
+  }
+
+  /** Fast forwarding */
+  else if (timeToMoveTo) {
+    vid.currentTime = timeToMoveTo
+  }
+
   videoOntouchcancel()
 }
 
 function videoOntouchcancel() {
   x1 = null
   y1 = null
-  directionalCoefficient = null
+  directionalCoefficient = undefined
   isSeeking = false
   timeToMoveTo = null
 }
 
-function toggleVideoPlay() {
-  let vid = $('video').get(0)
-  if (vid.paused == true) {
-    vid.play()
-    $('#play-button').html('|  |')
-    $('#display').get(0).requestFullscreen()
+function videoOnclick() {
 
-    if (isMobile) {
-      $('video').removeAttr('dblclick')
-      $('video').on('touchstart', videoOntouchstart)
-      $('video').on('touchmove', videoOntouchmove)
-      $('video').on('touchend', videoOntouchend)
-      $('video').on('touchcancel', videoOntouchcancel)
-    }
-  } else {
-    vid.pause()
-    $('#play-button').html('➤')
-    document.exitFullscreen()
+  function lockVideoOnclick() {
+    clearTimeout(videoOnclickLocked)
+    videoOnclickLocked = setTimeout(function() {
+      videoOnclickLocked = undefined
+    }, 500)
+  }
+  
+  /** Ignore all continuous clicks after successful double click */
+  if (videoOnclickLocked) {
+    lockVideoOnclick()
+    return
+  }
 
-    if (isMobile) {
-      $('video').attr('dblclick', 'toggleVideoPlay()')
-      $('video').off('touchstart')
-      $('video').off('touchmove')
-      $('video').off('touchend')
-      $('video').off('touchcancel')
-    }
+  /** Successful double click */
+  if (videoOnclickTimeout) {
+    clearTimeout(videoOnclickTimeout)
+    videoOnclickTimeout = undefined
+    lockVideoOnclick()
+    controlVideo('play')
+    return
+  }
+
+  /** Reset first click if second click does not come quickly */
+  videoOnclickTimeout = setTimeout(function() {
+    videoOnclickTimeout = undefined
+  }, 200)
+}
+
+function controlVideo(action) {
+  const display = $('#display').get(0)
+  const vid = $('video').get(0)
+  switch (action) {
+    case 'play':
+      display.requestFullscreen()
+      vid.play()
+      break
+    case 'pause':
+      document.exitFullscreen()
+      vid.pause()
   }
 }
 
 function videoOncanplay(vid) {
-  let duration = vid.get(0).duration
+  let duration = $(vid).get(0).duration
   let time = getFormattedTime(duration)
 
   $('#display').append(
@@ -130,7 +166,8 @@ function videoOncanplay(vid) {
     `min='0' max='${Math.floor(duration)}' value='0'>`
   )
 
-  vid.removeAttr('oncanplay')
+  $(vid).removeAttr('oncanplay')
+  controlVideo('play')
 }
 
 function getFormattedTime(duration) {
@@ -149,6 +186,15 @@ function updateControls() {
   $('#time-slider').val(Math.floor(time))
 }
 
+let showControlsTimeout = undefined
+function showControls() {
+  $('#display').addClass('active')
+  if (showControlsTimeout) clearInterval(showControlsTimeout)
+  showControlsTimeout = setTimeout(() => {
+    $('#display').removeClass('active')
+  }, 4000);
+}
+
 function sliderOninput(slider) {
   let time = slider.val()
   $('#time-info-span').html(getFormattedTime(time))
@@ -161,5 +207,17 @@ function sliderOnchange(slider) {
   vid.currentTime = time
   isSeeking = false
 }
+
+/** Sync video play to fullscreen if out of sync */
+setInterval(() => {
+  const isFullscreen = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen
+  const vid = $('video').get(0)
+
+  if (isFullscreen && vid.paused) {
+    vid.play()
+  } else if (!isFullscreen && !vid.paused) {
+    vid.pause()
+  }
+}, 200);
 
 setInterval(updateControls, 400)
