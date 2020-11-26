@@ -168,6 +168,20 @@ function videoOncanplay(vid) {
 
   $(vid).removeAttr('oncanplay')
   controlVideo('play')
+
+  /** Sync video play to fullscreen if out of sync */
+  setInterval(() => {
+    const isFullscreen = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen
+    const vid = $('video').get(0)
+  
+    if (isFullscreen && vid.paused) {
+      vid.play()
+    } else if (!isFullscreen && !vid.paused) {
+      vid.pause()
+    }
+  }, 200);
+  
+  setInterval(updateControls, 400)
 }
 
 function getFormattedTime(duration) {
@@ -208,16 +222,3 @@ function sliderOnchange(slider) {
   isSeeking = false
 }
 
-/** Sync video play to fullscreen if out of sync */
-setInterval(() => {
-  const isFullscreen = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen
-  const vid = $('video').get(0)
-
-  if (isFullscreen && vid.paused) {
-    vid.play()
-  } else if (!isFullscreen && !vid.paused) {
-    vid.pause()
-  }
-}, 200);
-
-setInterval(updateControls, 400)
