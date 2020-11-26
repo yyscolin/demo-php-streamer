@@ -45,7 +45,7 @@
   position: absolute;
   top: 30%;
   width: 15%;
-  z-index: 2;
+  z-index: 1;
 }
 
 #main-block {
