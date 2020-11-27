@@ -31,14 +31,13 @@ let videoOnclickLocked = undefined
 
 function videoOntouchstart() {
   event.preventDefault()
-  showControls()
   x1 = event.touches[0].clientX
   y1 = event.touches[0].clientY
 }
 
 function videoOntouchmove() {
   event.preventDefault()
-  showControls()
+  controlVideoUI('show')
 
   /** If was already registered as vertical swipe */
   if (directionalCoefficient === 'vertical') {
@@ -134,8 +133,9 @@ function videoOnclick() {
     return
   }
 
-  /** Reset first click if second click does not come quickly */
+  /** Register as single click if second click does not come quickly */
   videoOnclickTimeout = setTimeout(function() {
+    controlVideoUI('toggle')
     videoOnclickTimeout = undefined
   }, 200)
 }
@@ -200,13 +200,27 @@ function updateControls() {
   $('#time-slider').val(Math.floor(time))
 }
 
-let showControlsTimeout = undefined
-function showControls() {
-  $('#display').addClass('active')
-  if (showControlsTimeout) clearInterval(showControlsTimeout)
-  showControlsTimeout = setTimeout(() => {
-    $('#display').removeClass('active')
-  }, 4000);
+let showControlsTimeout = null
+function controlVideoUI(action) {
+  switch(action) {
+    case 'show':
+      $('#display').addClass('active')
+      if (showControlsTimeout) clearInterval(showControlsTimeout)
+      showControlsTimeout = setTimeout(() => {
+        controlVideoUI('hide')
+      }, 4000)
+      break
+    case 'hide':
+      $('#display').removeClass('active')
+      if (showControlsTimeout) {
+        clearInterval(showControlsTimeout)
+        showControlsTimeout = null
+      }
+      break
+    case 'toggle':
+      let nextAction = showControlsTimeout ? 'hide' : 'show'
+      controlVideoUI(nextAction)
+  }
 }
 
 function sliderOninput(slider) {
