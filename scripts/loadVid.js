@@ -63,7 +63,7 @@ function videoOntouchmove() {
 
   let isVertical = yDiff > Math.abs(xDiff)
   if (isVertical) {
-    let minMovementThreshold = 100
+    let minMovementThreshold = 75
     if (yDiff >= minMovementThreshold) {
       directionalCoefficient = 'vertical'
     }
