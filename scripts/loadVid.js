@@ -129,7 +129,7 @@ function videoOnclick() {
     clearTimeout(videoOnclickTimeout)
     videoOnclickTimeout = undefined
     lockVideoOnclick()
-    controlVideo('play')
+    controlVideo('toggle')
     return
   }
 
@@ -151,6 +151,11 @@ function controlVideo(action) {
     case 'pause':
       document.exitFullscreen()
       vid.pause()
+      break
+    case 'toggle':
+      let isFullscreen = document.fullScreen || document.mozFullScreen || document.webkitIsFullScreen
+      let nextAction = isFullscreen ? 'pause' : 'play'
+      controlVideo(nextAction)
   }
 }
 
