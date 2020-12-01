@@ -15,8 +15,8 @@ if (!isset($_POST['password']) || $_POST['password'] == '') {
 
 switch ($_POST['password']) {
     case 'test_password':
-        $_SESSION['auth'] = $auth;
-        exit("Welcome $name");
+        $_SESSION['auth'] = 1;
+        exit("Welcome");
     default:
         header('HTTP/1.0 400 Invalid Password');
         exit((string)$_SESSION['login_attempts']." Unsuccessful Attempt".($_SESSION['login_attempts'] > 1 ? "s" : ""));
