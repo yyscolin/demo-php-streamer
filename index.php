@@ -1,8 +1,6 @@
 <?php
-session_start();
 
-include("public/verifyLogin.php");
-include('public/html-head.html');
+include("public/common.php");
 echo "  <link rel='stylesheet' href='/styles/poster.css'>
   <link rel='stylesheet' href='/styles/star-box.css'>
   <title>Demo PHP Streamer</title>";

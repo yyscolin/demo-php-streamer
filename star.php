@@ -1,8 +1,6 @@
 <?php
 
-session_start();
-
-include('public/verifyLogin.php');
+include('public/common.php');
 
 if ($_GET['id'] == 0) {
     $r = new stdClass();
@@ -15,7 +13,6 @@ if ($_GET['id'] == 0) {
     include('public/getInfoById.php');
 }
 
-include('public/html-head.html');
 echo "  <link rel='stylesheet' href='/styles/poster.css'>
   <title>$r->name_j - Demo PHP Streamer</title>";
 include('public/html-mid.html');

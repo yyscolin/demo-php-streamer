@@ -1,10 +1,7 @@
 <?php
 
-session_start();
-
-include("public/verifyLogin.php");
+include("public/common.php");
 include('public/mysql_connections.php');
-include('public/html-head.html');
 
 echo "  <script src='/scripts/toggleStarDisplay.js'></script>
   <link rel='stylesheet' href='/styles/star-box.css'>

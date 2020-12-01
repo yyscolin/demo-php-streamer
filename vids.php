@@ -1,10 +1,7 @@
 <?php
 
-session_start();
-
-include("public/verifyLogin.php");
+include("public/common.php");
 include('public/mysql_connections.php');
-include('public/html-head.html');
 echo "  <link rel='stylesheet' href='/styles/poster.css'>
   <title>Vids - Demo PHP Streamer</title>";
 include('public/html-mid.html');
