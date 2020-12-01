@@ -29,23 +29,6 @@ a {
     align-items: center;
     justify-content: center;
 }
-.pageover {
-    background-color: rgba(0, 0, 0, 0.8);
-    height: 100vh;
-    margin: 0;
-    position: fixed;
-    top: 0;
-    width: 100vw;
-    z-index: 1;
-}
-.pageover>* {
-    background-color: #480445;
-	border: 2px solid white;
-	border-radius: 16px;
-	margin: 25vh auto;
-	padding: 32px;
-    position: relative;
-}
 .noselect {
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */

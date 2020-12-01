@@ -28,8 +28,6 @@ DirectoryIndex index.php
     # Rewrite URL
     RewriteRule ^stars/?$ stars.php [L]
     RewriteRule ^vids/?$ vids.php [L]
-    RewriteRule ^stars/([0-9]+)$ stars.php?page=$1 [L]
-    RewriteRule ^vids/([0-9]+)$ vids.php?page=$1 [L]
     RewriteRule ^star/([0-9]+)$ star.php?id=$1 [L]
     RewriteRule ^vid/(.+)$ vid.php?id=$1 [L]
 
