@@ -1,31 +1,35 @@
 <?php
 
-/** Set default subHref to 'vids' (if forgot to set) */
-if (!$subHref) $subHref = 'vids';
-
 /** Determine page range */
 $query = "select count(*) as count from ($query) as t";
-$res = mysqli_query($con, $query);
-$r = mysqli_fetch_object($res);
-$pages = ceil($r->count/$itemNo);
-$min = max($page - 4, 1);
-$max = min($page + 4, $pages);
+$db_response = mysqli_query($con, $query);
+$r = mysqli_fetch_object($db_response);
+$no_of_pages = ceil($r->count/$items_per_page);
 
 /** Display page navigation bar */
 echo "\n<div id='nav-pages'>";
-if ($page != 1)
-echo "
-  <a href='$subHref/1'>«</a>
-  <a href='$subHref/".($page-1)."'>◄</a>";
-for ($i = $min; $i <= $max; $i++) {
-  echo "\n  " . ($i == $page
-    ? "<span>$i</span>"
-    : "<a href='$subHref/$i'>$i</a>");
+for ($i = 1; $i <= $no_of_pages; $i++) {
+  $is_selected = $i == (int)$page_no ? "selected" : "";
+
+  if ($i == 1 || $i == 2 || $i== $no_of_pages) {
+    echo "<span class='nav-item-box'>";
+    echo "<div style='margin:0;position:absolute;top:0'>";
+  }
+
+  echo "<span class='nav-item noselect $is_selected' data-page='$i' onclick='openPage(this)'>$i</span>";
+
+  if ($i == 1 || $i == $no_of_pages - 1 || $i == $no_of_pages) {
+    echo "</div>";
+    echo "</span>";
+  }
 }
-if ($max != $pages) echo "
-  <span>...</span>
-  <a href='$subHref/$pages'>$pages</a>";
-if ($page != $pages) echo "
-  <a href='$subHref/".($page+1)."'>►</a>
-  <a href='$subHref/$pages'>»</a>";
-echo "\t\n</div>";
+
+echo "\t\n</div>
+  <div style='height:8vw'></div>
+  <script src='/scripts/nav-bar.js'></script>
+  <script>
+    const maxNavLeft = $no_of_pages - 7
+    const type = '$type'
+    const itemsPerPage = $items_per_page
+    adjustNavCss()
+  </script>";

@@ -12,14 +12,12 @@ echo "  <script src='/scripts/toggleStarDisplay.js'></script>
   <title>Stars - Demo PHP Streamer</title>";
 include('public/html-mid.html');
 
-/** Determine page number */
-$page = (int)$_GET['page'] != 0 ? $_GET['page'] : 1;
-$itemNo = 50;
-$limitStart = ($page-1)*$itemNo;
-   
+$type = 'stars';
+$items_per_page = 50;
+$page_no = isset($_SESSION["stars-page-no"]) ? $_SESSION["stars-page-no"] : 1;
+$limit_start = ($page_no - 1) * $items_per_page;
 
-$query = "select id, name_f, name_l, name_j, dob,
-    display, ifnull(t2.count, 0) as count from (
+$query = "select id, name_f, name_l, name_j, dob, ifnull(t2.count, 0) as count from (
     select stars.*, max(release_date) as release_date
     from stars left join casts on stars.id = casts.star
     join vids on vids.id = casts.vid group by stars.id
@@ -29,11 +27,12 @@ $query = "select id, name_f, name_l, name_j, dob,
       select id from vids where status=3
     ) group by star
 ) t2 on t1.id = t2.star
-order by release_date desc";
+where display = 1
+order by release_date desc, id";
 
 include('public/box-star.php');
 
-$res = mysqli_query($con, "$query limit $limitStart, $itemNo");
+$res = mysqli_query($con, "$query limit $limit_start, $items_per_page");
 echo "<h1>STARS</h1";
 while ($r = mysqli_fetch_object($res)) {
     $r->name_e = $r->name_f;
@@ -41,8 +40,6 @@ while ($r = mysqli_fetch_object($res)) {
     print_star($r);
 }
 echo ">";
-
-$subHref = '/stars';
 
 include('public/nav-pages.php');
 include('public/html-tail.html');
