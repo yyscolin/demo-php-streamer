@@ -24,11 +24,17 @@ a {
     text-decoration: none;
 }
 
+#main-block {
+  margin: auto;
+  max-width: 80vw;
+}
+
 .flex {
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
 .noselect {
     -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
@@ -81,3 +87,15 @@ a {
     background-color: darkblue;
     cursor: default;
 }
+
+@media only screen and (max-width: 720px) {
+    #main-block {
+      max-width: 95vw;
+    }
+  }
+  
+  @media only screen and (max-width: 480px) {
+    #main-block {
+      max-width: 99vw;
+    }
+  }

@@ -43,11 +43,6 @@
   z-index: 1;
 }
 
-#main-block {
-  margin: auto;
-  max-width: 80vw;
-}
-
 #info-table {
   border-radius: 12px;
   color: white;
@@ -69,16 +64,10 @@
   #display {
     height: 53.4375vw;
   }
-  #main-block {
-    max-width: 95vw;
-  }
 }
 
 @media only screen and (max-width: 480px) {
   #display {
     height: 55.6875vw;
-  }
-  #main-block {
-    max-width: 99vw;
   }
 }
