@@ -41,7 +41,7 @@ a {
 #nav-pages {
     bottom: 0;
     height: 4vw;
-    line-height: 3vw;
+    line-height: 2vw;
     padding-bottom: 2vw;
     padding-top: 2vw;
     position: fixed;
@@ -50,9 +50,8 @@ a {
 }
 .nav-item-box {
     display: inline-block;
-    height: 4vw;
-    margin: 0 !important;
-    overflow-y: hidden; 
+    height: 80%;
+    margin: .5vw 0;
     position: relative;
     width: 10vw;
 
