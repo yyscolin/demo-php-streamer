@@ -78,9 +78,6 @@ a {
     margin: 0 .5vw !important;
     width: 8vw;
 }
-.nav-item:hover {
-    background-color: darkmagenta;
-}
 .nav-item.selected {
     background-color: darkblue;
     cursor: default;

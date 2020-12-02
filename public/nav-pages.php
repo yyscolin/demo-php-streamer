@@ -33,3 +33,10 @@ echo "\t\n</div>
     const itemsPerPage = $items_per_page
     adjustNavCss()
   </script>";
+
+  if (!$is_mobile) echo "
+    <style>
+      .nav-item:not(.selected):hover {
+          background-color: darkmagenta;
+      }
+    </style>";
