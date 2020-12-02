@@ -1,5 +1,6 @@
 <?php
 
+include('public/box-vid.php');
 include('public/common.php');
 
 if ($_GET['id'] == 0) {
@@ -45,7 +46,9 @@ if ($_GET['id'] == 0) {
 }
 
 /** Print boxes */
-while ($r = mysqli_fetch_object($res)) include('public/box-vid.php');
+while ($r = mysqli_fetch_object($res)) {
+    print_vid_box($r->id);
+}
 
 include('public/html-tail.html');
 

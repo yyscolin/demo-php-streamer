@@ -30,13 +30,10 @@ order by release_date desc, id";
 include('public/box-star.php');
 
 $res = mysqli_query($con, "$query limit $limit_start, $items_per_page");
-echo "<h1>STARS</h1";
+echo "<h1>STARS</h1>";
 while ($r = mysqli_fetch_object($res)) {
-    $r->name_e = $r->name_f;
-    if ($r->name_l) $r->name_e .= " $r->name_l";
-    print_star($r);
+    print_star_box($r);
 }
-echo ">";
 
 include('public/nav-pages.php');
 include('public/html-tail.html');

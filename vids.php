@@ -1,7 +1,8 @@
 <?php
 
-include("public/common.php");
+include('public/box-vid.php');
 include('public/mysql_connections.php');
+include("public/common.php");
 echo "  <link rel='stylesheet' href='/styles/poster.css'>
   <title>Vids - Demo PHP Streamer</title>";
 include('public/html-mid.html');
@@ -16,7 +17,9 @@ $query = "select * from vids where status=3 order by modify_timestamp desc";
 
 /** Print boxes */
 $res = mysqli_query($con, "$query limit $limit_start, $items_per_page");
-while ($r = mysqli_fetch_object($res)) include('public/box-vid.php');
+while ($r = mysqli_fetch_object($res)) {
+  print_vid_box($r->id);
+}
 
 
 include('public/nav-pages.php');

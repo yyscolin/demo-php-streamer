@@ -9,7 +9,7 @@ function searchDatabase() {
 		return
 	}
 
-	let url = '/api/searchDatabase.php'
+	let url = '/api/search-database.php'
 	let type = $('#search-type')[0].value
 	let data = {query, type}
 	searchAjax = $.get(url, data, searchDatabaseSuccess)

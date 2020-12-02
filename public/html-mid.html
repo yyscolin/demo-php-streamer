@@ -7,13 +7,14 @@
   ><div id='menu-bar' class='inline'>
     <a href="/stars">Stars</a
     ><a href="/vids">Videos</a
-    ><div id='search-box' class='inline'>
-      <select id='search-type' onchange='searchDatabase()'>
+    ><form id='search-box' class='inline' action='/search.php'>
+      <select id='search-type' name='type' onchange='searchDatabase()'>
         <option value='star'>Stars</option>
         <option value='vid'>Videos</option>
       </select
-      ><input id='search-field' type="search" oninput='searchDatabase()' placeholder="search...">
+      ><input id='search-field' type="search" name='query' oninput='searchDatabase()' placeholder="search...">
       <div id='search-results' style="display: none;"></div>
-    </div>
+      <button type='submit'>GO</button>
+    </form>
   </div>
 </div>

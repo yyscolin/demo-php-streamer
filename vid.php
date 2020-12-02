@@ -38,12 +38,12 @@ echo "
     </tr>
   </table>
   <div id='stars-box'>
-    <div";
+    <div>";
 
 
 /** Get list of stars */
 include('public/box-star.php');
-$query = "select id, name_f, name_j, dob, display, count
+$query = "select id, name_f, name_l, name_j, dob, display, count
 from stars join (
     select star, count(*) as count from casts
     where vid in (
@@ -55,13 +55,11 @@ where id in (
 )";
 $res = mysqli_query($con, $query);
 while ($r = mysqli_fetch_object($res)) {
-    $r->name_e = $r->name_f;
-    if ($r->name_l) $r->name_e .= " $r->name_l";
-    print_star($r);
+    print_star_box($r);
 }
 
 echo "
-    ></div>
+    </div>
   </div>
   </div>
   <script src='/scripts/video-player.js'></script>";
