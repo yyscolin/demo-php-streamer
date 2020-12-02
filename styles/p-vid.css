@@ -37,14 +37,9 @@
 }
 
 #play-btn {
-  background-color: cyan;
-  border-radius: 50%;
-  height: 26.67%;
-  left: 42.5%;
-  padding: 2.5%;
+  margin: 25% 40%;
   position: absolute;
-  top: 30%;
-  width: 15%;
+  width: 20%;
   z-index: 1;
 }
 
