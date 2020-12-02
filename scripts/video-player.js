@@ -231,6 +231,7 @@ function controlVideoUI(action) {
 function sliderOninput(slider) {
   let time = slider.val()
   $('#time-info-span').html(getFormattedTime(time))
+  controlVideoUI('show')
   isSeeking = true
 }
 
@@ -238,6 +239,7 @@ function sliderOnchange(slider) {
   let time = slider.val()
   let vid = $('video').get(0)
   vid.currentTime = time
+  controlVideoUI('show')
   isSeeking = false
 }
 

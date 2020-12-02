@@ -64,7 +64,7 @@ echo "
     ></div>
   </div>
   </div>
-  <script src='/scripts/loadVid.js'></script>";
+  <script src='/scripts/video-player.js'></script>";
 
 include('public/html-tail.html');
 
