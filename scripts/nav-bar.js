@@ -62,5 +62,5 @@ function openPage(button) {
 function adjustNavCss(pageNo) {
     if (!pageNo) pageNo = $('.nav-item.selected').attr('data-page')
     const leftCss = Math.min(Math.max((pageNo - 4), 0), maxNavLeft) * window.innerWidth / 10
-    $('.nav-item-box:nth-child(2)').scrollLeft(leftCss)
+    $('.nav-item-box:nth-child(2)').animate({scrollLeft: leftCss}, 600)
 }

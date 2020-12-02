@@ -63,8 +63,7 @@ a {
     display: none;
 }
 .nav-item-box:nth-child(2) {
-    overflow-x: auto; 
-    scroll-snap-type: x mandatory;
+    overflow-x: hidden;
     width: 50vw;
 }
 .nav-item {
@@ -77,8 +76,6 @@ a {
     font-size: 2vw;
     padding: 0;
     margin: 0 .5vw !important;
-    scroll-snap-align: start;
-    scroll-margin-inline-start: .5vw;
     width: 8vw;
 }
 .nav-item:hover {
