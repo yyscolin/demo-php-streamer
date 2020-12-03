@@ -2,19 +2,25 @@
 
 include('mysql_connections.php');
 
-function search_database($type, $search_query, $itemsCount=5) {
+function search_database($type, $search_query, $itemsCount=5, $verbose=true) {
     global $con;
 
     $search_results = [];
 
     $search_query .= '%';
     if ($type == 'vid') {
-        $sql_query = "select id, title as name
+        $columns = $verbose
+            ? "id, title, release_date, duration"
+            : "id, title as name";
+        $sql_query = "select $columns
             from vids where id like ? and status=3 order by modify_timestamp desc limit 5";
         $stmt = $con->prepare($sql_query);
         $stmt->bind_param('s', $search_query);
     } else {
-        $sql_query = "select id, name_j as name from stars
+        $columns = $verbose
+            ? "id, name_j, name_l, name_f"
+            : "id, name_j as name";
+        $sql_query = "select $columns from stars
             where display=1
             and (concat(name_f, ' ', name_l) like ? or concat(name_l, ' ', name_f) like ?)
             order by name_f limit $itemsCount";

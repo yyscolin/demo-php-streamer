@@ -68,7 +68,7 @@ include('public/html-mid.html');
           $media_path = "/media/covers/$r->id.jpg";
           $font_size = 24;
         } else {
-          $title = $r->name;
+          $title = $r->name_j;
           $media_path = "/media/stars/$r->id.jpg";
           $font_size = 43;
         }
