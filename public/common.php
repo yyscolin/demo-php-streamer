@@ -23,6 +23,7 @@ $is_webOS = stripos($_SERVER['HTTP_USER_AGENT'], "webOS");
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <script src="/scripts/jquery.min.3.4.1.js"></script>
+  <script src="/scripts/main.js"></script>
   <script src='/scripts/search-box.js'></script>
   <script>
     const isAndroid = <?php echo $is_Android ? "true" : "false" ?>
