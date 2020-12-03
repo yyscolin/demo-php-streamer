@@ -2,7 +2,7 @@
 
 include('mysql_connections.php');
 
-function search_database($type, $search_query, $itemsCount=5, $verbose=true) {
+function search_database_by_query($type, $search_query, $itemsCount=5, $verbose=true) {
     global $con;
 
     $search_results = [];
@@ -35,4 +35,18 @@ function search_database($type, $search_query, $itemsCount=5, $verbose=true) {
     }
 
     return $search_results;
+}
+
+function search_database_by_id($type, $id) {
+    global $con;
+
+    $table = $type."s";
+    $stmt = $con->prepare("select * from $table where id = ?");
+    $stmt->bind_param('s', $id);
+    $stmt->execute();
+    $db_response = $stmt->get_result();
+    // if ($db_response->num_rows === 0) redirectToHomePage();
+
+    $r = $db_response->fetch_object();
+    return $r;
 }

@@ -7,7 +7,7 @@ include('public/search-database.php');
 $type = $_GET['type'];
 $query = $_GET['query'];
 $search_results = isset($query) && ($type != 'vid' || $type != 'star')
-  ? search_database($type, $query)
+  ? search_database_by_query($type, $query)
   : [];
 
 include('public/common.php');

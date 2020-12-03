@@ -1,7 +1,13 @@
 <?php
 
 include('public/common.php');
-include('public/getInfoById.php');
+
+$id = $_GET['id'];
+if (!isset($id)) redirectToHomePage();
+include('public/search-database.php');
+$r = search_database_by_id('vid', $id);
+if (count($r) == 0) redirectToHomePage();
+
 echo "  <script>const id = '$r->id'</script>
   <link rel='stylesheet' href='/styles/p-vid.css'>
   <link rel='stylesheet' href='/styles/star-box.css'>

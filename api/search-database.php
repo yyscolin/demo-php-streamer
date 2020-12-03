@@ -12,7 +12,7 @@ include('../public/search-database.php');
 
 $payload = new stdClass();
 $payload->type = $type;
-$payload->results = search_database($type, $query, 5 ,false);
+$payload->results = search_database_by_query($type, $query, 5 ,false);
 
 header('Content-type: application/json');
 echo json_encode($payload);

@@ -1,5 +1,10 @@
 <?php
 
+function redirectToHomePage() {
+    header("Location: /");
+    exit();
+}
+
 session_start();
 
 include('languages.php');

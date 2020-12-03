@@ -3,15 +3,20 @@
 include('public/box-vid.php');
 include('public/common.php');
 
-if ($_GET['id'] == 0) {
+$id = $_GET['id'];
+if (!isset($id)) redirectToHomePage();
+include('public/search-database.php');
+
+if ($id == 0) {
     $r = new stdClass();
-    $r->id = $_GET['id'];
+    $r->id = 0;
     $r->name_j = "";
     $r->name_f = "Untitled Stars";
     $r->name_l = "";
     $r->dob = "";
 } else {
-    include('public/getInfoById.php');
+    $r = search_database_by_id('star', $id);
+    if (count($r) == 0) redirectToHomePage();
 }
 
 if ($language == "jp") {
@@ -39,7 +44,7 @@ echo "<div class='flex' style='width: 100%; height: 32vw; margin: 8vw 0;overflow
 </div>";
 
 /** Prepare statement */
-if ($_GET['id'] == 0) {
+if ($id == 0) {
     echo "<p>";
     $query = "select id from vids where id not in (select vid from casts)";
     $res = $con->query($query);
