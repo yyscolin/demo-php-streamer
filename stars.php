@@ -11,7 +11,7 @@ include('public/html-mid.html');
 
 $type = 'stars';
 $items_per_page = 50;
-$page_no = isset($_SESSION["stars-page-no"]) ? $_SESSION["stars-page-no"] : 1;
+$page_no = isset($_COOKIE["Stars-Page"]) ? $_COOKIE["Stars-Page"] : 1;
 $limit_start = ($page_no - 1) * $items_per_page;
 
 $query = "select id, name_f, name_l, name_j, dob, ifnull(t2.count, 0) as count from (

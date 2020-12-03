@@ -9,7 +9,7 @@ include('public/html-mid.html');
 
 $type = 'vids';
 $items_per_page = 10;
-$page_no = isset($_SESSION["vids-page-no"]) ? $_SESSION["vids-page-no"] : 1;
+$page_no = isset($_COOKIE["Vids-Page"]) ? $_COOKIE["Vids-Page"] : 1;
 $limit_start = ($page_no - 1) * $items_per_page;
 
 /** Determine query to use */ 

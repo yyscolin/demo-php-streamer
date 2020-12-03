@@ -19,7 +19,7 @@ if (
 include('../public/mysql_connections.php');
 
 $type = $_GET['type'];
-$_SESSION["$type-page-no"] = $_GET['page-no'];
+setcookie(ucfirst($type)."-Page", $_GET['page-no'], time() + 86400, "/");
 $items_per_page = $_GET['items-count'];
 $limit_start = ($_GET['page-no'] - 1) * $items_per_page;
 $query = $type == 'vids'
