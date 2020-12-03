@@ -14,9 +14,16 @@ if ($_GET['id'] == 0) {
     include('public/getInfoById.php');
 }
 
+if ($language == "jp") {
+    $star_name = $r->name_j;
+} else {
+    $star_name = $r->name_f;
+    if ($r->name_l) $star_name .= " ".$r->name_l;
+}
+
 echo "  <link rel='stylesheet' href='/styles/poster.css'>
-  <title>$r->name_j - Demo PHP Streamer</title>";
-include('public/html-mid.html');
+  <title>$star_name - Demo PHP Streamer</title>";
+include('public/common-mid.php');
 
 $img_src = "/media/stars/$r->id.jpg";
 if (!file_exists(".".$img_src)) {
@@ -27,7 +34,7 @@ echo "<div class='flex' style='width: 100%; height: 32vw; margin: 8vw 0;overflow
     <img style='z-index: 0; width: 100vw; height: 60vw;' src='/images/frame.png'>
     <div class='flex' style='background-color: grey; margin: 0; width: 50vw; height: 30vw; position: absolute; z-index: -1;'>
         <img src='$img_src' style='width: 25%;'>
-        <h1 style='color: white; margin: 0 1vw; vertical-align: top; display: inline-block;'>$r->name_j<br>$r->name_f".($r->name_l?" $r->name_l":"")."<br>$r->dob</h1>
+        <h1 style='color: white; margin: 0 1vw; vertical-align: top; display: inline-block;'>$star_name<br>$r->dob</h1>
     </div>
 </div>";
 

@@ -6,7 +6,7 @@ include("public/common.php");
 echo "  <link rel='stylesheet' href='/styles/poster.css'>
   <link rel='stylesheet' href='/styles/star-box.css'>
   <title>Demo PHP Streamer</title>";
-include('public/html-mid.html');
+include('public/common-mid.php');
 
 /** establish mysql connection */
 require('public/mysql_connections.php');
@@ -31,14 +31,8 @@ while ($r = mysqli_fetch_object($dbResponse)) {
 $dbQuery = "select count(id) as count from vids where id not in (select vid from casts)";
 $dbResponse = mysqli_query($con, $dbQuery);
 $r = mysqli_fetch_object($dbResponse);
-echo "
-  <div class='star-box'>
-      <img onclick='window.location.href=\"/star/0\"' src='/media/stars/0.jpg'>
-      <p></p>
-      <p>Others</p>
-      <p></p>
-      <a href='/star/0'>$r->count Videos</a>
-  </div>";
+$r->name_f = "Others";
+print_star_box($r);
 echo "\n</div></div>";
 
 /** Get random vids */

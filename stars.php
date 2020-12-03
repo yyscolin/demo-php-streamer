@@ -6,8 +6,8 @@ include("public/common.php");
 echo "  
   <link rel='stylesheet' href='/styles/star-box.css'>
   <link rel='stylesheet' href='/styles/poster.css'>
-  <title>Stars - Demo PHP Streamer</title>";
-include('public/html-mid.html');
+  <title>".get_text("stars", ucfirst)." - Demo PHP Streamer</title>";
+include('public/common-mid.php');
 
 $type = 'stars';
 $items_per_page = 50;
@@ -30,10 +30,11 @@ order by release_date desc, id";
 include('public/box-star.php');
 
 $res = mysqli_query($con, "$query limit $limit_start, $items_per_page");
-echo "<h1>STARS</h1>";
+echo "<div id='main-block'>";
 while ($r = mysqli_fetch_object($res)) {
     print_star_box($r);
 }
+echo "</div>";
 
 include('public/nav-pages.php');
 include('public/html-tail.html');

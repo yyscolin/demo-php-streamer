@@ -6,7 +6,7 @@ echo "  <script>const id = '$r->id'</script>
   <link rel='stylesheet' href='/styles/p-vid.css'>
   <link rel='stylesheet' href='/styles/star-box.css'>
   <title>$r->id - Demo PHP Streamer</title>";
-include('public/html-mid.html');
+include('public/common-mid.php');
 
 echo "
   <div id='main-block'>
@@ -28,12 +28,12 @@ if ($count > 1) {
 echo "
   <table id='info-table'>
     <tr>
-      <td><b>発売日</b></td>
+      <td><b>".get_text("release date", ucwords)."</b></td>
       <td>$r->release_date</td>
     </tr>
     <tr>
-      <td><b>収録時間</b></td>
-      <td>$r->duration 分鐘</td>
+      <td><b>".get_text("duration", ucfirst)."</b></td>
+      <td>$r->duration ".get_text("minutes")."</td>
     </tr>
   </table>
   <div id='stars-box'>

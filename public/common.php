@@ -2,6 +2,8 @@
 
 session_start();
 
+include('languages.php');
+
 /** Verify Login */
 if (!$_SESSION['auth']) {
     include('public/login.html');
@@ -28,5 +30,7 @@ $is_webOS = stripos($_SERVER['HTTP_USER_AGENT'], "webOS");
   <script>
     const isAndroid = <?php echo $is_Android ? "true" : "false" ?>
   </script>
-  <link rel="stylesheet" href="/styles/index.css">
+  <link rel="stylesheet" href="/styles/main.css"><?php
+  if (!$is_mobile && !$is_iPad) {echo "<link rel='stylesheet' href='/styles/main-web.css'>";}?>
+
   <link rel="stylesheet" href="/styles/banner.css">
