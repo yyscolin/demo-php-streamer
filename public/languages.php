@@ -41,7 +41,7 @@ function get_locale_star_name($star) {
     global $language;
     switch ($language) {
         case "jp":
-            return $star->name_j;
+            return $star->name_j ? $star->name_j : $star->name_f;
         default:
             $star_name = $star->name_f;
             if ($star->name_l) $star_name .= " ".$star->name_l;
