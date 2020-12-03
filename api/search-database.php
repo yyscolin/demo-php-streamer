@@ -8,11 +8,25 @@ if (!isset($query) || ($type != 'vid' && $type != 'star')) {
     exit();
 }
 
-include('../public/search-database.php');
+require_once('../public/search-database.php');
 
 $payload = new stdClass();
 $payload->type = $type;
-$payload->results = search_database_by_query($type, $query, 5 ,false);
+$payload->results = [];
+
+foreach (search_database_by_query($type, $query, 5) as $r) {
+    if ($type == 'vid') {
+        array_push($payload->results, array(
+            "id"=>$r->id,
+            "name"=>$r->title
+        ));
+    } else {
+        array_push($payload->results, array(
+            "id"=>$r->id,
+            "name"=>get_locale_star_name($r)
+        ));
+    }
+}
 
 header('Content-type: application/json');
 echo json_encode($payload);

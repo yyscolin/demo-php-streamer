@@ -7,7 +7,7 @@ function redirectToHomePage() {
 
 session_start();
 
-include('languages.php');
+require_once('languages.php');
 
 /** Verify Login */
 if (!$_SESSION['auth']) {

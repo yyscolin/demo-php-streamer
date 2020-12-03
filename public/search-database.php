@@ -1,26 +1,21 @@
 <?php
 
 include('mysql_connections.php');
+require_once('languages.php');
 
-function search_database_by_query($type, $search_query, $itemsCount=5, $verbose=true) {
+function search_database_by_query($type, $search_query, $itemsCount=5) {
     global $con;
 
     $search_results = [];
 
     $search_query .= '%';
     if ($type == 'vid') {
-        $columns = $verbose
-            ? "id, title, release_date, duration"
-            : "id, title as name";
-        $sql_query = "select $columns
-            from vids where id like ? and status=3 order by modify_timestamp desc limit 5";
+        $sql_query = "select *
+            from vids where id like ? and status=3 order by modify_timestamp desc limit $itemsCount";
         $stmt = $con->prepare($sql_query);
         $stmt->bind_param('s', $search_query);
     } else {
-        $columns = $verbose
-            ? "id, name_j, name_l, name_f"
-            : "id, name_j as name";
-        $sql_query = "select $columns from stars
+        $sql_query = "select * from stars
             where display=1
             and (concat(name_f, ' ', name_l) like ? or concat(name_l, ' ', name_f) like ?)
             order by name_f limit $itemsCount";
@@ -31,6 +26,9 @@ function search_database_by_query($type, $search_query, $itemsCount=5, $verbose=
     $stmt->execute();
     $db_response = $stmt->get_result();
     while ($r = $db_response->fetch_object()) {
+        if ($type == 'star') {
+            $r->name = get_locale_star_name($r);
+        }
         array_push($search_results, $r);
     }
 
@@ -45,7 +43,6 @@ function search_database_by_id($type, $id) {
     $stmt->bind_param('s', $id);
     $stmt->execute();
     $db_response = $stmt->get_result();
-    // if ($db_response->num_rows === 0) redirectToHomePage();
 
     $r = $db_response->fetch_object();
     return $r;

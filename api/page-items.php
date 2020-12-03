@@ -17,7 +17,7 @@ if (
 }
 
 include('../public/mysql_connections.php');
-include('../public/languages.php');
+require_once('../public/languages.php');
 
 $type = $_GET['type'];
 setcookie(ucfirst($type)."-Page", $_GET['page-no'], time() + 86400, "/");
