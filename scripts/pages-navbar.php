@@ -74,13 +74,17 @@
         navWidthCoefficient = 1
       }
 
-      if (!pageNo) pageNo = $('.nav-item.selected').attr('data-page')
+      let slideAnimatationTime = 600
+      if (!pageNo) {
+        slideAnimatationTime = 0
+        pageNo = $('.nav-item.selected').attr('data-page')
+      }
       const lowerPageLimit = pageNo - (3 + navWidthCoefficient)
       const upperPageLimit = noOfPages - (5 + 2 * navWidthCoefficient)
       const targetPage = Math.min(Math.max(lowerPageLimit, 0), upperPageLimit)
       const navItemWidth = $('.nav-item').outerWidth()
       const scrollLeft = targetPage * navItemWidth
 
-      $('.nav-item-box:nth-child(2)').animate({scrollLeft}, 600)
+      $('.nav-item-box:nth-child(2)').animate({scrollLeft}, slideAnimatationTime)
     }
   </script>
