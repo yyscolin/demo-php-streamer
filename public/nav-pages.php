@@ -25,18 +25,7 @@ for ($i = 1; $i <= $no_of_pages; $i++) {
 }
 
 echo "\t\n</div>
-  <div style='height:8vw'></div>
-  <script src='/scripts/nav-bar.js'></script>
-  <script>
-    const maxNavLeft = $no_of_pages - 7
-    const type = '$type'
-    const itemsPerPage = $items_per_page
-    adjustNavCss()
-  </script>";
-
-  if (!$is_mobile) echo "
-    <style>
-      .nav-item:not(.selected):hover {
-          background-color: darkmagenta;
-      }
-    </style>";
+  <div style='height:8vw'></div>\n";
+  include('styles/pages-navbar.php');
+  include('scripts/pages-navbar.php');
+  

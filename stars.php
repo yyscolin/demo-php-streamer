@@ -1,7 +1,7 @@
 <?php
 
-include("public/common.php");
 include('public/mysql_connections.php');
+include("public/common.php");
 
 echo "  
   <link rel='stylesheet' href='/styles/star-box.css'>

@@ -44,58 +44,14 @@ a {
     user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 }
 
-#nav-pages {
-    bottom: 0;
-    height: 4vw;
-    line-height: 2vw;
-    padding-bottom: 2vw;
-    padding-top: 2vw;
-    position: fixed;
-    width: 100%;
-    z-index: 2;
-}
-.nav-item-box {
-    display: inline-block;
-    height: 80%;
-    margin: .5vw 0;
-    position: relative;
-    width: 10vw;
-
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-}
-.nav-item-box::-webkit-scrollbar {
-    display: none;
-}
-.nav-item-box:nth-child(2) {
-    overflow-x: hidden;
-    width: 50vw;
-}
-.nav-item {
-    background-color: darkslateblue;
-    border: .5vw solid black;
-    border-radius: 2vw;
-    color: white;
-    cursor: pointer;
-    display: inline-block;
-    font-size: 2vw;
-    padding: 0;
-    margin: 0 .5vw !important;
-    width: 8vw;
-}
-.nav-item.selected {
-    background-color: darkblue;
-    cursor: default;
-}
-
 @media only screen and (max-width: 720px) {
     #main-block {
       max-width: 95vw;
     }
-  }
+}
   
-  @media only screen and (max-width: 480px) {
+@media only screen and (max-width: 480px) {
     #main-block {
-      max-width: 99vw;
+        max-width: 99vw;
     }
-  }
+}
