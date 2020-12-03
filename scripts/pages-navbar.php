@@ -33,17 +33,12 @@
                 $(boxLink).find('img').attr('src', `/media/covers/${vid.id}.jpg`)
               } else {
                 let star = response[i]
-                let jpName = star.name_j ? star.name_j : ''
-                let enName = star.name_f
-                if (star.name_l) enName += ' ' + star.name_l
-                let dob = star.dob ? star.dob : ''
                 $(boxLink).find('img').attr('onclick', `window.location.href="/star/${star.id}"`)
                 $(boxLink).find('img').attr('src', `/media/stars/${star.id}.jpg`)
-                $(boxLink).find('.en-name').html(enName)
-                $(boxLink).find('.jp-name').html(jpName)
-                $(boxLink).find('.dob').html(dob)
+                $(boxLink).find('.name').html(star.name)
+                $(boxLink).find('.dob').html(star.dob)
                 $(boxLink).find('.vid-count').attr('href', `/star/${star.id}`)
-                $(boxLink).find('.vid-count').html(`${star.count} Videos`)
+                $(boxLink).find('.vid-count>span').html(star.count)
               }
             } else {
               $(boxLink).hide()

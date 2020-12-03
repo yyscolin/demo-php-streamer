@@ -1,5 +1,7 @@
 <?php
 
+$language = isset($_COOKIE['language']) ? $_COOKIE['language'] : "en";
+
 $dictionary = array(
     "stars"=>array("jp"=>"女優"),
     "videos"=>array("jp"=>"ビデオ"),
@@ -11,7 +13,6 @@ $dictionary = array(
     "search"=>array("jp"=>"捜索")
 );
 
-$language = isset($_COOKIE['language']) ? $_COOKIE['language'] : "en";
 function get_text($text_reference, $option_callback=null) {
     global $dictionary;
     global $language;
@@ -33,5 +34,17 @@ function get_text($text_reference, $option_callback=null) {
         return $option_callback($text);
     } else {
         return $text;
+    }
+}
+
+function get_locale_star_name($star) {
+    global $language;
+    switch ($language) {
+        case "jp":
+            return $star->name_j;
+        default:
+            $star_name = $star->name_f;
+            if ($star->name_l) $star_name .= " ".$star->name_l;
+            return $star_name;
     }
 }

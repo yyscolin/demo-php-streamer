@@ -10,20 +10,12 @@ include('public/search-database.php');
 if ($id == 0) {
     $r = new stdClass();
     $r->id = 0;
-    $r->name_j = "";
-    $r->name_f = "Untitled Stars";
-    $r->name_l = "";
+    $star_name = "Untitled Stars";
     $r->dob = "";
 } else {
     $r = search_database_by_id('star', $id);
-    if (count($r) == 0) redirectToHomePage();
-}
-
-if ($language == "jp") {
-    $star_name = $r->name_j;
-} else {
-    $star_name = $r->name_f;
-    if ($r->name_l) $star_name .= " ".$r->name_l;
+    if (!$r) redirectToHomePage();
+    $star_name = get_locale_star_name($r);
 }
 
 echo "  <link rel='stylesheet' href='/styles/poster.css'>

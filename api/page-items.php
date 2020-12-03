@@ -17,13 +17,14 @@ if (
 }
 
 include('../public/mysql_connections.php');
+include('../public/languages.php');
 
 $type = $_GET['type'];
 setcookie(ucfirst($type)."-Page", $_GET['page-no'], time() + 86400, "/");
 $items_per_page = $_GET['items-count'];
 $limit_start = ($_GET['page-no'] - 1) * $items_per_page;
 $query = $type == 'vids'
-    ? "select * from vids where status=3 order by modify_timestamp desc limit ?, ?"
+    ? "select id, title, release_date, duration from vids where status=3 order by modify_timestamp desc limit ?, ?"
     : "select id, name_f, name_l, name_j, dob, ifnull(t2.count, 0) as count
         from (
             select stars.*, max(release_date) as release_date
@@ -44,6 +45,12 @@ $db_response = $stmt->get_result();
 
 $api_response = [];
 while ($r = $db_response->fetch_object()) {
+    if ($type == 'stars') {
+        $r->name = get_locale_star_name($r);
+        unset($r->name_l);
+        unset($r->name_f);
+        unset($r->name_j);
+    }
     array_push($api_response, $r);
 }
 
