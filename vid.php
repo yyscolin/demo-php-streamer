@@ -3,7 +3,6 @@
 include('public/common.php');
 include('public/getInfoById.php');
 echo "  <script>const id = '$r->id'</script>
-  <script src='/scripts/toggleStarDisplay.js'></script>
   <link rel='stylesheet' href='/styles/p-vid.css'>
   <link rel='stylesheet' href='/styles/star-box.css'>
   <title>$r->id - Demo PHP Streamer</title>";

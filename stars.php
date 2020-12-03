@@ -3,7 +3,7 @@
 include("public/common.php");
 include('public/mysql_connections.php');
 
-echo "  <script src='/scripts/toggleStarDisplay.js'></script>
+echo "  
   <link rel='stylesheet' href='/styles/star-box.css'>
   <link rel='stylesheet' href='/styles/poster.css'>
   <title>Stars - Demo PHP Streamer</title>";
