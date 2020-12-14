@@ -51,3 +51,8 @@ DirectoryIndex index.php
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^(.*)$ index.php?/$1 [L]
 </IfModule>
+
+SetEnv MYSQL_HOSTNAME
+SetEnv MYSQL_USERNAME
+SetEnv MYSQL_PASSWORD
+SetEnv MYSQL_DATABASE
