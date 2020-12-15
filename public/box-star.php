@@ -12,7 +12,7 @@ function print_star_box($star) {
   echo "<p class='name'>$star_name</p>"
     ."<p class='dob'>$star->dob</p>"
     ."<a class='vid-count' href='/star/$star->id'><span>$star->count</span> "
-    .get_text('videos', ucfirst)."</a>";
+    .get_text("movies", ucfirst)."</a>";
   
   echo "</div>";
 }

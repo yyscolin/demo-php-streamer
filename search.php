@@ -163,7 +163,7 @@ include('public/common-mid.php');
     <form id='search-form'>
       <select name='type'>
         <option value='star'<?php if ($type == 'star') echo "selected='selected'"; ?>><?php echo get_text("stars", ucfirst); ?></option>
-        <option value='vid'<?php if ($type == 'vid') echo "selected='selected'"; ?>><?php echo get_text("videos", ucfirst); ?></option>
+        <option value='vid'<?php if ($type == 'vid') echo "selected='selected'"; ?>><?php echo get_text("movies", ucfirst); ?></option>
       </select>
       <input name='query' value='<?php echo $query; ?>'>
       <button type='submit'><?php echo get_text("search", ucfirst); ?></button>

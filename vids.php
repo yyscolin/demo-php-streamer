@@ -4,7 +4,7 @@ include('public/box-vid.php');
 include('public/mysql_connections.php');
 include("public/common.php");
 echo "  <link rel='stylesheet' href='/styles/poster.css'>
-  <title>".get_text("videos", ucfirst)." - Demo PHP Streamer</title>";
+  <title>".get_text("movies", ucfirst)." - Demo PHP Streamer</title>";
 include('public/common-mid.php');
 
 $type = 'vids';

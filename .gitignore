@@ -2,3 +2,4 @@
 /ssl/*
 000-default.conf
 .htaccess
+/public/languages-local.php
