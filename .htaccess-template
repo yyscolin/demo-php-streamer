@@ -26,10 +26,10 @@ DirectoryIndex index.php
     RewriteEngine On
 
     # Rewrite URL
-    RewriteRule ^stars/?$ stars.php [L]
-    RewriteRule ^vids/?$ vids.php [L]
-    RewriteRule ^star/([0-9]+)$ star.php?id=$1 [L]
-    RewriteRule ^vid/(.+)$ vid.php?id=$1 [L]
+    RewriteRule ^stars/?$ pages/stars.php [L]
+    RewriteRule ^vids/?$ pages/vids.php [L]
+    RewriteRule ^star/([0-9]+)$ pages/star.php?id=$1 [L]
+    RewriteRule ^vid/(.+)$ pages/vid.php?id=$1 [L]
 
     # Update RewriteBase if the app is in a subdirectory.
     RewriteBase /

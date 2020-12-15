@@ -1,11 +1,11 @@
 <?php
 
-include('public/box-vid.php');
-include('public/mysql_connections.php');
-include("public/common.php");
+include("../public/box-vid.php");
+include("../public/mysql_connections.php");
+include("../public/common.php");
 echo "  <link rel='stylesheet' href='/styles/poster.css'>
   <title>".get_text("movies", ucfirst)." - Demo PHP Streamer</title>";
-include('public/common-mid.php');
+include("../public/common-mid.php");
 
 $type = 'vids';
 $items_per_page = 10;
@@ -21,7 +21,7 @@ while ($r = mysqli_fetch_object($res)) {
   print_vid_box($r->id);
 }
 
-include('public/nav-pages.php');
-include('public/html-tail.html');
+include("../public/nav-pages.php");
+include("../public/html-tail.html");
 
 ?>

@@ -26,6 +26,6 @@ for ($i = 1; $i <= $no_of_pages; $i++) {
 
 echo "\t\n</div>
   <div style='height:8vw'></div>\n";
-  include('styles/pages-navbar.php');
-  include('scripts/pages-navbar.php');
+  include("../styles/pages-navbar.php");
+  include("../scripts/pages-navbar.php");
   
