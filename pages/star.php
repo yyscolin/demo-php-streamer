@@ -23,7 +23,7 @@ echo "  <link rel='stylesheet' href='/styles/poster.css'>
 include("../public/common-mid.php");
 
 $img_src = "/media/stars/$r->id.jpg";
-if (!file_exists(".".$img_src)) {
+if (!file_exists("..".$img_src)) {
   $img_src = "/media/stars/0.jpg";
 }
 
