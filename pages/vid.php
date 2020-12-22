@@ -22,7 +22,7 @@ echo "
       <img id='poster' src='/media/covers/$r->id.jpg' onclick='loadVideo()'>
     </div>";
 
-$count = count(glob("media/vids/$r->id*.mp4"));
+$count = count(glob("../media/vids/$r->id*.mp4"));
 if ($count > 1) {
   echo "\n\t<div style='width:100%'>";
   for ($i = 1; $i <= $count; $i++)
