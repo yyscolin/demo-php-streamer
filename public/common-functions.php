@@ -5,7 +5,7 @@ function redirectToHomePage() {
     exit();
 }
 
-function print_line($line, $indentation_level=0, $is_new_line=true) {
+function print_line($line, $indentation_level=1, $is_new_line=true) {
   if ($is_new_line) echo "\n";
 
   for ($i = 0 ; $i < $indentation_level; $i++) {

@@ -12,7 +12,7 @@ function print_page_navbar($type, $query, $items_per_page, $current_page) {
   if ($no_of_pages < 2) return;
   
   /** Display page navigation bar */
-  print_line("<div id='nav-pages'>", 1);
+  print_line("<div id='nav-pages'>");
   for ($i = 1; $i <= $no_of_pages; $i++) {
     $is_selected = $i == (int)$current_page ? "selected" : "";
   
@@ -30,8 +30,8 @@ function print_page_navbar($type, $query, $items_per_page, $current_page) {
       print_line("</span>", 2);
     }
   }
-  print_line("</div>", 1);
-  print_line("<div style='height:8vw'></div>", 1);
+  print_line("</div>");
+  print_line("<div style='height:8vw'></div>");
 
   echo "
   <script>
@@ -43,6 +43,6 @@ function print_page_navbar($type, $query, $items_per_page, $current_page) {
   <link rel='stylesheet' href='/styles/pages-navbar.css'>";
   
   if (!$is_mobile)
-    print_line("<link rel='stylesheet' href='/styles/pages-navbar-web.css'>", 1);
+    print_line("<link rel='stylesheet' href='/styles/pages-navbar-web.css'>");
 }
   
