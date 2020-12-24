@@ -1,0 +1,3 @@
+.nav-item:not(.selected):hover {
+    background-color: darkmagenta;
+}

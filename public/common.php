@@ -1,9 +1,6 @@
 <?php
 
-function redirectToHomePage() {
-    header("Location: /");
-    exit();
-}
+include_once("common-functions.php");
 
 session_start();
 

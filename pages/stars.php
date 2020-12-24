@@ -1,6 +1,7 @@
 <?php
 
 include("../public/mysql_connections.php");
+include("../public/nav-pages.php");
 include("../public/common.php");
 
 echo "  
@@ -11,8 +12,8 @@ include("../public/common-mid.php");
 
 $type = 'stars';
 $items_per_page = 50;
-$page_no = isset($_COOKIE["Stars-Page"]) ? $_COOKIE["Stars-Page"] : 1;
-$limit_start = ($page_no - 1) * $items_per_page;
+$current_page = isset($_COOKIE["Stars-Page"]) ? $_COOKIE["Stars-Page"] : 1;
+$limit_start = ($current_page - 1) * $items_per_page;
 
 $query = "select id, name_f, name_l, name_j, dob, ifnull(t2.count, 0) as count from (
     select stars.*, max(release_date) as release_date
@@ -36,7 +37,8 @@ while ($r = mysqli_fetch_object($res)) {
 }
 echo "</div>";
 
-include("../public/nav-pages.php");
+print_page_navbar($type, $query, $items_per_page, $current_page);
+
 include("../public/html-tail.html");
 
 ?>
