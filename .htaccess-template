@@ -22,37 +22,39 @@ DirectoryIndex index.php
 
 ## Rewrite rules
 <IfModule mod_rewrite.c>
-    Options +FollowSymlinks -Indexes
-    RewriteEngine On
+  Options +FollowSymlinks -Indexes
+  RewriteEngine On
 
-    # Rewrite URL
-    RewriteRule ^stars/?$ pages/stars.php [L]
-    RewriteRule ^vids/?$ pages/vids.php [L]
-    RewriteRule ^star/([0-9]+)$ pages/star.php?id=$1 [L]
-    RewriteRule ^vid/(.+)$ pages/vid.php?id=$1 [L]
+  # Rewrite URL
+  RewriteRule ^stars/?$ pages/stars.php [L]
+  RewriteRule ^vids/?$ pages/vids.php [L]
+  RewriteRule ^star/([0-9]+)$ pages/star.php?id=$1 [L]
+  RewriteRule ^vid/(.+)$ pages/vid.php?id=$1 [L]
 
-    # Update RewriteBase if the app is in a subdirectory.
-    RewriteBase /
+  # Update RewriteBase if the app is in a subdirectory.
+  RewriteBase /
 
-    # Remove access to "system" and "data" folders
-    RewriteCond %{REQUEST_URI} ^(system|data).*
-    RewriteRule ^(.*)$ /index.php?/$1 [L]
+  # Remove access to "system" and "data" folders
+  RewriteCond %{REQUEST_URI} ^(system|data).*
+  RewriteRule ^(.*)$ /index.php?/$1 [L]
 
-    # Block access to "hidden" directories whose names begin with
-    # a period. e.g. .git, .svn
-    RewriteCond %{SCRIPT_FILENAME} -d
-    RewriteCond %{SCRIPT_FILENAME} -f
-    RewriteRule "(^|/)\." - [F]
+  # Block access to "hidden" directories whose names begin with
+  # a period. e.g. .git, .svn
+  RewriteCond %{SCRIPT_FILENAME} -d
+  RewriteCond %{SCRIPT_FILENAME} -f
+  RewriteRule "(^|/)\." - [F]
 
-    # Checks to see if the user is attempting to access a valid file,
-    # such as an image or css document, if this isn't true it sends the
-    # request to the root index.php.
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ index.php?/$1 [L]
+  # Checks to see if the user is attempting to access a valid file,
+  # such as an image or css document, if this isn't true it sends the
+  # request to the root index.php.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ index.php?/$1 [L]
 </IfModule>
 
 SetEnv MYSQL_HOSTNAME
 SetEnv MYSQL_USERNAME
 SetEnv MYSQL_PASSWORD
 SetEnv MYSQL_DATABASE
+
+SetEnv show_vid_code false

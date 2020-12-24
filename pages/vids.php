@@ -17,11 +17,14 @@ $limit_start = ($current_page - 1) * $items_per_page;
 /** Determine query to use */ 
 $query = "select * from vids where status=3 order by modify_timestamp desc";
 
-/** Print boxes */
+/** Print page contents */
+print_line("<div id='main-block'>");
 $res = mysqli_query($con, "$query limit $limit_start, $items_per_page");
 while ($r = mysqli_fetch_object($res)) {
-  print_vid_box($r->id);
+  $title = $_SERVER["show_vid_code"] == "true" ? "$r->id $r->title" : $r->title;
+  print_vid_box($r->id, $title, 2);
 }
+print_line("</div>");
 
 print_page_navbar($type, $query, $items_per_page, $current_page);
 print_page_footer();

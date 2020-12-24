@@ -17,20 +17,17 @@ function openPage(button) {
     const url = `/api/page-items.php`
     const data = {type, 'page-no': pageNo, 'items-count': itemsPerPage}
     const onSuccess = function(response) {
-      let boxClassName = `.${type.substr(0, type.length - 1)}-box`
+      let boxClassName = type == 'vids' ? '.vid-box' : '.star-box'
       let boxLinks = $(boxClassName)
       for (let i = 0; i < boxLinks.length; i++) {
         let boxLink = boxLinks[i]
         if (response.length > i) {
           $(boxLink).show()
           if (type == 'vids') {
-              let vid = response[i]
-            $(boxLink).attr('href', `/vid/${vid.id}`)
-            $(boxLink).find('p').html(vid.id)
-            $(boxLink).find('img').attr('src', `/media/covers/${vid.id}.jpg`)
-            $(boxLink).find('img').on('error', () => {
-              $(boxLink).find('img').attr('src', defaultCoverSrc)
-            })
+            let vid = response[i]
+            $(boxLink).find('h3').html(vid.title)
+            $(boxLink).find('img').attr('onclick', `window.location.href="/vid/${vid.id}"`)
+            $(boxLink).find('img').attr('src', vid.img)
           } else {
             let star = response[i]
             $(boxLink).find('img').attr('onclick', `window.location.href="/star/${star.id}"`)

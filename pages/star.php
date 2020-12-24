@@ -28,32 +28,35 @@ if (!file_exists($_SERVER['DOCUMENT_ROOT'].$img_src)) {
   $img_src = $default_star_src;
 }
 
-echo "\n<div class='flex' style='width: 100%; height: 32vw; margin: 8vw 0;overflow: hidden;'>
-    <img style='z-index: 0; width: 100vw; height: 60vw;' src='/images/frame.png'>
-    <div class='flex' style='background-color: grey; margin: 0; width: 50vw; height: 30vw; position: absolute; z-index: -1;'>
-        <img src='$img_src' style='width: 25%;'>
-        <h1 style='color: white; margin: 0 1vw; vertical-align: top; display: inline-block;'>$star_name<br>$r->dob</h1>
-    </div>
-</div>";
+print_line("<div class='flex' style='width: 100%; height: 32vw; margin: 8vw 0;overflow: hidden;'>");
+print_line("<img style='z-index: 0; width: 100vw; height: 60vw;' src='/images/frame.png'>", 2);
+print_line("<div class='flex' style='background-color: grey; margin: 0; width: 50vw; height: 30vw; position: absolute; z-index: -1;'>", 2);
+print_line("<img src='$img_src' style='width: 15%;'>", 3);
+print_line("<h1 style='color: white; margin: 0 1vw; vertical-align: top; display: inline-block;'>$star_name<br>$r->dob</h1>", 3);
+print_line("</div>", 2);
+print_line("</div>");
 
 /** Prepare statement */
 if ($id == 0) {
-    echo "<p>";
-    $query = "select id from vids where id not in (select vid from casts)";
-    $res = $con->query($query);
-    echo "</p>";
+  echo "<p>";
+  $query = "select id, title from vids where id not in (select vid from casts)";
+  $res = $con->query($query);
+  echo "</p>";
 } else {
-    $query = "select id from vids where id in (select vid from casts where star = ?) and status=3 order by release_date desc";
-    $stmt = $con->prepare($query);
-    $stmt->bind_param('s', $r->id);
-    $stmt->execute();
-    $res = $stmt->get_result();
+  $query = "select id, title from vids where id in (select vid from casts where star = ?) and status=3 order by release_date desc";
+  $stmt = $con->prepare($query);
+  $stmt->bind_param('s', $r->id);
+  $stmt->execute();
+  $res = $stmt->get_result();
 }
 
-/** Print boxes */
+/** Print page content */
+print_line("<div id='main-block'>");
 while ($r = mysqli_fetch_object($res)) {
-    print_vid_box($r->id);
+  $title = $_SERVER["show_vid_code"] == "true" ? "$r->id $r->title" : $r->title;
+  print_vid_box($r->id, $title, 2);
 }
+print_line("</div>");
 
 print_page_footer();
 
