@@ -24,7 +24,7 @@ include("../public/common-mid.php");
 
 $img_src = "/media/stars/$r->id.jpg";
 if (!file_exists("..".$img_src)) {
-  $img_src = "/media/stars/0.jpg";
+  $img_src = $default_star_src;
 }
 
 echo "<div class='flex' style='width: 100%; height: 32vw; margin: 8vw 0;overflow: hidden;'>
