@@ -43,30 +43,10 @@
   cursor: default;
 }
 
-/* @media only screen and (max-width: 1200px) {
-  .nav-item-box.middle {
-    max-width: 700px;
-  }
-}
-@media only screen and (max-width: 1000px) {
-  .nav-item-box.middle {
-    max-width: 500px;
-  }
-}
-  
-@media only screen and (max-width: 800px) {
-  .nav-item-box.middle {
-    max-width: 300px;
-  }
-} */
-
 @media only screen and (max-width: 600px) {
   .nav-item-box {
     width: 60px;
   }
-  /* .nav-item-box.middle {
-    max-width: 180px;
-  } */
   .nav-item {
     border: 3px solid black;
     border-radius: 9px;
