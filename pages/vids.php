@@ -1,12 +1,12 @@
 <?php
 
-include("../public/box-vid.php");
-include("../public/mysql_connections.php");
-include("../public/nav-pages.php");
-include("../public/common.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/box-vid.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/mysql_connections.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/nav-pages.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/common.php");
 echo "  <link rel='stylesheet' href='/styles/poster.css'>
   <title>".get_text("movies", ucfirst)." - Demo PHP Streamer</title>";
-include("../public/common-mid.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/common-mid.php");
 
 $type = 'vids';
 $items_per_page = 10;
@@ -24,6 +24,6 @@ while ($r = mysqli_fetch_object($res)) {
 
 print_page_navbar($type, $query, $items_per_page, $current_page);
 
-include("../public/html-tail.html");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/html-tail.html");
 
 ?>

@@ -21,7 +21,7 @@ foreach (array_keys($dictionary) as $reference_text)
 /** Custom text translation/ display for this project (if any) */
 $translation_modifications_file = __DIR__."/languages-local.php";
 if (file_exists($translation_modifications_file)) {
-    include_once($translation_modifications_file);
+    require_once_once($translation_modifications_file);
 
     foreach (array_keys($modifications) as $reference_text) {
         foreach ($modifications[$reference_text] as $language => $translated_text) {

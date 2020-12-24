@@ -8,7 +8,7 @@ if (!isset($query) || ($type != 'vid' && $type != 'star')) {
     exit();
 }
 
-require_once('../public/search-database.php');
+require_once($_SERVER['DOCUMENT_ROOT']."/public/search-database.php");
 
 $payload = new stdClass();
 $payload->type = $type;

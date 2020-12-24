@@ -1,14 +1,14 @@
 <?php
 
-include_once("common-functions.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/common-functions.php");
 
 session_start();
 
-require_once('languages.php');
+require_once($_SERVER['DOCUMENT_ROOT']."/public/languages.php");
 
 /** Verify Login */
 if (!$_SESSION['auth']) {
-  include('public/login.html');
+  require_once("public/login.html");
   exit();
 }
 

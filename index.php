@@ -1,15 +1,15 @@
 <?php
 
-include('public/box-star.php');
-include('public/box-vid.php');
-include("public/common.php");
+require_once("public/box-star.php");
+require_once("public/box-vid.php");
+require_once("public/common.php");
 echo "  <link rel='stylesheet' href='/styles/poster.css'>
   <link rel='stylesheet' href='/styles/star-box.css'>
   <title>Demo PHP Streamer</title>";
-include('public/common-mid.php');
+require_once("public/common-mid.php");
 
 /** establish mysql connection */
-require('public/mysql_connections.php');
+require_once($_SERVER['DOCUMENT_ROOT']."public/mysql_connections.php");
 
 /** Get stars in random order */
 $randCount = 5;
@@ -44,5 +44,5 @@ while ($r = mysqli_fetch_object($dbResponse)) {
   print_vid_box($r->id);
 }
     
-include('public/html-tail.html');
+require_once("public/html-tail.html");
 ?>

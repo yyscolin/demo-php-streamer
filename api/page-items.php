@@ -16,8 +16,8 @@ if (
     exit();
 }
 
-include('../public/mysql_connections.php');
-require_once('../public/languages.php');
+require_once($_SERVER['DOCUMENT_ROOT']."/public/mysql_connections.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/languages.php");
 
 $type = $_GET['type'];
 setcookie(ucfirst($type)."-Page", $_GET['page-no'], time() + 86400, "/");

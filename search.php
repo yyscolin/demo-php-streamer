@@ -1,8 +1,8 @@
 <?php
 
-include('public/box-star.php');
-include('public/box-vid.php');
-include('public/search-database.php');
+require_once("public/box-star.php");
+require_once("public/box-vid.php");
+require_once("public/search-database.php");
 
 $type = $_GET['type'];
 $query = $_GET['query'];
@@ -38,7 +38,7 @@ function print_search_results() {
   }
 }
 
-include('public/common.php');
+require_once("public/common.php");
 ?>
 
   <title><?php echo get_text("search", ucfirst); ?> - Demo PHP Streamer</title>
@@ -155,7 +155,7 @@ include('public/common.php');
   }
   
 
-include('public/common-mid.php');
+require_once("public/common-mid.php");
 
 ?>
   
@@ -172,6 +172,6 @@ include('public/common-mid.php');
 
   </div><?php
 
-include('public/html-tail.html');
+require_once("public/html-tail.html");
 
 ?>

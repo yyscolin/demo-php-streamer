@@ -1,11 +1,11 @@
 <?php
 
-include("../public/box-vid.php");
-include("../public/common.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/box-vid.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/common.php");
 
 $id = $_GET["id"];
 if (!isset($id)) redirectToHomePage();
-include("../public/search-database.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/search-database.php");
 
 if ($id == 0) {
     $r = new stdClass();
@@ -20,10 +20,10 @@ if ($id == 0) {
 
 echo "  <link rel='stylesheet' href='/styles/poster.css'>
   <title>$star_name - Demo PHP Streamer</title>";
-include("../public/common-mid.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/common-mid.php");
 
 $img_src = "/media/stars/$r->id.jpg";
-if (!file_exists("..".$img_src)) {
+if (!file_exists($_SERVER['DOCUMENT_ROOT'].$img_src)) {
   $img_src = $default_star_src;
 }
 
@@ -54,6 +54,6 @@ while ($r = mysqli_fetch_object($res)) {
     print_vid_box($r->id);
 }
 
-include("../public/html-tail.html");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/html-tail.html");
 
 ?>

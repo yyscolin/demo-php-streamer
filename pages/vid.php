@@ -1,10 +1,10 @@
 <?php
 
-include("../public/common.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/common.php");
 
 $id = $_GET["id"];
 if (!isset($id)) redirectToHomePage();
-include("../public/search-database.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/search-database.php");
 $r = search_database_by_id('vid', $id);
 if (!$r) redirectToHomePage();
 
@@ -12,7 +12,7 @@ echo "  <script>const id = '$r->id'</script>
   <link rel='stylesheet' href='/styles/p-vid.css'>
   <link rel='stylesheet' href='/styles/star-box.css'>
   <title>$r->id - Demo PHP Streamer</title>";
-include("../public/common-mid.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/common-mid.php");
 
 $img_src = "/media/covers/$r->id.jpg";
 if (!file_exists($_SERVER['DOCUMENT_ROOT'].$img_src)) {
@@ -53,7 +53,7 @@ echo "
 
 
 /** Get list of stars */
-include('../public/box-star.php');
+require_once($_SERVER['DOCUMENT_ROOT']."/public/box-star.php");
 $query = "select id, name_f, name_l, name_j, dob, display, count
 from stars join (
     select star, count(*) as count from casts
@@ -75,6 +75,6 @@ echo "
   </div>
   <script src='/scripts/video-player.js'></script>";
 
-include("../public/html-tail.html");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/html-tail.html");
 
 ?>

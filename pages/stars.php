@@ -1,14 +1,14 @@
 <?php
 
-include("../public/mysql_connections.php");
-include("../public/nav-pages.php");
-include("../public/common.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/mysql_connections.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/nav-pages.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/common.php");
 
 echo "  
   <link rel='stylesheet' href='/styles/star-box.css'>
   <link rel='stylesheet' href='/styles/poster.css'>
   <title>".get_text("stars", ucfirst)." - Demo PHP Streamer</title>";
-include("../public/common-mid.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/common-mid.php");
 
 $type = 'stars';
 $items_per_page = 50;
@@ -28,7 +28,7 @@ $query = "select id, name_f, name_l, name_j, dob, ifnull(t2.count, 0) as count f
 where display = 1
 order by release_date desc, id";
 
-include("../public/box-star.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/box-star.php");
 
 $res = mysqli_query($con, "$query limit $limit_start, $items_per_page");
 echo "<div id='main-block'>";
@@ -39,6 +39,6 @@ echo "</div>";
 
 print_page_navbar($type, $query, $items_per_page, $current_page);
 
-include("../public/html-tail.html");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/html-tail.html");
 
 ?>
