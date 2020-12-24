@@ -14,12 +14,18 @@ echo "  <script>const id = '$r->id'</script>
   <title>$r->id - Demo PHP Streamer</title>";
 include("../public/common-mid.php");
 
+$img_src = "/media/covers/$r->id.jpg";
+if (!file_exists($_SERVER['DOCUMENT_ROOT'].$img_src)) {
+  global $default_cover_src;
+  $img_src = "$default_cover_src";
+}
+
 echo "
   <div id='main-block'>
     <h4 style='width:100%'>$r->id $r->title</h4>
     <div id='display' value='$r->id'>
       <img id='play-btn' src='/images/play.png' onclick='loadVideo()'>
-      <img id='poster' src='/media/covers/$r->id.jpg' onclick='loadVideo()'>
+      <img id='poster' src='$img_src' onclick='loadVideo()'>
     </div>";
 
 $count = count(glob("../media/vids/$r->id*.mp4"));

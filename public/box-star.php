@@ -2,12 +2,17 @@
 
 function print_star_box($star) {
   $onclick = "window.location.href=\"/star/$star->id\"";
-  $onerror = "$(this).attr(\"src\", \"/media/stars/0.jpg\")";
-  $src = "/media/stars/$star->id.jpg";
+  
+  $img_src = "/media/stars/$star->id.jpg";
+  if (!file_exists($_SERVER['DOCUMENT_ROOT'].$img_src)) {
+    global $default_star_src;
+    $img_src = $default_star_src;
+  }
+
   $star_name = get_locale_star_name($star);
 
   echo "<div class='star-box'>"
-    ."<img onclick='$onclick' onerror='$onerror' src='$src'>";
+    ."<img onclick='$onclick' src='$img_src'>";
   
   echo "<p class='name'>$star_name</p>"
     ."<p class='dob'>$star->dob</p>"

@@ -28,10 +28,16 @@ function openPage(button) {
             $(boxLink).attr('href', `/vid/${vid.id}`)
             $(boxLink).find('p').html(vid.id)
             $(boxLink).find('img').attr('src', `/media/covers/${vid.id}.jpg`)
+            $(boxLink).find('img').on('error', () => {
+              $(boxLink).find('img').attr('src', defaultCoverSrc)
+            })
           } else {
             let star = response[i]
             $(boxLink).find('img').attr('onclick', `window.location.href="/star/${star.id}"`)
             $(boxLink).find('img').attr('src', `/media/stars/${star.id}.jpg`)
+            $(boxLink).find('img').on('error', () => {
+              $(boxLink).find('img').attr('src', defaultStarSrc)
+            })
             $(boxLink).find('.name').html(star.name)
             $(boxLink).find('.dob').html(star.dob)
             $(boxLink).find('.vid-count').attr('href', `/star/${star.id}`)
