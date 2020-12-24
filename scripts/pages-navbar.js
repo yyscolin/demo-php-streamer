@@ -81,8 +81,10 @@ function resizeNavbarMiddle() {
   if (!$('.nav-item-box.middle').length) return
 
   if (window.innerWidth >= 1200) {
-    var maxNavWidthCoefficient = 7
+    var maxNavWidthCoefficient = 9
   } else if (window.innerWidth >= 1000) {
+    var maxNavWidthCoefficient = 7
+  } else if (window.innerWidth >= 800) {
     var maxNavWidthCoefficient = 5
   } else {
     var maxNavWidthCoefficient = 3
