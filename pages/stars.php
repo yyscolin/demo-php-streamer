@@ -16,14 +16,14 @@ $current_page = isset($_COOKIE["Stars-Page"]) ? $_COOKIE["Stars-Page"] : 1;
 $limit_start = ($current_page - 1) * $items_per_page;
 
 $query = "select id, name_f, name_l, name_j, dob, ifnull(t2.count, 0) as count from (
-    select stars.*, max(release_date) as release_date
-    from stars left join casts on stars.id = casts.star
-    join vids on vids.id = casts.vid group by stars.id
+  select stars.*, max(release_date) as release_date
+  from stars left join casts on stars.id = casts.star
+  left join vids on vids.id = casts.vid group by stars.id
 ) t1 left join (
-    select star, count(star) as count
-    from casts where vid in (
-      select id from vids where status=3
-    ) group by star
+  select star, count(star) as count
+  from casts where vid in (
+    select id from vids where status=3
+  ) group by star
 ) t2 on t1.id = t2.star
 where display = 1
 order by release_date desc, id";
