@@ -4,9 +4,10 @@ require_once($_SERVER['DOCUMENT_ROOT']."/public/box-vid.php");
 require_once($_SERVER['DOCUMENT_ROOT']."/public/mysql_connections.php");
 require_once($_SERVER['DOCUMENT_ROOT']."/public/nav-pages.php");
 require_once($_SERVER['DOCUMENT_ROOT']."/public/common.php");
-echo "  <link rel='stylesheet' href='/styles/poster.css'>
-  <title>".get_text("movies", ucfirst)." - Demo PHP Streamer</title>";
-require_once($_SERVER['DOCUMENT_ROOT']."/public/common-mid.php");
+print_page_header([
+  "<link rel='stylesheet' href='/styles/poster.css'>",
+  "<title>".get_text("movies", ucfirst)." - Demo PHP Streamer</title>"
+]);
 
 $type = 'vids';
 $items_per_page = 10;
@@ -23,7 +24,6 @@ while ($r = mysqli_fetch_object($res)) {
 }
 
 print_page_navbar($type, $query, $items_per_page, $current_page);
-
-require_once($_SERVER['DOCUMENT_ROOT']."/public/html-tail.html");
+print_page_footer();
 
 ?>

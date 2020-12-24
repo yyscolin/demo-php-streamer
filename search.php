@@ -1,8 +1,9 @@
 <?php
 
-require_once("public/box-star.php");
-require_once("public/box-vid.php");
-require_once("public/search-database.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/common.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/box-star.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/box-vid.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/search-database.php");
 
 $type = $_GET['type'];
 $query = $_GET['query'];
@@ -38,124 +39,11 @@ function print_search_results() {
   }
 }
 
-require_once("public/common.php");
-?>
-
-  <title><?php echo get_text("search", ucfirst); ?> - Demo PHP Streamer</title>
-  <style>
-    #search-form {
-      margin-top: 32px;
-    }
-    #results-table {
-      margin: 32px auto;
-    }
-    #results-table tr {
-      cursor: pointer;
-    }
-    #results-table img {
-      height: 125px;
-    }
-    #results-table td:nth-child(2) {
-      min-width: 20vw;
-      padding-left: 1vw;
-      padding-right: 1vw;
-    }
-    #results-table p {
-      margin: 0;
-      width: 100%;
-    }
-    #results-table.vid p:not(.subtitle) {
-      font-size: 24px;
-    }
-    #results-table.star p:not(.subtitle) {
-      font-size: 42px;
-    }
-    
-    @media only screen and (max-width: 960px) {
-      #results-table.vid p:not(.subtitle) {
-        font-size: 22px;
-      }
-    }
-    
-    @media only screen and (max-width: 840px) {
-      #results-table.vid p:not(.subtitle) {
-        font-size: 20px;
-      }
-    }
-    
-    @media only screen and (max-width: 720px) {
-      #results-table.vid {
-        margin: 32px 4vw;
-      }
-    }
-    
-    @media only screen and (max-width: 680px) {
-      #results-table.vid p:not(.subtitle) {
-        font-size: 18px;
-      }
-    }
-    
-    @media only screen and (max-width: 600px) {
-      #results-table.vid {
-        background-color: transparent;
-        border: 0;
-        margin: 0 4vw;
-      }
-      #results-table.vid td {
-        background-color: darkslateblue;
-        display: block;
-      }
-      #results-table.vid tr:not(first-child) td:first-child {
-        margin-top: 32px;
-      }
-      #results-table.vid img {
-        height: auto;
-        width: 100%;
-      }
-    }
-
-    @media only screen and (max-width: 500px) {
-      #results-table {
-        margin: 0 auto;
-        width: 90vw;
-      }
-      #results-table.star {
-        background-color: transparent;
-        border: 0;
-      }
-      #results-table.star td {
-        background-color: darkslateblue;
-        display: block;
-      }
-      #results-table.star p {
-        text-align: center;
-      }
-      #results-table.vid p:not(.subtitle) {
-        font-size: 22px;
-      }
-      #results-table.star tr:not(first-child) td:first-child {
-        margin-top: 32px;
-      }
-      #results-table.star img {
-        height: auto;
-        width: 100%;
-      }
-      #results-table.vid p:not(.subtitle) {
-        font-size: 14px;
-      }
-    }
-  </style><?php if (!$is_mobile && $is_iPad) {
-    echo "
-  <style>
-    #results-table tr:hover {
-      background-color: black;
-      color: white;
-    }
-  </style>";
-  }
-  
-
-require_once("public/common-mid.php");
+print_page_header([
+  "<link rel='stylesheet' href='/styles/page-search.css'>",
+  !$is_mobile && !$is_iPad ? "<link rel='stylesheet' href='/styles/page-search-web.css'>" : null,
+  "<title>".get_text("search", ucfirst)." - Demo PHP Streamer</title>"
+]);
 
 ?>
   
@@ -172,6 +60,6 @@ require_once("public/common-mid.php");
 
   </div><?php
 
-require_once("public/html-tail.html");
+print_page_footer();
 
 ?>

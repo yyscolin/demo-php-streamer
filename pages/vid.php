@@ -8,11 +8,12 @@ require_once($_SERVER['DOCUMENT_ROOT']."/public/search-database.php");
 $r = search_database_by_id('vid', $id);
 if (!$r) redirectToHomePage();
 
-echo "  <script>const id = '$r->id'</script>
-  <link rel='stylesheet' href='/styles/p-vid.css'>
-  <link rel='stylesheet' href='/styles/star-box.css'>
-  <title>$r->id - Demo PHP Streamer</title>";
-require_once($_SERVER['DOCUMENT_ROOT']."/public/common-mid.php");
+print_page_header([
+  "<script>const id = '$r->id'</script>",
+  "<link rel='stylesheet' href='/styles/p-vid.css'>",
+  "<link rel='stylesheet' href='/styles/star-box.css'>",
+  "<title>$r->id - Demo PHP Streamer</title>"
+]);
 
 $img_src = "/media/covers/$r->id.jpg";
 if (!file_exists($_SERVER['DOCUMENT_ROOT'].$img_src)) {
@@ -75,6 +76,6 @@ echo "
   </div>
   <script src='/scripts/video-player.js'></script>";
 
-require_once($_SERVER['DOCUMENT_ROOT']."/public/html-tail.html");
+print_page_footer();
 
 ?>

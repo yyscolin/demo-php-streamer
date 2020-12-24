@@ -1,16 +1,97 @@
 <?php
 
-require_once($_SERVER['DOCUMENT_ROOT']."/public/common-functions.php");
+function redirectToHomePage() {
+  header("Location: /");
+  exit();
+}
+
+function print_line($line, $indentation_level=1) {
+  if ($is_new_line) echo "\n";
+  for ($i = 0 ; $i < $indentation_level; $i++) echo "  ";
+  echo $line;
+}
+
+function print_page_header($head_items=[]) {
+  global $is_Android;
+  global $is_mobile;
+  global $is_iPad;
+  global $default_star_src;
+  global $default_cover_src;
+  
+  ?><!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <meta http-equiv='X-UA-Compatible' content='ie=edge'>
+  <script src='/scripts/jquery.min.3.4.1.js'></script>
+  <script src='/scripts/main.js'></script>
+  <script src='/scripts/search-box.js'></script>
+  <script>
+    const isAndroid = <?php echo $is_Android ? "true" : "false"; ?>;
+    const defaultStarSrc = '<?php echo $default_star_src; ?>';
+    const defaultCoverSrc = '<?php echo $default_cover_src; ?>';
+  </script>
+  <link rel='stylesheet' href='/styles/main.css'>
+  <link rel='stylesheet' href='/styles/banner.css'><?php
+
+  if (!$is_mobile && !$is_iPad) {
+    print_line("<link rel='stylesheet' href='/styles/main-web.css'>");
+  }
+
+  foreach ($head_items as $i) {
+    if ($i) print_line($i);
+  }
+?>
+
+</head>
+<body>
+  <div id='banner'>
+    <button id='menu-button' onclick='$("body").toggleClass("menu-active")'>☰</button
+    ><img id='banner-icon' onclick="window.location.href='/'" src='/banner.png' title='Go to homepage'
+    ><div id='menu-bar' class='inline'>
+      <a href='/stars'><?php echo get_text('stars', strtoupper); ?></a
+      ><a href='/vids'><?php echo get_text('movies', strtoupper); ?></a
+      ><form id='search-box' class='inline' action='/search.php'>
+        <select id='search-type' name='type' onchange='searchDatabase()'>
+          <option value='star'><?php echo get_text('stars', ucfirst); ?></option>
+          <option value='vid'><?php echo get_text('movies', ucfirst); ?></option>
+        </select
+        ><input id='search-field' type='search' name='query' oninput='searchDatabase()' placeholder='<?php echo get_text("keyword"); ?>...'>
+        <div id='search-results' style='display: none;'></div>
+        <button type='submit'><?php echo get_text("go", strtoupper); ?></button>
+      </form><!--
+      --><div class='inline' style='cursor:pointer;margin-left:16px'>
+        <img src='/images/languages-white.png' width='24px' onclick='$("#lang-dropdown").toggle()'>
+        <ul id='lang-dropdown' class='dropdown-list'>
+          <li onclick='setLanguange("en")'>English</li>
+          <li onclick='setLanguange("jp")'>日本語</li>
+        </ul>
+        <script>
+          function setLanguange(language) {
+            document.cookie = `language=${language}; SameSite=Lax;`
+            location.reload()
+          }
+        </script>
+      </div>
+    </div>
+  </div><?php
+}
+
+function print_page_footer() {
+  print_line("</body>", 0);
+  print_line("</html>", 0);
+}
 
 session_start();
 
-require_once($_SERVER['DOCUMENT_ROOT']."/public/languages.php");
-
 /** Verify Login */
 if (!$_SESSION['auth']) {
-  require_once("public/login.html");
+  require_once($_SERVER['DOCUMENT_ROOT']."/public/login.html");
   exit();
 }
+
+require_once($_SERVER['DOCUMENT_ROOT']."/public/languages.php");
 
 $default_star_src = file_exists($_SERVER['DOCUMENT_ROOT']."/media/stars/default.jpg")
   ? "/media/stars/default.jpg"
@@ -27,22 +108,3 @@ $is_iPhone = stripos($_SERVER['HTTP_USER_AGENT'], "iPhone");
 $is_iPad = stripos($_SERVER['HTTP_USER_AGENT'], "iPad");
 $is_Android = stripos($_SERVER['HTTP_USER_AGENT'], "Android");
 $is_webOS = stripos($_SERVER['HTTP_USER_AGENT'], "webOS");
-
-?><!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <script src="/scripts/jquery.min.3.4.1.js"></script>
-  <script src="/scripts/main.js"></script>
-  <script src='/scripts/search-box.js'></script>
-  <script>
-    const isAndroid = <?php echo $is_Android ? "true" : "false"; ?>;
-    const defaultStarSrc = '<?php echo $default_star_src; ?>';
-    const defaultCoverSrc = '<?php echo $default_cover_src; ?>';
-  </script>
-  <link rel="stylesheet" href="/styles/main.css"><?php
-  if (!$is_mobile && !$is_iPad) {echo "<link rel='stylesheet' href='/styles/main-web.css'>";}?>
-
-  <link rel="stylesheet" href="/styles/banner.css">

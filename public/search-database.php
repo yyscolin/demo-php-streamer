@@ -1,6 +1,6 @@
 <?php
 
-require_once("mysql_connections.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/mysql_connections.php");
 require_once($_SERVER['DOCUMENT_ROOT']."/public/languages.php");
 
 function search_database_by_query($type, $search_query, $itemsCount=5) {
