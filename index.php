@@ -18,7 +18,7 @@ echo "<h2>STARS</h2>"
     ."<div style='width:95vw;overflow-y:auto'><div style='text-align:center'>";
 $dbQuery = "
   select id, name_l, name_f, name_j, dob, coalesce(count, 0) as count
-  from stars join (
+  from stars left join (
     select star, count(star) as count from casts group by star
   ) as t on stars.id = t.star
   where display = 1
