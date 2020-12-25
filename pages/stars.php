@@ -32,7 +32,8 @@ require_once($_SERVER['DOCUMENT_ROOT']."/public/box-star.php");
 
 $res = mysqli_query($con, "$query limit $limit_start, $items_per_page");
 print_line("<div id='main-block'>");
-while ($r = mysqli_fetch_object($res)) {
+for ($i = 0; $i < $items_per_page; $i++) {
+  $r = mysqli_fetch_object($res);
   print_star_box($r);
 }
 print_line("</div>");

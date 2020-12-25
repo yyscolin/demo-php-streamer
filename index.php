@@ -43,8 +43,7 @@ $dbQuery = "select id, title from vids where status = 3 order by rand() limit $r
 $dbResponse = mysqli_query($con, $dbQuery);
 print_line("<div id='main-block'>");
 while ($r = mysqli_fetch_object($dbResponse)) {
-  $title = $_SERVER["show_vid_code"] == "true" ? "$r->id $r->title" : $r->title;
-  print_vid_box($r->id, $title, 2);
+  print_vid_box($r, 2);
 }
 print_line("</div>");
 

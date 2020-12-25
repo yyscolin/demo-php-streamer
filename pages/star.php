@@ -47,10 +47,9 @@ if ($id == 0) {
 }
 
 /** Print page content */
-print_line("<div id='main-block'>");
+print_line("<div id='main-block' style='margin-top:0'>");
 while ($r = mysqli_fetch_object($res)) {
-  $title = $_SERVER["show_vid_code"] == "true" ? "$r->id $r->title" : $r->title;
-  print_vid_box($r->id, $title, 2);
+  print_vid_box($r, 2);
 }
 print_line("</div>");
 

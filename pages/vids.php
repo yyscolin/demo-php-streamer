@@ -20,9 +20,9 @@ $query = "select * from vids where status=3 order by modify_timestamp desc";
 /** Print page contents */
 print_line("<div id='main-block'>");
 $res = mysqli_query($con, "$query limit $limit_start, $items_per_page");
-while ($r = mysqli_fetch_object($res)) {
-  $title = $_SERVER["show_vid_code"] == "true" ? "$r->id $r->title" : $r->title;
-  print_vid_box($r->id, $title, 2);
+for ($i = 0; $i < $items_per_page; $i++) {
+  $r = mysqli_fetch_object($res);
+  print_vid_box($r, 2);
 }
 print_line("</div>");
 

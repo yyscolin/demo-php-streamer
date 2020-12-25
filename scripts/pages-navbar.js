@@ -17,7 +17,7 @@ function openPage(button) {
     const url = `/api/page-items.php`
     const data = {type, 'page-no': pageNo, 'items-count': itemsPerPage}
     const onSuccess = function(response) {
-      let boxClassName = type == 'vids' ? '.vid-box' : '.star-box'
+      let boxClassName = type == 'vids' ? '.poster' : '.star-box'
       let boxLinks = $(boxClassName)
       for (let i = 0; i < boxLinks.length; i++) {
         let boxLink = boxLinks[i]
