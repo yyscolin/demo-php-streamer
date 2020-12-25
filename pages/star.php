@@ -24,7 +24,7 @@ print_page_header([
   "<title>$star_name - Demo PHP Streamer</title>"
 ]);
 
-print_line("<div class='flex' style='width: 100%; height: 32vw; margin: 8vw 0;overflow: hidden;'>");
+print_line("<div class='flex' style='width:100%;height:32vw;padding:8vw 0;margin:0;overflow:hidden;'>");
 print_line("<img style='z-index: 0; width: 100vw; height: 60vw;' src='/images/frame.png'>", 2);
 print_line("<div class='flex' style='background-color: grey; margin: 0; width: 50vw; height: 30vw; position: absolute; z-index: -1;'>", 2);
 print_line("<img src='$r->img' style='width: 15%;'>", 3);
