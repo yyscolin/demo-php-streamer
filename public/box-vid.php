@@ -2,7 +2,7 @@
 
 function print_vid_box($vid, $default_indentation=1) {
   if ($vid) {
-    $img = get_img_src('vid', $id);
+    $img = get_img_src('vid', $vid->id);
     $onclick = "window.location.href=`/vid/$vid->id`";
     $title = $_SERVER["show_vid_code"] == "true" ? "$vid->id $vid->title" : $vid->title;
     $style = "";
