@@ -31,10 +31,7 @@ function openPage(button) {
           } else {
             let star = response[i]
             $(boxLink).find('img').attr('onclick', `window.location.href="/star/${star.id}"`)
-            $(boxLink).find('img').attr('src', `/media/stars/${star.id}.jpg`)
-            $(boxLink).find('img').on('error', () => {
-              $(boxLink).find('img').attr('src', defaultStarSrc)
-            })
+            $(boxLink).find('img').attr('src', star.img)
             $(boxLink).find('.name').html(star.name)
             $(boxLink).find('.dob').html(star.dob)
             $(boxLink).find('.vid-count').attr('href', `/star/${star.id}`)

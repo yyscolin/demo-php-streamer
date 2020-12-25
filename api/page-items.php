@@ -30,7 +30,7 @@ $query = $type == 'vids'
     from (
       select stars.*, max(release_date) as release_date
       from stars left join casts on stars.id = casts.star
-      join vids on vids.id = casts.vid group by stars.id
+      left join vids on vids.id = casts.vid group by stars.id
     ) t1 left join (
       select star, count(star) as count
       from casts where vid in (
@@ -48,6 +48,12 @@ $api_response = [];
 while ($r = $db_response->fetch_object()) {
   if ($type == 'stars') {
     $r->name = get_locale_star_name($r);
+
+    $r->img = "/media/stars/$r->id.jpg";
+    if (!file_exists($_SERVER["DOCUMENT_ROOT"].$r->img)) {
+      $r->img = $default_star_src;
+    }
+
     unset($r->name_l);
     unset($r->name_f);
     unset($r->name_j);

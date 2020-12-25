@@ -33,7 +33,7 @@ function searchDatabaseSuccess(res) {
 			var innerHTML = `${r.id} ${r.name}`
 			var className = 'x-pic'
 		} else {
-			var innerHTML = `<img src='/media/stars/${r.id}.jpg'><span>${r.name}</span>`
+			var innerHTML = `<img src='${r.img}.jpg'><span>${r.name}</span>`
 			var className = 'w-pic'
 		}
 		$('#search-results').append(`<a class='search-result ${className}' href='/${res.type}/${r.id}'>${innerHTML}</a>`)
