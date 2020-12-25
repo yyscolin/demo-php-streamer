@@ -30,10 +30,10 @@ function searchDatabaseSuccess(res) {
 	$('#search-results').show()
 	for (let r of res.results) {
 		if (res.type === 'vid') {
-			var innerHTML = `${r.id} ${r.name}`
+			var innerHTML = r.name
 			var className = 'x-pic'
 		} else {
-			var innerHTML = `<img src='${r.img}.jpg'><span>${r.name}</span>`
+			var innerHTML = `<img src='${r.img}'><span>${r.name}</span>`
 			var className = 'w-pic'
 		}
 		$('#search-results').append(`<a class='search-result ${className}' href='/${res.type}/${r.id}'>${innerHTML}</a>`)

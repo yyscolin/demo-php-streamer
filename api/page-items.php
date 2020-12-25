@@ -46,13 +46,9 @@ $db_response = $stmt->get_result();
 
 $api_response = [];
 while ($r = $db_response->fetch_object()) {
+  $r->img = get_img_src($type, $r->id);
   if ($type == 'stars') {
     $r->name = get_locale_star_name($r);
-
-    $r->img = "/media/stars/$r->id.jpg";
-    if (!file_exists($_SERVER["DOCUMENT_ROOT"].$r->img)) {
-      $r->img = $default_star_src;
-    }
 
     unset($r->name_l);
     unset($r->name_f);
@@ -60,10 +56,6 @@ while ($r = $db_response->fetch_object()) {
   } else {
     if ($_SERVER["show_vid_code"] == "true") {
       $r->title = $r->id." ".$r->title;
-    }
-    $r->img = "/media/covers/$r->id.jpg";
-    if (!file_exists($_SERVER["DOCUMENT_ROOT"].$r->img)) {
-      $r->img = $default_cover_src;
     }
   }
   array_push($api_response, $r);

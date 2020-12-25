@@ -20,13 +20,13 @@ function print_search_results() {
 
     foreach ($search_results as $r) {
       if ($type == 'vid') {
-        $title = "<p>$r->id $r->title</p>";
+        $title = "<p>$r->name</p>";
         $subtitle = $r->release_date ? "<p class='subtitle'>$r->release_date</p>" : "";
-        $media_path = "/media/covers/$r->id.jpg";
+        $media_path = $r->img;
       } else {
         $title = "<p>$r->name</p>";
         $subtitle = $r->dob ? "<p class='subtitle'>$r->dob</p>" : "";
-        $media_path = "/media/stars/$r->id.jpg";
+        $media_path = $r->img;
       }
     
       echo "<tr class='noselect' onclick='window.location.href=\"/$type/$r->id\"'>";

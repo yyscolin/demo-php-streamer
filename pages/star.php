@@ -12,6 +12,7 @@ if ($id == 0) {
   $r->id = 0;
   $star_name = "Untitled Stars";
   $r->dob = "";
+  $r->img = $img_src = $default_imgs['star'];
 } else {
   $r = search_database_by_id('star', $id);
   if (!$r) redirectToHomePage();
@@ -23,15 +24,10 @@ print_page_header([
   "<title>$star_name - Demo PHP Streamer</title>"
 ]);
 
-$img_src = "/media/stars/$r->id.jpg";
-if (!file_exists($_SERVER['DOCUMENT_ROOT'].$img_src)) {
-  $img_src = $default_star_src;
-}
-
 print_line("<div class='flex' style='width: 100%; height: 32vw; margin: 8vw 0;overflow: hidden;'>");
 print_line("<img style='z-index: 0; width: 100vw; height: 60vw;' src='/images/frame.png'>", 2);
 print_line("<div class='flex' style='background-color: grey; margin: 0; width: 50vw; height: 30vw; position: absolute; z-index: -1;'>", 2);
-print_line("<img src='$img_src' style='width: 15%;'>", 3);
+print_line("<img src='$r->img' style='width: 15%;'>", 3);
 print_line("<h1 style='color: white; margin: 0 1vw; vertical-align: top; display: inline-block;'>$star_name<br>$r->dob</h1>", 3);
 print_line("</div>", 2);
 print_line("</div>");
