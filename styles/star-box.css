@@ -1,24 +1,64 @@
 .star-box {
-    border: 3px solid grey;
+    background-color: grey;
     display: inline-block;
-    margin: .5vw;
-    width: 15vw;
-    min-width: 125px;
-    overflow: hidden;
+    padding: 1%;
+    margin: 1%;
+    width: 16%;
 }
-.star-box>img {
-    cursor: pointer;
+.star-box img {
     width: 100%;
 }
-.star-box>p, .star-box>a {
+.star-box p {
+    color: white;
+}
+.star-box .text {
     margin: 0 auto;
     font-size: 1.6vw;
     height: 2vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 90%;
 }
 
-@media only screen and (max-width: 840px) {
-    .star-box>p, .star-box>a {
-        font-size: 13.5px;
-        height: 16.9px;
+@media only screen and (max-width: 1140px) {
+    .star-box {
+        width: 21%;
+    }
+    .star-box .text {
+        font-size: 2vw;
+        height: 2.5vw;
+    }
+}
+
+@media only screen and (max-width: 900px) {
+    .star-box {
+        width: 29.33%;
+    }
+    .star-box .text {
+        font-size: 2.67vw;
+        height: 3.33vw;
+    }
+}
+
+@media only screen and (max-width: 720px) {
+    .star-box {
+        margin: 2%;
+        width: 44%;
+    }
+    .star-box .text {
+        font-size: 4vw;
+        height: 5vw;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .star-box {
+        margin: 3vw 0;
+        width: 98%;
+    }
+    .star-box .text {
+        font-size: 8vw;
+        height: 10vw;
     }
 }

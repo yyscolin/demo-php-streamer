@@ -10,8 +10,6 @@
     white-space: nowrap;
     width: 100%;
 }
-.poster>img {
-    cursor: pointer;
-    height: 100%;
+.poster img {
     width: 100%;
 }

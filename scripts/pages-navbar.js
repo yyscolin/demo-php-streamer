@@ -26,15 +26,14 @@ function openPage(button) {
           if (type == 'vids') {
             let vid = response[i]
             $(boxLink).find('h3').html(vid.title)
-            $(boxLink).find('img').attr('onclick', `window.location.href="/vid/${vid.id}"`)
+            $(boxLink).find('a').attr('href', `/vid/${vid.id}`)
             $(boxLink).find('img').attr('src', vid.img)
           } else {
             let star = response[i]
-            $(boxLink).find('img').attr('onclick', `window.location.href="/star/${star.id}"`)
+            $(boxLink).find('a').attr('href', `/star/${star.id}`)
             $(boxLink).find('img').attr('src', star.img)
             $(boxLink).find('.name').html(star.name)
             $(boxLink).find('.dob').html(star.dob)
-            $(boxLink).find('.vid-count').attr('href', `/star/${star.id}`)
             $(boxLink).find('.vid-count>span').html(star.count)
           }
         } else {
