@@ -2,14 +2,37 @@
     margin: 0 auto 8vw auto;
     width: 100%;
 }
-.poster>h3 {
+.poster>.title {
+    font-family: cursive;
+    font-size: 2vw;
     margin: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
     text-align: left;
-    white-space: nowrap;
     width: 100%;
 }
 .poster img {
     width: 100%;
+}
+
+@media only screen and (max-width: 1140px) {
+    .poster>.title {
+        font-size: 2.5vw;
+    }
+}
+
+@media only screen and (max-width: 900px) {
+    .poster>.title {
+        font-size: 3vw;
+    }
+}
+
+@media only screen and (max-width: 660px) {
+    .poster>.title {
+        font-size: 3.5vw;
+    }
+}
+
+@media only screen and (max-width: 420px) {
+    .poster>.title {
+        font-size: 4vw;
+    }
 }
