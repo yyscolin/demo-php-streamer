@@ -1,9 +1,9 @@
 .star-box {
     background-color: grey;
     display: inline-block;
-    padding: 1%;
-    margin: 1%;
-    width: 16%;
+    margin: .6vw;
+    padding: .6vw;
+    width: 13.6vw;
 }
 .star-box img {
     width: 100%;
@@ -23,7 +23,9 @@
 
 @media only screen and (max-width: 1140px) {
     .star-box {
-        width: 21%;
+        margin: .75vw;
+        padding: .75vw;
+        width: 17vw;
     }
     .star-box .text {
         font-size: 2vw;
@@ -33,7 +35,9 @@
 
 @media only screen and (max-width: 900px) {
     .star-box {
-        width: 29.33%;
+        margin: 1vw;
+        padding: 1vw;
+        width: 22.66vw;
     }
     .star-box .text {
         font-size: 2.67vw;
@@ -43,8 +47,9 @@
 
 @media only screen and (max-width: 720px) {
     .star-box {
-        margin: 2%;
-        width: 44%;
+        margin: 1vw;
+        padding: 1vw;
+        width: 36vw;
     }
     .star-box .text {
         font-size: 4vw;
@@ -54,8 +59,9 @@
 
 @media only screen and (max-width: 480px) {
     .star-box {
-        margin: 3vw 0;
-        width: 98%;
+        margin: 2vw;
+        padding: 2vw;
+        width: 72vw;
     }
     .star-box .text {
         font-size: 8vw;
