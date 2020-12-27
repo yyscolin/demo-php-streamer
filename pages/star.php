@@ -21,14 +21,22 @@ if ($id == 0) {
 
 print_page_header([
   "<link rel='stylesheet' href='/styles/poster.css'>",
+  "<link rel='stylesheet' href='/styles/star-potrait.css'>",
   "<title>$star_name - Demo PHP Streamer</title>"
 ]);
 
-print_line("<div class='flex' style='width:100%;height:32vw;padding:8vw 0;margin:0;overflow:hidden;'>");
-print_line("<img style='z-index: 0; width: 100vw; height: 60vw;' src='/images/frame.png'>", 2);
-print_line("<div class='flex' style='background-color: grey; margin: 0; width: 50vw; height: 30vw; position: absolute; z-index: -1;'>", 2);
-print_line("<img src='$r->img' style='width: 15%;'>", 3);
-print_line("<h1 style='color: white; margin: 0 1vw; vertical-align: top; display: inline-block;'>$star_name<br>$r->dob</h1>", 3);
+
+print_line("<div id='main-block' style='margin-top:0;overflow:hidden'>");
+
+print_line("<div id='s-pot' class='flex'>");
+print_line("<img class='frame' src='/images/frame.png'>", 2);
+print_line("<div class='flex inner' style='background-color:grey;z-index:-2'></div>", 2);
+print_line("<div class='flex inner'>", 2);
+print_line("<img src='$r->img'>", 3);
+print_line("<div class='info'>", 3);
+print_line("<p class='text-ellipsis'>$star_name</p>", 4);
+print_line("<p class='text-ellipsis'>$r->dob</p>", 4);
+print_line("</div>", 3);
 print_line("</div>", 2);
 print_line("</div>");
 
@@ -47,7 +55,6 @@ if ($id == 0) {
 }
 
 /** Print page content */
-print_line("<div id='main-block' style='margin-top:0'>");
 while ($r = mysqli_fetch_object($res)) {
   print_vid_box($r, 2);
 }

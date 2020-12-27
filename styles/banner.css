@@ -54,9 +54,6 @@
 .search-result.x-pic {
     padding: .8vw;
     max-width: 40vw;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap; 
 }
 .search-result.w-pic {
     display: flex;

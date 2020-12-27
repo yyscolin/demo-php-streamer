@@ -15,9 +15,6 @@
     margin: 0 auto;
     font-size: 1.6vw;
     height: 2vw;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     width: 90%;
 }
 

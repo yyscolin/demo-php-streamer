@@ -31,7 +31,7 @@ function searchDatabaseSuccess(res) {
 	for (let r of res.results) {
 		if (res.type === 'vid') {
 			var innerHTML = r.name
-			var className = 'x-pic'
+			var className = 'x-pic text-ellipsis'
 		} else {
 			var innerHTML = `<img src='${r.img}'><span>${r.name}</span>`
 			var className = 'w-pic'
