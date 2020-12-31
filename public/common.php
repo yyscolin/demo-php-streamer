@@ -5,6 +5,20 @@ function redirectToHomePage() {
   exit();
 }
 
+function get_others_star() {
+  global $con;
+
+  $db_query = "select count(id) as count from vids where id not in (select vid from casts)";
+  $db_response = mysqli_query($con, $db_query);
+  $star = mysqli_fetch_object($db_response);
+  if ($star->count == 0) return null;
+
+  $star->id = 0;
+  $star->name_f = "Others";
+  $star->dob = null;
+  return $star;
+}
+
 function print_line($line, $indentation_level=1) {
   echo "\n";
   for ($i = 0 ; $i < $indentation_level; $i++) echo "  ";
@@ -106,6 +120,7 @@ if (!$_SESSION['auth']) {
   exit();
 }
 
+require_once($_SERVER['DOCUMENT_ROOT']."/public/mysql_connections.php");
 require_once($_SERVER['DOCUMENT_ROOT']."/public/languages.php");
 
 $default_imgs = array(

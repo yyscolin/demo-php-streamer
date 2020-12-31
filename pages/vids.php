@@ -1,7 +1,6 @@
 <?php
 
 require_once($_SERVER['DOCUMENT_ROOT']."/public/box-vid.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/public/mysql_connections.php");
 require_once($_SERVER['DOCUMENT_ROOT']."/public/nav-pages.php");
 require_once($_SERVER['DOCUMENT_ROOT']."/public/common.php");
 print_page_header([

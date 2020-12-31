@@ -7,7 +7,8 @@ function print_page_navbar($type, $query, $items_per_page, $current_page) {
   $query = "select count(*) as count from ($query) as t";
   $db_response = mysqli_query($con, $query);
   $r = mysqli_fetch_object($db_response);
-  $no_of_pages = ceil($r->count/$items_per_page);
+  if (get_others_star() != null) $r->count++; // Determine if "Other" star exists
+  $no_of_pages = ceil(($r->count)/$items_per_page);
 
   if ($no_of_pages < 2) return;
   
