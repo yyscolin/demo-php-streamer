@@ -1,13 +1,13 @@
 <?php
 
-function print_star_potrait($star) {
+function print_star_potrait($star, $star_name) {
   print_line("<div id='s-pot' class='flex'>");
   print_line("<img class='frame' src='/images/frame.png'>", 2);
   print_line("<div class='flex inner' style='background-color:grey;z-index:-2'></div>", 2);
   print_line("<div class='flex inner'>", 2);
   print_line("<img src='$star->img'>", 3);
   print_line("<div class='info'>", 3);
-  print_line("<p class='text-ellipsis'>".get_locale_star_name($star)."</p>", 4);
+  print_line("<p class='text-ellipsis'>$star_name</p>", 4);
   print_line("<p class='text-ellipsis'>$star->dob</p>", 4);
   print_line("</div>", 3);
   print_line("</div>", 2);
@@ -21,6 +21,14 @@ $id = $_GET["id"];
 if (!isset($id)) redirectToHomePage();
 require_once($_SERVER['DOCUMENT_ROOT']."/public/search-database.php");
 
+if ($id == 0) {
+  $star_name = "Others";
+} else {
+  $star = search_database_by_id('star', $id);
+  if (!star) redirectToHomePage();
+  $star_name = get_locale_star_name($star);
+}
+
 print_page_header([
   "<link rel='stylesheet' href='/styles/poster.css'>",
   "<link rel='stylesheet' href='/styles/star-potrait.css'>",
@@ -33,13 +41,11 @@ if ($id == 0) {
   $query = "select id, title from vids where id not in (select vid from casts) and status=3 order by release_date desc";
   $res = $con->query($query);
 } else {
-  $r = search_database_by_id('star', $id);
-  if (!$r) redirectToHomePage();
-  print_star_potrait($r);
+  print_star_potrait($star, $star_name);
 
   $query = "select id, title from vids where id in (select vid from casts where star = ?) and status=3 order by release_date desc";
   $stmt = $con->prepare($query);
-  $stmt->bind_param('s', $r->id);
+  $stmt->bind_param('s', $star->id);
   $stmt->execute();
   $res = $stmt->get_result();
 }
