@@ -1,14 +1,9 @@
-function loadVideo(partBtn) {
-  if (partBtn) {
-    var partNo = $(partBtn).attr('part');
+function loadVideo(vid_path, button) {
+  if (button) {
+    if (button.id == 'selected') return
 
-    $('#selected').attr('onclick', 'loadVideo(this)');
-    $('#selected').removeAttr('id');
-
-    $(partBtn).removeAttr('onclick');
-    $(partBtn).attr('id', 'selected');
-  } else {
-    var partNo = 1
+    $('#selected').removeAttr('id')
+    $(button).attr('id', 'selected')
   }
   
   let videoAttributes = isAndroid
@@ -16,7 +11,7 @@ function loadVideo(partBtn) {
     : `onloadedmetadata='this.play()' controls`
   $('#display').html(
     `<video ${videoAttributes}>` +
-    `<source src='/media/vids/${id}_${partNo}.mp4'>` +
+    `<source src='${vid_path}'>` +
     `</video>`
   )
 }

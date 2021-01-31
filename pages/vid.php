@@ -1,5 +1,34 @@
 <?php
 
+function get_mp4s($vid_id) {
+  $mp4s = [];
+  $sub_paths = ["", "*/"];
+  $number_patterns = ["[123456789]", "0[123456789]", "[123456789][0123456789]"];
+
+  foreach ($sub_paths as $sub_path) {
+    foreach ($number_patterns as $number_pattern) {
+      foreach (glob("../media/vids/$sub_path$vid_id\_$number_pattern.mp4") as $mp4) {
+        $splits = explode("/", $mp4);
+        $file_name = $splits[count($splits) - 1];
+        $file_name = substr($file_name, 0, count($file_name) - 5);
+
+        $splits = explode("_", $file_name);
+        $part_no = intval($splits[count($splits) - 1]);
+        array_push($mp4s, array(
+          file_path=>substr($mp4, 2),
+          part_no=>$part_no
+        ));
+      }
+    }
+  }
+
+  usort($mp4s, function($a, $b) {
+    return $a['part_no'] > $b['part_no'];
+  });
+
+  return $mp4s;
+}
+
 require_once($_SERVER['DOCUMENT_ROOT']."/public/common.php");
 
 $id = $_GET["id"];
@@ -15,23 +44,33 @@ print_page_header([
   "<title>$r->id - Demo PHP Streamer</title>"
 ]);
 
-echo "
-  <div id='main-block'>
-    <h4 style='width:100%'>$r->id $r->title</h4>
-    <div id='display' value='$r->id'>
-      <img id='play-btn' src='/images/play.png' onclick='loadVideo()'>
-      <img id='poster' src='$r->img' onclick='loadVideo()'>
-    </div>";
+print_line("<div id='main-block'>");
+print_line("<h4 style='width:100%'>$r->id $r->title</h4>", 2);
+print_line("<div id='display' value='$r->id'>", 2);
 
-$count = count(glob("../media/vids/$r->id*.mp4"));
-if ($count > 1) {
-  echo "\n\t<div style='width:100%'>";
-  for ($i = 1; $i <= $count; $i++)
-    echo "\n\t\t<button part='$i' "
-    .($i == 1 ? "id='selected'" : "onclick='loadVideo(this)'")
-    .">PART $i</button>";
-  echo "\n\t</div>";
+$mp4s = get_mp4s($r->id);
+if (count($mp4s) > 0) {
+  $vid_path = $mp4s[0]['file_path'];
+  $onclick = "loadVideo(\"$vid_path\")";
+  print_line("<img id='play-btn' src='/images/play.png' onclick='$onclick'>", 3);
+  print_line("<img id='poster' src='$r->img' onclick='$onclick'>", 3);
+} else {
+  print_line("<img id='poster' src='$r->img'>", 3);
 }
+
+print_line("</div>", 2);
+
+if (count($mp4s) > 1) {
+  print_line("<div style='width:100%'>", 2);
+  for ($i = 0; $i < count($mp4s); $i++) {
+    $id = $i == 0 ? "id='selected'" : "";
+    $vid_path = $mp4s[$i]['file_path'];
+    $part_no = $mp4s[$i]['part_no'];
+    print_line("<button ".$id."onclick='loadVideo(\"$vid_path\", this)'>PART $part_no</button>", 3);
+  }
+  print_line("</div>", 2);
+}
+
 echo "
   <table id='info-table'>
     <tr>
