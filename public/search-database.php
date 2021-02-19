@@ -28,7 +28,7 @@ function search_database_by_query($type, $search_query, $itemsCount=5) {
   while ($r = $db_response->fetch_object()) {
     $r->img = get_img_src($type, $r->id);
     if ($type == 'vid') {
-      $r->name = $_SERVER['show_vid_code'] ? $r->title : $r->id." ".$r->title;
+      $r->name = $_SERVER['show_vid_code'] == "true" ? $r->id." ".$r->title : $r->title;
     } else {
       $r->name = get_locale_star_name($r);
     }
