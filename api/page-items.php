@@ -3,7 +3,7 @@
 function get_api_vids($limit_start, $items_per_page) {
   global $con;
 
-  $db_query = "select id, title, release_date, duration from vids where status=3 order by modify_timestamp desc limit ?, ?";
+  $db_query = "select id, title, release_date, duration from vids where status=1 order by modify_timestamp desc limit ?, ?";
   $stmt = $con->prepare($db_query);
   $stmt->bind_param('ss', $limit_start, $items_per_page);
   $stmt->execute();
@@ -43,7 +43,7 @@ function get_api_stars($limit_start, $items_per_page) {
   ) t1 left join (
     select star, count(star) as count
     from casts where vid in (
-    select id from vids where status=3
+    select id from vids where status=1
     ) group by star
   ) t2 on t1.id = t2.star
   where display=1

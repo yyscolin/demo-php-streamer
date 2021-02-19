@@ -24,7 +24,7 @@ $db_query = "select id, name_f, name_l, name_j, dob, ifnull(t2.count, 0) as coun
 ) t1 left join (
   select star, count(star) as count
   from casts where vid in (
-    select id from vids where status=3
+    select id from vids where status=1
   ) group by star
 ) t2 on t1.id = t2.star
 where display = 1

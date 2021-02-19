@@ -11,7 +11,7 @@ function search_database_by_query($type, $search_query, $itemsCount=5) {
   $search_query .= '%';
   if ($type == 'vid') {
     $sql_query = "select *
-      from vids where id like ? and status=3 order by modify_timestamp desc limit $itemsCount";
+      from vids where id like ? and status=1 order by modify_timestamp desc limit $itemsCount";
     $stmt = $con->prepare($sql_query);
     $stmt->bind_param('s', $search_query);
   } else {

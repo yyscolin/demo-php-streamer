@@ -36,7 +36,7 @@ print_line("</div>", 2);
 /** Get random vids */
 $randCount = 5;
 print_line("<h2>Random Videos</h2>", 2);
-$db_query = "select id, title from vids where status = 3 order by rand() limit $randCount";
+$db_query = "select id, title from vids where status=1 order by rand() limit $randCount";
 $db_response = mysqli_query($con, $db_query);
 while ($r = mysqli_fetch_object($db_response)) {
   print_vid_box($r, 2);

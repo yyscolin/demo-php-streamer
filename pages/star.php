@@ -38,12 +38,12 @@ print_page_header([
 print_line("<div id='main-block' style='margin-top:0;overflow:hidden'>");
 
 if ($id == 0) {
-  $query = "select id, title from vids where id not in (select vid from casts) and status=3 order by release_date desc";
+  $query = "select id, title from vids where id not in (select vid from casts) and status=1 order by release_date desc";
   $res = $con->query($query);
 } else {
   print_star_potrait($star, $star_name);
 
-  $query = "select id, title from vids where id in (select vid from casts where star = ?) and status=3 order by release_date desc";
+  $query = "select id, title from vids where id in (select vid from casts where star = ?) and status=1 order by release_date desc";
   $stmt = $con->prepare($query);
   $stmt->bind_param('s', $star->id);
   $stmt->execute();

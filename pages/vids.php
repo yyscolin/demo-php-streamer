@@ -14,7 +14,7 @@ $current_page = isset($_COOKIE["Vids-Page"]) ? $_COOKIE["Vids-Page"] : 1;
 $limit_start = ($current_page - 1) * $items_per_page;
 
 /** Determine query to use */ 
-$query = "select * from vids where status=3 order by modify_timestamp desc";
+$query = "select * from vids where status=1 order by modify_timestamp desc";
 
 /** Print page contents */
 print_line("<div id='main-block'>");

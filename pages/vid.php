@@ -92,7 +92,7 @@ $query = "select id, name_f, name_l, name_j, dob, display, count
 from stars join (
     select star, count(*) as count from casts
     where vid in (
-      select id from vids where status=3
+      select id from vids where status=1
     ) group by star
 ) as t on stars.id = t.star
 where id in (

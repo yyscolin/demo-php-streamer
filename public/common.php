@@ -8,7 +8,7 @@ function redirectToHomePage() {
 function get_others_star() {
   global $con;
 
-  $db_query = "select count(id) as count from vids where id not in (select vid from casts) and status=3";
+  $db_query = "select count(id) as count from vids where id not in (select vid from casts) and status=1";
   $db_response = mysqli_query($con, $db_query);
   $star = mysqli_fetch_object($db_response);
   if ($star->count == 0) return null;
