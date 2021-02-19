@@ -20,7 +20,10 @@ print_line("<div style='text-align:center'>", 3);
 $db_query = "
   select id, name_l, name_f, name_j, dob, coalesce(count, 0) as count
   from stars left join (
-    select star, count(star) as count from casts group by star
+    select star, count(star) as count from casts
+    where vid in (
+      select id from vids where status=1
+    ) group by star
   ) as t on stars.id = t.star
   where display = 1
   order by rand() limit $randCount";
