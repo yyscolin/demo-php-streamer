@@ -19,14 +19,13 @@ require_once($_SERVER['DOCUMENT_ROOT']."/public/common.php");
 
 $id = $_GET["id"];
 if (!isset($id)) redirectToHomePage();
-require_once($_SERVER['DOCUMENT_ROOT']."/public/search-database.php");
 
 if ($id == 0) {
   $star_name = "Others";
 } else {
-  $star = search_database_by_id('star', $id);
+  $star = get_entity_from_database('star', $id);
   if (!star) redirectToHomePage();
-  $star_name = get_locale_star_name($star);
+  $star_name = $star->name;
 }
 
 print_page_header([
@@ -38,22 +37,19 @@ print_page_header([
 print_line("<div id='main-block' style='margin-top:0;overflow:hidden'>");
 
 if ($id == 0) {
-  $query = "select id, title from vids where id not in (select vid from casts) and status=1 order by release_date desc";
-  $res = $con->query($query);
+  $db_query = "select id, name_$language as name from vids where id not in (select vid from xref_entities_vids) and status=1 order by release_date desc";
+  $res = $con->query($db_query);
 } else {
   print_star_potrait($star, $star_name);
 
-  $query = "select id, title from vids where id in (select vid from casts where star = ?) and status=1 order by release_date desc";
-  $stmt = $con->prepare($query);
+  $db_query = "select id, name_$language as name from vids where id in (select vid from xref_entities_vids where entity=?) and status=1 order by release_date desc";
+  $stmt = $con->prepare($db_query);
   $stmt->bind_param('s', $star->id);
   $stmt->execute();
   $res = $stmt->get_result();
 }
 
-/** Print page content */
-while ($r = mysqli_fetch_object($res)) {
-  print_vid_box($r, 2);
-}
+while ($r = mysqli_fetch_object($res)) print_vid_box($r, 2);
 print_line("</div>");
 
 print_page_footer();

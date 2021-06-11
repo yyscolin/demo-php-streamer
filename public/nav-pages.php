@@ -1,18 +1,13 @@
 <?php
 
-function print_page_navbar($type, $query, $items_per_page, $current_page) {
+function print_page_navbar($type, $count, $items_per_page, $current_page) {
   global $con;
+  global $is_mobile;
 
-  /** Determine page range */
-  $query = "select count(*) as count from ($query) as t";
-  $db_response = mysqli_query($con, $query);
-  $r = mysqli_fetch_object($db_response);
-  if (get_others_star() != null) $r->count++; // Determine if "Other" star exists
-  $no_of_pages = ceil(($r->count)/$items_per_page);
+  $no_of_pages = ceil($count/$items_per_page);
 
   if ($no_of_pages < 2) return;
-  
-  /** Display page navigation bar */
+
   print_line("<div id='nav-pages'>");
   for ($i = 1; $i <= $no_of_pages; $i++) {
     $is_selected = $i == (int)$current_page ? "selected" : "";

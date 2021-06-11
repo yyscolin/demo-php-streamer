@@ -5,17 +5,99 @@ function redirectToHomePage() {
   exit();
 }
 
+function get_entity_from_database($type, $id = null) {
+  global $con;
+  global $language;
+
+  $metadata = [];
+  $db_query = "select * from entities_metadata";
+  $db_response = mysqli_query($con, $db_query);
+  while ($r = mysqli_fetch_object($db_response)) $metadata[] = $r;
+
+  $entities = [];
+  $db_query = "
+  select id, ifnull(name_$language, '&ltNo Name&gt') as name,
+  ifnull(t2.count, 0) as count, latest_release_date from (
+    select entities.*, max(release_date) as latest_release_date from entities
+    left join xref_entities_vids on entities.id=xref_entities_vids.entity
+    left join vids on vids.id=xref_entities_vids.vid
+    where `is`='$type' group by entities.id
+  ) t1 left join (
+    select entity, count(*) as count
+    from xref_entities_vids where vid in (
+      select id from vids where status=1
+    ) group by entity
+  ) t2 on t1.id=t2.entity
+  where status=1
+  order by latest_release_date desc";
+  $db_response = mysqli_query($con, $db_query);
+  while ($r = mysqli_fetch_object($db_response)) {
+    $r->img = get_img_src($type, $r->id);
+
+    foreach($metadata as $x) if ($x->id == $r->id) {
+      $attribute = $x->attribute;
+      $r->$attribute = $x->value;
+    }
+
+    if ($r->id == $id) return $r;
+    $entities[] = $r;
+  }
+  return $entities;
+}
+
+function get_vids_from_database() {
+  global $con;
+  global $default_imgs;
+  global $language;
+
+  $vids = [];
+  $db_query = "select id, ifnull(name_$language, '&ltNo Title&gt') as name, release_date, duration from vids order by db_timestamp desc";
+  $stmt = $con->prepare($db_query);
+  $stmt->execute();
+  $db_response = $stmt->get_result();
+  while ($r = $db_response->fetch_object()) {
+    $r->img = get_img_src('vids', $r->id);
+    $vids[] = $r;
+  }
+  return $vids;
+}
+
+function get_vid_from_database($id) {
+  $vids = get_vids_from_database();
+  foreach ($vids as $vid) {
+    if ($vid->id == $id) return $vid;
+  }
+  return null;
+}
+
+function search_database_by_query($type, $search_query, $items_count = null) {
+  global $con;
+
+  $search_results = $type == 'vid' ? get_vids_from_database() : get_entity_from_database($type);
+  $search_results = array_filter($search_results, function($x) {
+    global $search_query;
+    return strpos(strtolower($x->name), strtolower($search_query)) !== false;
+  });
+
+  usort($search_results, function($a, $b) {
+    return $a->name <=> $b->name;
+  });
+
+  if (!$items_count) return $search_results;
+
+  return array_slice($search_results, 0, $items_count);
+}
+
 function get_others_star() {
   global $con;
 
-  $db_query = "select count(id) as count from vids where id not in (select vid from casts) and status=1";
+  $db_query = "select count(*) as count from vids where id not in (select vid from xref_entities_vids) and status=1";
   $db_response = mysqli_query($con, $db_query);
   $star = mysqli_fetch_object($db_response);
   if ($star->count == 0) return null;
 
   $star->id = 0;
-  $star->name_f = "Others";
-  $star->dob = null;
+  $star->name = "Others";
   return $star;
 }
 
@@ -122,6 +204,7 @@ if (!$_SESSION['auth']) {
 
 require_once($_SERVER['DOCUMENT_ROOT']."/public/mysql_connections.php");
 require_once($_SERVER['DOCUMENT_ROOT']."/public/languages.php");
+$language = isset($_COOKIE['language']) ? $_COOKIE['language'] : "en";
 
 $default_imgs = array(
   "star"=>file_exists($_SERVER['DOCUMENT_ROOT']."/media/stars/default.jpg")

@@ -56,5 +56,3 @@ SetEnv MYSQL_HOSTNAME
 SetEnv MYSQL_USERNAME
 SetEnv MYSQL_PASSWORD
 SetEnv MYSQL_DATABASE
-
-SetEnv show_vid_code false

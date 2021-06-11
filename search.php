@@ -1,15 +1,16 @@
 <?php
 
 require_once($_SERVER['DOCUMENT_ROOT']."/public/common.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/public/box-star.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/public/box-vid.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/public/search-database.php");
 
 $type = $_GET['type'];
-$query = $_GET['query'];
-$search_results = isset($query) && ($type != 'vid' || $type != 'star')
-  ? search_database_by_query($type, $query, 10)
-  : [];
+$search_query = $_GET['query'];
+
+if (!isset($type) || !isset($search_query) || !in_array($type, ['vid', 'star'])) {
+  header("HTTP/1.0 400");
+  exit();
+}
+
+$search_results = search_database_by_query($type, $search_query);
 
 function print_search_results() {
   global $type;
@@ -20,18 +21,18 @@ function print_search_results() {
 
     foreach ($search_results as $r) {
       if ($type == 'vid') {
-        $title = "<p>$r->name</p>";
+        $name = "<p>$r->name</p>";
         $subtitle = $r->release_date ? "<p class='subtitle'>$r->release_date</p>" : "";
         $media_path = $r->img;
       } else {
-        $title = "<p>$r->name</p>";
+        $name = "<p>$r->name</p>";
         $subtitle = $r->dob ? "<p class='subtitle'>$r->dob</p>" : "";
         $media_path = $r->img;
       }
     
       echo "<tr class='noselect' onclick='window.location.href=\"/$type/$r->id\"'>";
       echo "<td><img src='$media_path'></td>";
-      echo "<td style='text-align:left'>$title$subtitle</td>";
+      echo "<td style='text-align:left'>$name$subtitle</td>";
       echo "</tr>";
     }
 
@@ -53,7 +54,7 @@ print_page_header([
         <option value='star'<?php if ($type == 'star') echo "selected='selected'"; ?>><?php echo get_text("stars", ucfirst); ?></option>
         <option value='vid'<?php if ($type == 'vid') echo "selected='selected'"; ?>><?php echo get_text("movies", ucfirst); ?></option>
       </select>
-      <input name='query' value='<?php echo $query; ?>'>
+      <input name='query' value='<?php echo $db_query; ?>'>
       <button type='submit'><?php echo get_text("search", ucfirst); ?></button>
     </form>
     <?php print_search_results(); ?>

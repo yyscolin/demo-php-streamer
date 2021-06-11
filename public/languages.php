@@ -44,15 +44,3 @@ function get_text($text_reference, $option_callback=null) {
         return $text;
     }
 }
-
-function get_locale_star_name($star) {
-    $language = isset($_COOKIE['language']) ? $_COOKIE['language'] : "en";
-    switch ($language) {
-        case "jp":
-            return $star->name_j ? $star->name_j : $star->name_f;
-        default:
-            $star_name = $star->name_f;
-            if ($star->name_l) $star_name .= " ".$star->name_l;
-            return $star_name;
-    }
-}

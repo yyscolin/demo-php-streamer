@@ -17,15 +17,15 @@ function openPage(button) {
     const url = `/api/page-items.php`
     const data = {type, 'page-no': pageNo, 'items-count': itemsPerPage}
     const onSuccess = function(response) {
-      let boxClassName = type == 'vids' ? '.poster' : '.star-box'
+      let boxClassName = type == 'vid' ? '.poster' : '.star-box'
       let boxLinks = $(boxClassName)
       for (let i = 0; i < boxLinks.length; i++) {
         let boxLink = boxLinks[i]
         if (response.length > i) {
           $(boxLink).show()
-          if (type == 'vids') {
+          if (type == 'vid') {
             let vid = response[i]
-            $(boxLink).find('h3').html(vid.title)
+            $(boxLink).find('.title').html(vid.name)
             $(boxLink).find('a').attr('href', `/vid/${vid.id}`)
             $(boxLink).find('img').attr('src', vid.img)
           } else {

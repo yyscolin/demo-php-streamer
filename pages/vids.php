@@ -8,24 +8,19 @@ print_page_header([
   "<title>".get_text("movies", ucfirst)." - Demo PHP Streamer</title>"
 ]);
 
-$type = 'vids';
 $items_per_page = 10;
 $current_page = isset($_COOKIE["Vids-Page"]) ? $_COOKIE["Vids-Page"] : 1;
 $limit_start = ($current_page - 1) * $items_per_page;
 
-/** Determine query to use */ 
-$query = "select * from vids where status=1 order by modify_timestamp desc";
-
-/** Print page contents */
 print_line("<div id='main-block'>");
-$res = mysqli_query($con, "$query limit $limit_start, $items_per_page");
-for ($i = 0; $i < $items_per_page; $i++) {
-  $r = mysqli_fetch_object($res);
-  print_vid_box($r, 2);
+$vids = get_vids_from_database();
+for ($i = $limit_start; $i < $limit_start+$items_per_page; $i++) {
+  $vid = $vids[$i];
+  print_vid_box($vid, 2);
 }
 print_line("</div>");
 
-print_page_navbar($type, $query, $items_per_page, $current_page);
+print_page_navbar('vid', count($vids), $items_per_page, $current_page);
 print_page_footer();
 
 ?>

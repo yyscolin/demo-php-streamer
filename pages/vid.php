@@ -30,32 +30,32 @@ function get_mp4s($vid_id) {
 }
 
 require_once($_SERVER['DOCUMENT_ROOT']."/public/common.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/box-star.php");
 
 $id = $_GET["id"];
 if (!isset($id)) redirectToHomePage();
-require_once($_SERVER['DOCUMENT_ROOT']."/public/search-database.php");
-$r = search_database_by_id('vid', $id);
-if (!$r) redirectToHomePage();
+$vid = get_vid_from_database($id);
+if (!$vid) redirectToHomePage();
 
 print_page_header([
-  "<script>const id = '$r->id'</script>",
+  "<script>const id = '$vid->id'</script>",
   "<link rel='stylesheet' href='/styles/p-vid.css'>",
   "<link rel='stylesheet' href='/styles/star-box.css'>",
-  "<title>$r->id - Demo PHP Streamer</title>"
+  "<title>$vid->id - Demo PHP Streamer</title>"
 ]);
 
 print_line("<div id='main-block'>");
-print_line("<h4 style='width:100%'>$r->id $r->title</h4>", 2);
-print_line("<div id='display' value='$r->id'>", 2);
+print_line("<h4 style='width:100%'>$vid->name</h4>", 2);
+print_line("<div id='display' value='$vid->id'>", 2);
 
-$mp4s = get_mp4s($r->id);
+$mp4s = get_mp4s($vid->id);
 if (count($mp4s) > 0) {
   $vid_path = $mp4s[0]['file_path'];
   $onclick = "loadVideo(\"$vid_path\")";
   print_line("<img id='play-btn' src='/images/play.png' onclick='$onclick'>", 3);
-  print_line("<img id='poster' src='$r->img' onclick='$onclick'>", 3);
+  print_line("<img id='poster' src='$vid->img' onclick='$onclick'>", 3);
 } else {
-  print_line("<img id='poster' src='$r->img'>", 3);
+  print_line("<img id='poster' src='$vid->img'>", 3);
 }
 
 print_line("</div>", 2);
@@ -75,11 +75,11 @@ echo "
   <table id='info-table'>
     <tr>
       <td><b>".get_text("release date", ucwords)."</b></td>
-      <td>$r->release_date</td>
+      <td>$vid->release_date</td>
     </tr>
     <tr>
       <td><b>".get_text("duration", ucfirst)."</b></td>
-      <td>$r->duration ".get_text("minutes")."</td>
+      <td>$vid->duration ".get_text("minutes")."</td>
     </tr>
   </table>
   <div id='stars-box'>
@@ -87,18 +87,18 @@ echo "
 
 
 /** Get list of stars */
-require_once($_SERVER['DOCUMENT_ROOT']."/public/box-star.php");
-$query = "select id, name_f, name_l, name_j, dob, display, count
-from stars join (
-    select star, count(*) as count from casts
+$db_query = "select id, name_$language as name, count
+from entities join (
+    select entity, count(*) as count from xref_entities_vids
     where vid in (
       select id from vids where status=1
-    ) group by star
-) as t on stars.id = t.star
+    ) group by entity
+) as t on entities.id = t.entity
 where id in (
-    select star from casts where vid = '$r->id'
-)";
-$res = mysqli_query($con, $query);
+    select entity from xref_entities_vids
+    where vid = '$vid->id' and `is`='star'
+) and status=1";
+$res = mysqli_query($con, $db_query);
 while ($r = mysqli_fetch_object($res)) {
     print_star_box($r);
 }
