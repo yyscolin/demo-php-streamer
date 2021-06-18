@@ -112,7 +112,7 @@ function get_img_src($type, $id) {
     $img = "/media/covers/$id.jpg";
     $type = "vid";
   } else {
-    $img = "/media/stars/$id.jpg";
+    $img = "/media/entities/$id.jpg";
     $type = "star";
   }
 
