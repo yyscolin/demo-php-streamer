@@ -197,7 +197,7 @@ function print_page_footer() {
 session_start();
 
 /** Verify Login */
-if (!$_SESSION['auth']) {
+if ($_SERVER['ACCESS_PASSWORD'] && !$_SESSION['auth']) {
   require_once($_SERVER['DOCUMENT_ROOT']."/public/login.html");
   exit();
 }

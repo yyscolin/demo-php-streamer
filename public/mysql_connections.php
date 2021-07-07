@@ -3,7 +3,6 @@
 function throwMysqlError($message) {
     header('HTTP/1.0 500 MySQL Error');
     echo "<p>MySQL Error: $message</p>";
-    require_once($_SERVER['DOCUMENT_ROOT']."/public/html-tail.html");
     exit();
 }
 

@@ -14,12 +14,14 @@ if (!isset($_POST['password']) || $_POST['password'] == '') {
 }
 
 switch ($_POST['password']) {
-    case 'test_password':
+    case $_SERVER['ACCESS_PASSWORD']:
         $_SESSION['auth'] = 1;
-        exit("Welcome");
+        exit("Login Successful");
     default:
         header('HTTP/1.0 400 Invalid Password');
-        exit((string)$_SESSION['login_attempts']." Unsuccessful Attempt".($_SESSION['login_attempts'] > 1 ? "s" : ""));
+        $exit_message = (string)$_SESSION['login_attempts']." Unsuccessful Attempt";
+        if ($_SESSION['login_attempts'] > 1) $exit_message .= "s";
+        exit($exit_message);
 }
 
 ?>
