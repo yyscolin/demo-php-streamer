@@ -19,7 +19,7 @@ print_line("<div style='font-size:0;width:100%;overflow-y:auto'>", 2);
 print_line("<div style='text-align:center'>", 3);
 $db_query = "
   select id, name_$language as name, coalesce(count, 0) as count
-  from entities left join (
+  from entities join (
     select entity, count(*) as count from xref_entities_vids
     where vid in (
       select id from vids where status=1
