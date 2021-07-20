@@ -136,15 +136,31 @@ function print_page_header($head_items=[]) {
   <meta name='viewport' content='width=device-width, initial-scale=1.0'>
   <meta http-equiv='X-UA-Compatible' content='ie=edge'>
   <script src='/scripts/jquery.min.3.4.1.js'></script>
+  <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src='/scripts/main.js'></script>
-  <script src='/scripts/search-box.js'></script>
   <script>
     const isAndroid = <?php echo $is_Android ? "true" : "false"; ?>;
     const defaultStarSrc = '<?php echo $img_src = $default_imgs['star']; ?>';
     const defaultCoverSrc = '<?php echo $img_src = $default_imgs['vid']; ?>';
+    const languages = [{
+      code: `en`,
+      name: `English`
+    }, {
+      code: `jp`,
+      name: `日本語`
+    }]
+    const displayText = {
+      stars: `<?php echo get_text('stars', strtoupper); ?>`,
+      movies: `<?php echo get_text('movies', strtoupper); ?>`,
+      keyword: `<?php echo get_text('keyword', strtoupper); ?>`,
+      go: `<?php echo get_text('go', strtoupper); ?>`,
+    }
   </script>
-  <link rel='stylesheet' href='/styles/main.css'>
-  <link rel='stylesheet' href='/styles/banner.css'><?php
+  <script src="/react/TopBanner.js" type="text/babel"></script>
+  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="stylesheet" href="/styles/banner.css"><?php
 
   if (!$is_mobile && !$is_iPad) {
     print_line("<link rel='stylesheet' href='/styles/main-web.css'>");
@@ -157,36 +173,7 @@ function print_page_header($head_items=[]) {
 
 </head>
 <body>
-  <div id='banner'>
-    <button id='menu-button' onclick='$("body").toggleClass("menu-active")'>☰</button
-    ><img id='banner-icon' onclick="window.location.href='/'" src='/banner.png' title='Go to homepage'
-    ><div id='menu-bar' class='inline'>
-      <a href='/stars'><?php echo get_text('stars', strtoupper); ?></a
-      ><a href='/vids'><?php echo get_text('movies', strtoupper); ?></a
-      ><form id='search-box' class='inline' action='/search.php'>
-        <select id='search-type' name='type' onchange='searchDatabase()'>
-          <option value='star'><?php echo get_text('stars', ucfirst); ?></option>
-          <option value='vid'><?php echo get_text('movies', ucfirst); ?></option>
-        </select
-        ><input id='search-field' type='search' name='query' oninput='searchDatabase()' placeholder='<?php echo get_text("keyword"); ?>...'>
-        <div id='search-results' style='display: none;'></div>
-        <button type='submit'><?php echo get_text("go", strtoupper); ?></button>
-      </form><!--
-      --><div class='inline' style='cursor:pointer;margin-left:16px'>
-        <img src='/images/languages-white.png' width='24px' onclick='$("#lang-dropdown").toggle()'>
-        <ul id='lang-dropdown' class='dropdown-list'>
-          <li onclick='setLanguange("en")'>English</li>
-          <li onclick='setLanguange("jp")'>日本語</li>
-        </ul>
-        <script>
-          function setLanguange(language) {
-            document.cookie = `language=${language}; SameSite=Lax;`
-            location.reload()
-          }
-        </script>
-      </div>
-    </div>
-  </div><?php
+  <nav id='banner'></nav><?php
 }
 
 function print_page_footer() {
