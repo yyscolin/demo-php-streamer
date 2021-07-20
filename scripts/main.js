@@ -18,7 +18,7 @@ eventCallbacks.load.push(() => $(`body`).click(({target}) => {
   do {
     if (target.attr(`id`) == `banner`) return
     target = target.parent()
-  } while (target.prop(`tagName`) != `HTML`)
+  } while (target.length && target.prop(`tagName`) != `HTML`)
   menu2.reset()
 }))
 
