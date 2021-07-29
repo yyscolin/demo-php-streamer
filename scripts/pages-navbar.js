@@ -1,8 +1,8 @@
 let middleNavWidthCoefficient
-callbacks.load.push(resizeNavbarMiddle)
-callbacks.load.push(adjustNavCss)
-callbacks.resize.push(resizeNavbarMiddle)
-callbacks.resize.push(adjustNavCss)
+eventCallbacks.load.push(resizeNavbarMiddle)
+eventCallbacks.load.push(adjustNavCss)
+eventCallbacks.resize.push(resizeNavbarMiddle)
+eventCallbacks.resize.push(adjustNavCss)
 
 let pageNavAjax = null
 function openPage(button) {
