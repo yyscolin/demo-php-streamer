@@ -46,7 +46,7 @@ const TopBanner = () => {
 
   return <>
     <button id='menu-button' onClick={() => $(`body`).toggleClass(`menu-active`)}>☰</button>
-    <img id='banner-icon' onClick={() => "window.location.href='/'"} src='/banner.png' title='Go to homepage'/>
+    <img id='banner-icon' onClick={() => window.location.href='/'} src='/banner.png' title='Go to homepage'/>
     <div id='menu-bar'>
       <a href='/stars'>{displayText.stars}</a>
       <a href='/vids'>{displayText.movies}</a>
