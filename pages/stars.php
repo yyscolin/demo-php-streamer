@@ -8,7 +8,7 @@ print_page_header([
   "<link rel='stylesheet' href='/styles/star-box.css'>",
   "<link rel='stylesheet' href='/styles/poster.css'>",
   "<style>#main-block{font-size:0}</style>",
-  "<title>".get_text("stars", ucfirst)." - Demo PHP Streamer</title>"
+  "<title>".get_text("stars", 'ucfirst')." - Demo PHP Streamer</title>"
 ]);
 
 $items_per_page = 50;

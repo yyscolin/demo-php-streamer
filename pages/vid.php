@@ -74,11 +74,11 @@ if (count($mp4s) > 1) {
 echo "
   <table id='info-table'>
     <tr>
-      <td><b>".get_text("release date", ucwords)."</b></td>
+      <td><b>".get_text("release date", 'ucwords')."</b></td>
       <td>$vid->release_date</td>
     </tr>
     <tr>
-      <td><b>".get_text("duration", ucfirst)."</b></td>
+      <td><b>".get_text("duration", 'ucfirst')."</b></td>
       <td>$vid->duration ".get_text("minutes")."</td>
     </tr>
   </table>

@@ -24,7 +24,7 @@ if ($id == 0) {
   $star_name = "Others";
 } else {
   $star = get_entity_from_database('star', $id);
-  if (!star) redirectToHomePage();
+  if (!$star) redirectToHomePage();
   $star_name = $star->name;
 }
 

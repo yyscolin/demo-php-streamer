@@ -38,9 +38,14 @@ function get_text($text_reference, $option_callback=null) {
         ? $dictionary[$text_reference][$language]
         : $text_reference;
 
-    if ($option_callback) {
-        return $option_callback($text);
-    } else {
-        return $text;
+    switch ($option_callback) {
+        case 'strtoupper':
+            return strtoupper($text);
+        case 'ucfirst':
+            return ucfirst($text);
+        case 'ucwords':
+            return ucwords($text);
+        default:
+            return $text;
     }
 }

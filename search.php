@@ -43,7 +43,7 @@ function print_search_results() {
 print_page_header([
   "<link rel='stylesheet' href='/styles/page-search.css'>",
   !$is_mobile && !$is_iPad ? "<link rel='stylesheet' href='/styles/page-search-web.css'>" : null,
-  "<title>".get_text("search", ucfirst)." - Demo PHP Streamer</title>"
+  "<title>".get_text("search", 'ucfirst')." - Demo PHP Streamer</title>"
 ]);
 
 ?>
@@ -51,11 +51,11 @@ print_page_header([
   <div id='main-block'>
     <form id='search-form'>
       <select name='type'>
-        <option value='star'<?php if ($type == 'star') echo "selected='selected'"; ?>><?php echo get_text("stars", ucfirst); ?></option>
-        <option value='vid'<?php if ($type == 'vid') echo "selected='selected'"; ?>><?php echo get_text("movies", ucfirst); ?></option>
+        <option value='star'<?php if ($type == 'star') echo "selected='selected'"; ?>><?php echo get_text("stars", 'ucfirst'); ?></option>
+        <option value='vid'<?php if ($type == 'vid') echo "selected='selected'"; ?>><?php echo get_text("movies", 'ucfirst'); ?></option>
       </select>
       <input name='query' value='<?php echo $db_query; ?>'>
-      <button type='submit'><?php echo get_text("search", ucfirst); ?></button>
+      <button type='submit'><?php echo get_text("search", 'ucfirst'); ?></button>
     </form>
     <?php print_search_results(); ?>
 

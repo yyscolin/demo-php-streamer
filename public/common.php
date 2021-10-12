@@ -152,10 +152,10 @@ function print_page_header($head_items=[]) {
       name: `日本語`
     }]
     const displayText = {
-      stars: `<?php echo get_text('stars', strtoupper); ?>`,
-      movies: `<?php echo get_text('movies', strtoupper); ?>`,
-      keyword: `<?php echo get_text('keyword', strtoupper); ?>`,
-      go: `<?php echo get_text('go', strtoupper); ?>`,
+      stars: `<?php echo get_text('stars', "strtoupper"); ?>`,
+      movies: `<?php echo get_text('movies', "strtoupper"); ?>`,
+      keyword: `<?php echo get_text('keyword', "strtoupper"); ?>`,
+      go: `<?php echo get_text('go', "strtoupper"); ?>`,
     }
   </script>
   <script src="/react/TopBanner.js" type="text/babel"></script>
