@@ -10,7 +10,8 @@ $con = mysqli_connect(
     $_SERVER['MYSQL_HOSTNAME'],
     $_SERVER['MYSQL_USERNAME'],
     $_SERVER['MYSQL_PASSWORD'],
-    $_SERVER['MYSQL_DATABASE']
+    $_SERVER['MYSQL_DATABASE'],
+    $_SERVER['MYSQL_PORT']
 );
 
 if (mysqli_connect_error())

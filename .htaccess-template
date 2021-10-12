@@ -1,7 +1,7 @@
 ## Protect files and directories from prying eyes.
-<FilesMatch "\.(make|test|md|po|sh|.*sql|.*bson|tpl(\.php)?|svn-base)$|^(code-style\.pl|Entries.*|Repository|Root|Tag|Template|all-wcprops|entries|format)$">
-  Order allow,deny
-</FilesMatch>
+# <FilesMatch "\.(make|test|md|po|sh|.*sql|.*bson|tpl(\.php)?|svn-base)$|^(code-style\.pl|Entries.*|Repository|Root|Tag|Template|all-wcprops|entries|format)$">
+#   Order allow,deny
+# </FilesMatch>
 
 ## Don't show directory listings for URLs which map to a directory.
 Options -Indexes
@@ -52,7 +52,10 @@ DirectoryIndex index.php
   RewriteRule ^(.*)$ index.php?/$1 [L]
 </IfModule>
 
+SetEnv ACCESS_PASSWORD
+
 SetEnv MYSQL_HOSTNAME
+SetEnv MYSQL_PORT 3306
 SetEnv MYSQL_USERNAME
 SetEnv MYSQL_PASSWORD
 SetEnv MYSQL_DATABASE
