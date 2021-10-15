@@ -1,9 +1,10 @@
 <?php
 
 function get_mp4s($vid_id) {
+  global $con;
   $media_path = $_SERVER['MEDIA_PATH'];
-
   $mp4s = [];
+
   foreach (glob("$media_path/vids/*/$vid_id"."_*.mp4") as $mp4) {
     $splits = explode("/", $mp4);
     $subfolder = $splits[count($splits) - 2];
@@ -13,6 +14,21 @@ function get_mp4s($vid_id) {
       "file_path"=>"/media/vid/$subfolder/$vid_id/$part_no",
       "part_no"=>intval($part_no)
     ));
+  }
+
+  if (count($mp4s) == 0) {
+    $db_query = "select part from vid_media where vid=?";
+    $stmt = $con->prepare($db_query);
+    $stmt->bind_param('s', $vid_id);
+    $stmt->execute();
+    $db_response = $stmt->get_result();
+    while ($row = mysqli_fetch_object($db_response)) {
+      $part_no = $row->part;
+      array_push($mp4s, array(
+        "file_path"=>"/media/vid/x/$vid_id/$part_no",
+        "part_no"=>intval($part_no)
+      ));
+    }
   }
 
   usort($mp4s, function($a, $b) {

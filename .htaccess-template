@@ -61,6 +61,7 @@ SetEnv MYSQL_PORT 3306
 SetEnv MYSQL_USERNAME
 SetEnv MYSQL_PASSWORD
 SetEnv MYSQL_DATABASE
-SetEnv ACCESS_PASSWORD
 
 SetEnv MEDIA_PATH c:/example/media/path
+SetEnv BLOB_PATH c:/example/blob/path
+SetEnv BLOB_KEY
