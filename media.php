@@ -78,20 +78,18 @@ switch($_GET["type"]) {
         header("Content-Range: bytes $byte_start-$byte_end/$file_size");
         header("Content-Length: $content_length");
 
+        $buffer_size = 4 * 1024;
         if (file_exists($file_fullpath)) {
             if ($byte_start > 0) fseek($fp, $byte_start);
-            $blob_size = 1024 * 1024;
             while(!feof($fp) && ($p = ftell($fp)) <= $byte_end) {
-                if ($p + $blob_size > $byte_end) {
-                    $blob_size = $byte_end - $p + 1;
-                }
+                if ($p + $buffer_size > $byte_end) $buffer_size = $byte_end - $p + 1;
                 set_time_limit(0);
-                echo fread($fp, $blob_size);
+                echo fread($fp, $buffer_size);
                 flush();
             }
             fclose($fp);
         } else {
-            $blob_size = 512 * 1024 - 1;
+            $blob_size = 4 * 1024 * 1024 - 1;
             foreach ($blob_chunks as $blob_chunk) {
                 if ($byte_start <= $blob_chunk->size) {
                     $chunk_byte_end = min($byte_end, $blob_chunk->size);
@@ -116,8 +114,16 @@ switch($_GET["type"]) {
                             if ($byte_length < $blob_size) $bin_data = substr($bin_data, 0, $byte_length);
                         }
 
-                        echo $bin_data;
-                        flush();
+                        while ($bin_data) {
+                            if (strlen($bin_data) > $buffer_size) {
+                                echo substr($bin_data, 0, $buffer_size);
+                                $bin_data = substr($bin_data, $buffer_size);
+                            } else {
+                                echo $bin_data;
+                                $bin_data = null;
+                            }
+                            flush();
+                        }
                     }
                 }
                 $byte_start -= $blob_chunk->size;
