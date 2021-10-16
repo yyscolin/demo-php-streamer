@@ -32,7 +32,7 @@ switch($_GET["type"]) {
         } else {
             $file_size = 0;
             $blob_chunks = [];
-            $db_query = "select blob_head, size, iv from media_files where fid=(select fid from vid_media where vid=? and part=?) order by blob_no";
+            $db_query = "select head_blob, head_piece, size, iv from media_blobs where fid=(select fid from vid_media where vid=? and part=?) order by sequence";
             $stmt = $con->prepare($db_query);
             $stmt->bind_param('ss', $vid, $part);
             $stmt->execute();
@@ -89,45 +89,73 @@ switch($_GET["type"]) {
             }
             fclose($fp);
         } else {
-            $blob_size = 4 * 1024 * 1024 - 1;
+            $piece_size = 512 * 1024 - 1;
+            $pieces_per_blob = 128;
+            $blob_size = $piece_size * $pieces_per_blob;
+
             foreach ($blob_chunks as $blob_chunk) {
                 if ($byte_start <= $blob_chunk->size) {
-                    $chunk_byte_end = min($byte_end, $blob_chunk->size);
-                    $blob_first = $blob_chunk->blob_head + floor($byte_start / $blob_size);
-                    $blob_last = $blob_chunk->blob_head + floor($chunk_byte_end / $blob_size);
-                    for ($i = $blob_first; $i <= $blob_last; $i++) {
-                        set_time_limit(0);
+                    $blob_no = $blob_chunk->head_blob;
+                    $piece_no = $blob_chunk->head_piece;
 
+                    while ($byte_start > $blob_size) {
+                        $blob_no++;
+                        $byte_start -= $blob_size;
+                    }
+
+                    while ($byte_start > $piece_size) {
+                        if ($piece_no == $pieces_per_blob) {
+                            $blob_no++;
+                            $piece_no = 1;
+                        } else {
+                            $piece_no++;
+                        }
+                        $byte_start -= $piece_size;
+                    }
+
+                    while ($content_length > 0 && $blob_chunk->size > 0) {
+                        if (!isset($blob_file)) $blob_file = fopen($_SERVER['BLOB_PATH']."/$blob_no", 'rb');
+                        fseek($blob_file, ($piece_no - 1) * ($piece_size + 1));
+
+                        $bin_data = fread($blob_file, $piece_size + 1);
                         $bin_data = openssl_decrypt(
-                            file_get_contents($_SERVER['BLOB_PATH']."/$i"),
+                            $bin_data,
                             "AES-256-CBC",
                             $_SERVER["BLOB_KEY"],
                             OPENSSL_RAW_DATA,
                             $blob_chunk->iv
                         );
 
-                        if ($i == $blob_first && $byte_start > 0) {
-                            $blob_byte_start = $byte_start % $blob_size;
-                            if ($blob_byte_start > 0) $bin_data = substr($bin_data, $blob_byte_start);
-                        } elseif ($i == $blob_last) {
-                            $byte_length = $chunk_byte_end % $blob_size + 1;
-                            if ($byte_length < $blob_size) $bin_data = substr($bin_data, 0, $byte_length);
+                        if ($byte_start > 0) {
+                            $bin_data = substr($bin_data, $byte_start);
+                            $byte_start = 0;
                         }
 
-                        while ($bin_data) {
-                            if (strlen($bin_data) > $buffer_size) {
-                                echo substr($bin_data, 0, $buffer_size);
-                                $bin_data = substr($bin_data, $buffer_size);
-                            } else {
-                                echo $bin_data;
-                                $bin_data = null;
-                            }
-                            flush();
+                        $bytes_to_send = min($content_length, $blob_chunk->size, $piece_size);
+                        if (strlen($bin_data) > $bytes_to_send) $bin_data = substr($bin_data, 0, $bytes_to_send);
+
+                        echo $bin_data;
+                        flush();
+
+                        $content_length -= $bytes_to_send;
+                        $blob_chunk->size -= $bytes_to_send;
+
+                        if ($piece_no == $pieces_per_blob) {
+                            $blob_no++;
+                            $piece_no = 1;
+                            fclose($blob_file);
+                            unset($blob_file);
+                        } else {
+                            $piece_no++;
                         }
+                    }
+
+                    if ($blob_file) {
+                        fclose($blob_file);
+                        unset($blob_file);
                     }
                 }
                 $byte_start -= $blob_chunk->size;
-                $byte_end -= $blob_chunk->size;
             }
         }
         break;
