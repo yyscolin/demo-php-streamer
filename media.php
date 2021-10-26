@@ -127,7 +127,7 @@ switch($_GET["type"]) {
                         $bin_data = openssl_decrypt(
                             $bin_data,
                             "AES-256-CBC",
-                            $_SERVER["BLOB_KEY"],
+                            file_get_contents($_SERVER["BLOB_KEY"]),
                             OPENSSL_RAW_DATA,
                             $iv
                         );
