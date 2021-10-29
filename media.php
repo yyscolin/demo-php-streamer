@@ -2,6 +2,12 @@
 
 require_once($_SERVER['DOCUMENT_ROOT']."/public/mysql_connections.php");
 
+function get_blob_path($blob_no) {
+    $blob_no = strval($blob_no);
+    $blob_no = str_repeat("0", 6 - strlen($blob_no)).$blob_no;
+    return $_SERVER['BLOB_PATH']."/$blob_no";
+}
+
 $project_root = $_SERVER['DOCUMENT_ROOT'];
 $media_path = $_SERVER['MEDIA_PATH'];
 switch($_GET["type"]) {
@@ -37,7 +43,6 @@ switch($_GET["type"]) {
             $stmt->bind_param('ss', $vid, $part);
             $stmt->execute();
             $db_response = $stmt->get_result();
-            // $db_row = $db_response->fetch_assoc();
             $db_row = mysqli_fetch_object($db_response);
             $fid = $db_row->fid;
             $padding = $db_row->padding;
@@ -118,7 +123,7 @@ switch($_GET["type"]) {
 
                         if (!isset($blob_opened) || $blob_opened !== $blob_no) {
                             if (isset($blob_opened)) fclose($blob_stream);
-                            $blob_stream = fopen($_SERVER['BLOB_PATH']."/$blob_no", "rb");
+                            $blob_stream = fopen(get_blob_path($blob_no), "rb");
                             $blob_opened = $blob_no;
                             if ($piece_index > 0) fseek($blob_stream, $piece_index * ($piece_size + 1));
                         }
