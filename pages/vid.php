@@ -17,9 +17,9 @@ function get_mp4s($vid_id) {
   }
 
   if (count($mp4s) == 0) {
-    $db_query = "select part from vid_media where vid=?";
+    $db_query = "select part from vid_media where vid=? union select part from vid_media_v2 where vid=?";
     $stmt = $con->prepare($db_query);
-    $stmt->bind_param('s', $vid_id);
+    $stmt->bind_param('ss', $vid_id, $vid_id);
     $stmt->execute();
     $db_response = $stmt->get_result();
     while ($row = mysqli_fetch_object($db_response)) {
