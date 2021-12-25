@@ -111,7 +111,6 @@ if (file_exists($file_fullpath)) {
 }
 
 $blob_key = file_get_contents($_SERVER["BLOB_KEY"]);
-$piece_size = 512 * 1024 - 1;
 
 $db_query = "select * from media_files_v2 where fid=(select fid from vid_media_v2 where vid=? and part=?)";
 $stmt = $con->prepare($db_query);
@@ -119,18 +118,20 @@ $stmt->bind_param('ss', $vid, $part);
 $stmt->execute();
 $db_response = $stmt->get_result();
 if ($db_response->num_rows > 0) {
+    $blob_size = 512 * 1024 - 1;
+
     $db_row = mysqli_fetch_object($db_response);
     $fid = $db_row->fid;
     $file_size = $db_row->size;
     $iv = $db_row->iv;
+    $blob_count = ceil($file_size / $blob_size);
 
     list($content_remaining, $bytes_displacement, $byte_end) = send_headers($file_size);
     $blob_folder = $_SERVER['BLOB_PATH']."/".str_repeat(0, 4 - strlen($fid)).$fid;
-    $blob_files = scandir($blob_folder);
-    $i = floor($bytes_displacement / $piece_size) + 2;
-    $bytes_displacement %= $piece_size;
-    for ($i; $i < count($blob_files); $i++) {
-        $blob_path = "$blob_folder/".$blob_files[$i];
+    $blob_index = floor($bytes_displacement / $blob_size);
+    $bytes_displacement %= $blob_size;
+    for ($blob_index; $blob_index < $blob_count; $blob_index++) {
+        $blob_path = "$blob_folder/".str_repeat(0, 5 - strlen($blob_index)).$blob_index;
         $bin_data = file_get_contents($blob_path);
         $bin_data =  openssl_decrypt($bin_data, "AES-256-CBC", $blob_key, OPENSSL_RAW_DATA, $iv);
         if ($bytes_displacement > 0) {
@@ -145,6 +146,7 @@ if ($db_response->num_rows > 0) {
 }
 
 $pieces_per_blob = 256;
+$piece_size = 512 * 1024 - 1;
 
 $db_query = "select * from media_files where fid=(select fid from vid_media where vid=? and part=?)";
 $stmt = $con->prepare($db_query);
