@@ -126,10 +126,10 @@ if ($db_response->num_rows > 0) {
     $iv = $db_row->iv;
     $blob_count = ceil($file_size / $blob_size);
 
-    list($content_remaining, $bytes_displacement, $byte_end) = send_headers($file_size);
+    list($content_remaining, $byte_start, $byte_end) = send_headers($file_size);
     $blob_folder = $_SERVER['BLOB_PATH']."/".str_repeat(0, 4 - strlen($fid)).$fid;
-    $blob_index = floor($bytes_displacement / $blob_size);
-    $bytes_displacement %= $blob_size;
+    $blob_index = floor($byte_start / $blob_size);
+    $bytes_displacement = $byte_start - $blob_index * $blob_size;
     for ($blob_index; $blob_index < $blob_count; $blob_index++) {
         $blob_path = "$blob_folder/".str_repeat(0, 5 - strlen($blob_index)).$blob_index;
         $bin_data = file_get_contents($blob_path);
@@ -184,7 +184,7 @@ foreach ($blob_chunks as $blob_chunk) {
         $pieces_to_skip = floor($bytes_displacement / $piece_size);
         $piece_no += $pieces_to_skip;
         $chunk_remaining -= $pieces_to_skip * $piece_size;
-        $bytes_displacement %= $piece_size;
+        $bytes_displacement = $bytes_displacement - $pieces_to_skip * $piece_size;
     }
 
     while ($content_remaining > 0 && $chunk_remaining > 0) {
@@ -194,7 +194,7 @@ foreach ($blob_chunks as $blob_chunk) {
             if (isset($blob_opened)) fclose($blob_stream);
             $blob_stream = fopen(get_blob_path($blob_no), "rb");
             $blob_opened = $blob_no;
-            $piece_displacement = $piece_no % $pieces_per_blob;
+            $piece_displacement = $piece_no - $blob_no * $pieces_per_blob;
             if ($piece_displacement > 0) fseek($blob_stream, $piece_displacement * ($piece_size + 1));
         }
 
