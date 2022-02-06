@@ -88,10 +88,9 @@ function send_headers($file_size) {
     return array($content_length, $byte_start, $byte_end);
 }
 
-$subfolder = $_GET["subfolder"];
 $vid = $_GET["vid"];
 $part = $_GET["part"];
-$file_fullpath = "$media_path/vids/$subfolder/$vid"."_$part.mp4";
+$file_fullpath = "$media_path/vids/$vid"."_$part.mp4";
 
 $buffer_size = 4 * 1024;
 
