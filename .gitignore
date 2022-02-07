@@ -1,1 +1,4 @@
 .htaccess
+
+media/*/*
+!media/*/readme.txt

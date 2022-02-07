@@ -15,7 +15,7 @@ if ($_GET["type"] == "cover") {
 if ($_GET["type"] == "star") {
     header("Content-Type:image/jpeg");
     $file = $_GET["file"];
-    $media_file = "$media_path/entities/$file.jpg";
+    $media_file = "$media_path/stars/$file.jpg";
     if (!file_exists($media_file)) $media_file = "$project_root/images/default-star.jpg";
     readfile($media_file);
     exit();

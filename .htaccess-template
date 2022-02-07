@@ -62,6 +62,6 @@ SetEnv MYSQL_USERNAME
 SetEnv MYSQL_PASSWORD
 SetEnv MYSQL_DATABASE
 
-SetEnv MEDIA_PATH c:/example/media/path
+SetEnv MEDIA_PATH ./media
 SetEnv BLOB_PATH c:/example/blob/path
 SetEnv BLOB_KEY c:/example/blob.key
