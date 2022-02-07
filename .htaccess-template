@@ -30,7 +30,6 @@ DirectoryIndex index.php
   RewriteRule ^vids/?$ pages/vids.php [L]
   RewriteRule ^star/([0-9]+)$ pages/star.php?id=$1 [L]
   RewriteRule ^vid/(.+)$ pages/vid.php?id=$1 [L]
-  RewriteRule ^media/vid/(.+)/(.+)$ media.php?type=vid&vid=$1&part=$2 [L]
   RewriteRule ^media/(.+)/(.+)$ media.php?type=$1&file=$2 [L]
 
   # Update RewriteBase if the app is in a subdirectory.

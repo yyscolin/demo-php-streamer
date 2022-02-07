@@ -5,8 +5,7 @@ $media_path = $_SERVER['MEDIA_PATH'];
 
 if ($_GET["type"] == "cover") {
     header("Content-Type:image/jpeg");
-    $file = $_GET["file"];
-    $media_file = "$media_path/covers/$file.jpg";
+    $media_file = "$media_path/covers/".$_GET["file"].".jpg";
     if (!file_exists($media_file)) $media_file = "$project_root/images/default-cover.jpg";
     readfile($media_file);
     exit();
@@ -14,8 +13,7 @@ if ($_GET["type"] == "cover") {
 
 if ($_GET["type"] == "star") {
     header("Content-Type:image/jpeg");
-    $file = $_GET["file"];
-    $media_file = "$media_path/stars/$file.jpg";
+    $media_file = "$media_path/stars/".$_GET["file"].".jpg";
     if (!file_exists($media_file)) $media_file = "$project_root/images/default-star.jpg";
     readfile($media_file);
     exit();
@@ -88,9 +86,8 @@ function send_headers($file_size) {
     return array($content_length, $byte_start, $byte_end);
 }
 
-$vid = $_GET["vid"];
-$part = $_GET["part"];
-$file_fullpath = "$media_path/vids/$vid"."_$part.mp4";
+list($vid, $part) = explode("~", $_GET["file"]);
+$file_fullpath = "$media_path/vids/$vid~$part.mp4";
 
 $buffer_size = 4 * 1024;
 

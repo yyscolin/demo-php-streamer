@@ -5,13 +5,13 @@ function get_mp4s($vid_id) {
   $media_path = $_SERVER['MEDIA_PATH'];
   $mp4s = [];
 
-  foreach (glob("$media_path/vids/$vid_id"."_*.mp4") as $mp4) {
+  foreach (glob("$media_path/vids/$vid_id~*.mp4") as $mp4) {
     $splits = explode("/", $mp4);
     $subfolder = $splits[count($splits) - 2];
     $file_name = explode(".", $splits[count($splits) - 1])[0];
-    list(, $part_no) = explode("_", $file_name);
+    list(, $part_no) = explode("~", $file_name);
     array_push($mp4s, array(
-      "file_path"=>"/media/vid/$vid_id/$part_no",
+      "file_path"=>"/media/vid/$vid_id~$part_no",
       "part_no"=>intval($part_no)
     ));
   }
@@ -25,7 +25,7 @@ function get_mp4s($vid_id) {
     while ($row = mysqli_fetch_object($db_response)) {
       $part_no = $row->part;
       array_push($mp4s, array(
-        "file_path"=>"/media/vid/$vid_id/$part_no",
+        "file_path"=>"/media/vid/$vid_id~$part_no",
         "part_no"=>intval($part_no)
       ));
     }
