@@ -6,7 +6,7 @@ require_once($_SERVER['DOCUMENT_ROOT']."/public/box-vid.php");
 print_page_header([
   "<link rel='stylesheet' href='/styles/poster.css'>",
   "<link rel='stylesheet' href='/styles/star-box.css'>",
-  "<title>Demo PHP Streamer</title>"
+  "<title>".$_SERVER["PROJECT_TITLE"]."</title>"
 ]);
 
 print_line("<div id='main-block'>");

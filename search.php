@@ -43,7 +43,7 @@ function print_search_results() {
 print_page_header([
   "<link rel='stylesheet' href='/styles/page-search.css'>",
   !$is_mobile && !$is_iPad ? "<link rel='stylesheet' href='/styles/page-search-web.css'>" : null,
-  "<title>".get_text("search", 'ucfirst')." - Demo PHP Streamer</title>"
+  "<title>".get_text("search", 'ucfirst')." - ".$_SERVER["PROJECT_TITLE"]."</title>"
 ]);
 
 ?>

@@ -53,6 +53,7 @@ DirectoryIndex index.php
   RewriteRule ^(.*)$ index.php?/$1 [L]
 </IfModule>
 
+SetEnv PROJECT_TITLE
 SetEnv ACCESS_PASSWORD
 
 SetEnv MYSQL_HOSTNAME

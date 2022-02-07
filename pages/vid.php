@@ -37,7 +37,7 @@ print_page_header([
   "<script>const id = '$vid->id'</script>",
   "<link rel='stylesheet' href='/styles/p-vid.css'>",
   "<link rel='stylesheet' href='/styles/star-box.css'>",
-  "<title>$vid->id - Demo PHP Streamer</title>"
+  "<title>$vid->id - ".$_SERVER["PROJECT_TITLE"]."</title>"
 ]);
 
 print_line("<div id='main-block'>");
