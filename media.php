@@ -3,49 +3,7 @@
 $project_root = $_SERVER['DOCUMENT_ROOT'];
 $media_path = $_SERVER['MEDIA_PATH'];
 
-if ($_GET["type"] == "cover") {
-    header("Content-Type:image/jpeg");
-    $media_file = "$media_path/covers/".$_GET["file"].".jpg";
-    if (!file_exists($media_file)) $media_file = "$project_root/images/default-cover.jpg";
-    readfile($media_file);
-    exit();
-}
-
-if ($_GET["type"] == "star") {
-    header("Content-Type:image/jpeg");
-    $media_file = "$media_path/stars/".$_GET["file"].".jpg";
-    if (!file_exists($media_file)) $media_file = "$project_root/images/default-star.jpg";
-    readfile($media_file);
-    exit();
-}
-
-if ($_GET["type"] != "vid") {
-    http_response_code(404);
-    exit();
-}
-
 require_once($_SERVER['DOCUMENT_ROOT']."/public/mysql_connections.php");
-
-function buffer_bytes($bin_data, $bytes_to_send, $buffer_size) {
-    if (strlen($bin_data) > $bytes_to_send) $bin_data = substr($bin_data, 0, $bytes_to_send);
-    while ($bin_data) {
-        set_time_limit(0);
-        if (strlen($bin_data) > $buffer_size) {
-            echo substr($bin_data, 0, $buffer_size);
-            $bin_data = substr($bin_data, $buffer_size);
-        } else {
-            echo $bin_data;
-            $bin_data = null;
-        }
-        flush();
-    }
-}
-
-function get_blob_path($blob_no) {
-    $blob_no = strval($blob_no);
-    $blob_no = str_repeat("0", 6 - strlen($blob_no)).$blob_no;
-    return $_SERVER['BLOB_PATH']."/$blob_no";
-}
 
 function send_headers($file_size) {
     $content_length = $file_size;
@@ -86,15 +44,70 @@ function send_headers($file_size) {
     return array($content_length, $byte_start, $byte_end);
 }
 
+if ($_GET["type"] == "cover") {
+    header("Content-Type:image/jpeg");
+    $media_file = "$media_path/covers/".$_GET["file"].".jpg";
+    if (!file_exists($media_file)) $media_file = "$project_root/images/default-cover.jpg";
+    readfile($media_file);
+    exit();
+}
+
+if ($_GET["type"] == "star") {
+    header("Content-Type:image/jpeg");
+    $media_file = "$media_path/stars/".$_GET["file"].".jpg";
+    if (!file_exists($media_file)) $media_file = "$project_root/images/default-star.jpg";
+    readfile($media_file);
+    exit();
+}
+
+if ($_GET["type"] != "vid") {
+    http_response_code(400);
+    exit();
+}
+
 list($video_id, $part_id) = explode("~", $_GET["file"]);
-$file_fullpath = "$media_path/vids/$video_id~$part_id.mp4";
+$db_query = "select file_id from vid_media where video_id=? and part_id=?";
+$db_statement = $con->prepare($db_query);
+$db_statement->bind_param('ss', $video_id, $part_id);
+$db_statement->execute();
+$db_response = $db_statement->get_result();
+if ($db_response->num_rows < 1) {
+    http_response_code(404);
+    exit();
+}
 
-$buffer_size = 4 * 1024;
+// http_response_code(404);
+// exit();
 
-if (file_exists($file_fullpath)) {
-    $file_size = filesize($file_fullpath);
+function buffer_bytes($bin_data, $bytes_to_send, $buffer_size) {
+    if (strlen($bin_data) > $bytes_to_send) $bin_data = substr($bin_data, 0, $bytes_to_send);
+    while ($bin_data) {
+        set_time_limit(0);
+        if (strlen($bin_data) > $buffer_size) {
+            echo substr($bin_data, 0, $buffer_size);
+            $bin_data = substr($bin_data, $buffer_size);
+        } else {
+            echo $bin_data;
+            $bin_data = null;
+        }
+        flush();
+    }
+}
+
+function get_blob_path($blob_no) {
+    $blob_no = strval($blob_no);
+    $blob_no = str_repeat("0", 6 - strlen($blob_no)).$blob_no;
+    return $_SERVER['BLOB_PATH']."/$blob_no";
+}
+
+$db_row = mysqli_fetch_object($db_response);
+$file_id = $db_row->file_id;
+$file_path = "$media_path/vids/$file_id.mp4";
+if (file_exists($file_path)) {
+    $buffer_size = 4 * 1024;
+    $file_size = filesize($file_path);
     list($content_length, $byte_start, $byte_end) = send_headers($file_size);
-    $fp = fopen($file_fullpath, 'rb');
+    $fp = fopen($file_path, 'rb');
     if ($byte_start > 0) fseek($fp, $byte_start);
     while(!feof($fp) && ($p = ftell($fp)) <= $byte_end) {
         if ($p + $buffer_size > $byte_end) $buffer_size = $byte_end - $p + 1;
@@ -107,16 +120,11 @@ if (file_exists($file_fullpath)) {
 }
 
 $blob_key = file_get_contents($_SERVER["BLOB_KEY"]);
-
-$db_query = "select * from media_files where id=(select file_id from vid_media where video_id=? and part_id=?)";
-$stmt = $con->prepare($db_query);
-$stmt->bind_param('ss', $video_id, $part_id);
-$stmt->execute();
-$db_response = $stmt->get_result();
+$db_query = "select * from media_files where id=$file_id";
+$db_response = $con->query($db_query);
 $db_row = mysqli_fetch_object($db_response);
-
-$file_id = $db_row->id;
 $iv_key = $db_row->iv_key;
+
 if ($db_row->ver_id == 2) {
     $blob_size = 512 * 1024 - 1;
 
@@ -142,6 +150,7 @@ if ($db_row->ver_id == 2) {
     exit();
 }
 
+$buffer_size = 4 * 1024;
 $pieces_per_blob = 256;
 $piece_size = 512 * 1024 - 1;
 

@@ -5,30 +5,17 @@ function get_mp4s($vid_id) {
   $media_path = $_SERVER['MEDIA_PATH'];
   $mp4s = [];
 
-  foreach (glob("$media_path/vids/$vid_id~*.mp4") as $mp4) {
-    $splits = explode("/", $mp4);
-    $subfolder = $splits[count($splits) - 2];
-    $file_name = explode(".", $splits[count($splits) - 1])[0];
-    list(, $part_id) = explode("~", $file_name);
+  $db_query = "select part_id from vid_media where video_id=?";
+  $stmt = $con->prepare($db_query);
+  $stmt->bind_param("s", $vid_id);
+  $stmt->execute();
+  $db_response = $stmt->get_result();
+  while ($row = mysqli_fetch_object($db_response)) {
+    $part_id = $row->part_id;
     array_push($mp4s, array(
       "file_path"=>"/media/vid/$vid_id~$part_id",
       "part_id"=>intval($part_id)
     ));
-  }
-
-  if (count($mp4s) == 0) {
-    $db_query = "select part_id from vid_media where video_id=?";
-    $stmt = $con->prepare($db_query);
-    $stmt->bind_param("s", $vid_id);
-    $stmt->execute();
-    $db_response = $stmt->get_result();
-    while ($row = mysqli_fetch_object($db_response)) {
-      $part_id = $row->part_id;
-      array_push($mp4s, array(
-        "file_path"=>"/media/vid/$vid_id~$part_id",
-        "part_id"=>intval($part_id)
-      ));
-    }
   }
 
   usort($mp4s, function($a, $b) {
