@@ -119,7 +119,7 @@ if (file_exists($file_path)) {
     exit();
 }
 
-$blob_key = file_get_contents($_SERVER["BLOB_KEY"]);
+$blob_key = base64_decode($_SERVER["BLOB_KEY"]);
 $db_query = "select * from media_files where id=$file_id";
 $db_response = $con->query($db_query);
 $db_row = mysqli_fetch_object($db_response);
