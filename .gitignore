@@ -1,6 +1,6 @@
 .htaccess
 
-media/*/*
+media/*
 !media/*/readme.txt
 
 banner.png
