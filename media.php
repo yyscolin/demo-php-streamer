@@ -86,8 +86,8 @@ function send_headers($file_size) {
     return array($content_length, $byte_start, $byte_end);
 }
 
-list($vid, $part) = explode("~", $_GET["file"]);
-$file_fullpath = "$media_path/vids/$vid~$part.mp4";
+list($video_id, $part_id) = explode("~", $_GET["file"]);
+$file_fullpath = "$media_path/vids/$video_id~$part_id.mp4";
 
 $buffer_size = 4 * 1024;
 
@@ -108,28 +108,29 @@ if (file_exists($file_fullpath)) {
 
 $blob_key = file_get_contents($_SERVER["BLOB_KEY"]);
 
-$db_query = "select * from media_files_v2 where fid=(select fid from vid_media_v2 where vid=? and part=?)";
+$db_query = "select * from media_files where id=(select file_id from vid_media where video_id=? and part_id=?)";
 $stmt = $con->prepare($db_query);
-$stmt->bind_param('ss', $vid, $part);
+$stmt->bind_param('ss', $video_id, $part_id);
 $stmt->execute();
 $db_response = $stmt->get_result();
-if ($db_response->num_rows > 0) {
+$db_row = mysqli_fetch_object($db_response);
+
+$file_id = $db_row->id;
+$iv_key = $db_row->iv_key;
+if ($db_row->ver_id == 2) {
     $blob_size = 512 * 1024 - 1;
 
-    $db_row = mysqli_fetch_object($db_response);
-    $fid = $db_row->fid;
-    $file_size = $db_row->size;
-    $iv = $db_row->iv;
+    $file_size = $db_row->bytes_special;
     $blob_count = ceil($file_size / $blob_size);
 
     list($content_remaining, $byte_start, $byte_end) = send_headers($file_size);
-    $blob_folder = $_SERVER['BLOB_PATH']."/".str_repeat(0, 4 - strlen($fid)).$fid;
+    $blob_folder = $_SERVER['BLOB_PATH']."/".str_repeat(0, 4 - strlen($file_id)).$file_id;
     $blob_index = floor($byte_start / $blob_size);
     $bytes_displacement = $byte_start - $blob_index * $blob_size;
     for ($blob_index; $blob_index < $blob_count; $blob_index++) {
         $blob_path = "$blob_folder/".str_repeat(0, 5 - strlen($blob_index)).$blob_index;
         $bin_data = file_get_contents($blob_path);
-        $bin_data =  openssl_decrypt($bin_data, "AES-256-CBC", $blob_key, OPENSSL_RAW_DATA, $iv);
+        $bin_data =  openssl_decrypt($bin_data, "AES-256-CBC", $blob_key, OPENSSL_RAW_DATA, $iv_key);
         if ($bytes_displacement > 0) {
             $bin_data = substr($bin_data, $bytes_displacement);
             $bytes_displacement = 0;
@@ -144,19 +145,11 @@ if ($db_response->num_rows > 0) {
 $pieces_per_blob = 256;
 $piece_size = 512 * 1024 - 1;
 
-$db_query = "select * from media_files where fid=(select fid from vid_media where vid=? and part=?)";
-$stmt = $con->prepare($db_query);
-$stmt->bind_param('ss', $vid, $part);
-$stmt->execute();
-$db_response = $stmt->get_result();
-$db_row = mysqli_fetch_object($db_response);
-$fid = $db_row->fid;
-$padding = $db_row->padding;
-$iv = $db_row->iv;
+$padding = $db_row->bytes_special;
 
 $blob_chunks = [];
 $file_size = 0;
-$db_query = "select head_piece, pieces from media_pieces where fid=$fid order by sequence";
+$db_query = "select head_piece, pieces from media_pieces where file_id=$file_id order by sequence";
 $db_response = $con->query($db_query);
 while ($db_row = mysqli_fetch_object($db_response)) {
     $db_row->size = $piece_size * $db_row->pieces;
@@ -195,7 +188,7 @@ foreach ($blob_chunks as $blob_chunk) {
         }
 
         $bin_data = fread($blob_stream, $piece_size + 1);
-        $bin_data =  openssl_decrypt($bin_data, "AES-256-CBC", $blob_key, OPENSSL_RAW_DATA, $iv);
+        $bin_data =  openssl_decrypt($bin_data, "AES-256-CBC", $blob_key, OPENSSL_RAW_DATA, $iv_key);
 
         if ($bytes_displacement > 0) {
             $bin_data = substr($bin_data, $bytes_displacement);

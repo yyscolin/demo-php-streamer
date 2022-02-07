@@ -9,30 +9,30 @@ function get_mp4s($vid_id) {
     $splits = explode("/", $mp4);
     $subfolder = $splits[count($splits) - 2];
     $file_name = explode(".", $splits[count($splits) - 1])[0];
-    list(, $part_no) = explode("~", $file_name);
+    list(, $part_id) = explode("~", $file_name);
     array_push($mp4s, array(
-      "file_path"=>"/media/vid/$vid_id~$part_no",
-      "part_no"=>intval($part_no)
+      "file_path"=>"/media/vid/$vid_id~$part_id",
+      "part_id"=>intval($part_id)
     ));
   }
 
   if (count($mp4s) == 0) {
-    $db_query = "select part from vid_media where vid=? union select part from vid_media_v2 where vid=?";
+    $db_query = "select part_id from vid_media where video_id=?";
     $stmt = $con->prepare($db_query);
-    $stmt->bind_param('ss', $vid_id, $vid_id);
+    $stmt->bind_param("s", $vid_id);
     $stmt->execute();
     $db_response = $stmt->get_result();
     while ($row = mysqli_fetch_object($db_response)) {
-      $part_no = $row->part;
+      $part_id = $row->part_id;
       array_push($mp4s, array(
-        "file_path"=>"/media/vid/$vid_id~$part_no",
-        "part_no"=>intval($part_no)
+        "file_path"=>"/media/vid/$vid_id~$part_id",
+        "part_id"=>intval($part_id)
       ));
     }
   }
 
   usort($mp4s, function($a, $b) {
-    return $a['part_no'] > $b['part_no'];
+    return $a['part_id'] > $b['part_id'];
   });
 
   return $mp4s;
@@ -74,8 +74,8 @@ if (count($mp4s) > 1) {
   for ($i = 0; $i < count($mp4s); $i++) {
     $id = $i == 0 ? "id='selected'" : "";
     $vid_path = $mp4s[$i]['file_path'];
-    $part_no = $mp4s[$i]['part_no'];
-    print_line("<button ".$id."onclick='loadVideo(\"$vid_path\", this)'>PART $part_no</button>", 3);
+    $part_id = $mp4s[$i]['part_id'];
+    print_line("<button ".$id."onclick='loadVideo(\"$vid_path\", this)'>PART $part_id</button>", 3);
   }
   print_line("</div>", 2);
 }
