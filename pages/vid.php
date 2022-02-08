@@ -1,19 +1,19 @@
 <?php
 
-function get_mp4s($vid_id) {
+function get_mp4s($video_id) {
   global $con;
   $media_path = $_SERVER["MEDIA_PATH"];
   $mp4s = [];
 
   $db_query = "select part_id from vid_media where video_id=?";
   $stmt = $con->prepare($db_query);
-  $stmt->bind_param("s", $vid_id);
+  $stmt->bind_param("s", $video_id);
   $stmt->execute();
   $db_response = $stmt->get_result();
   while ($row = mysqli_fetch_object($db_response)) {
     $part_id = $row->part_id;
     array_push($mp4s, array(
-      "file_path"=>"/media/vid/$vid_id~$part_id",
+      "file_path"=>"/media/vid/$video_id~$part_id",
       "part_id"=>intval($part_id)
     ));
   }
@@ -34,13 +34,45 @@ function get_seek_options() {
   return json_encode($options);
 }
 
+function get_playlist_json($video_id, $mp4s) {
+  $playlist = [];
+  foreach ($mp4s as $mp4) {
+    array_push($playlist, array(
+      "sources"=>[array(
+        "src"=>"/media/vid/$video_id~".$mp4["part_id"],
+        "type"=>"video/mp4",
+      )],
+      "poster"=>"/media/cover/$video_id",
+    ));
+  }
+  return json_encode($playlist);
+}
+
+function print_star_boxes($video_id, $language, $con) {
+  $db_query = "
+  select id, name_$language as name, count
+  from entities join (
+    select entity, count(*) as count from xref_entities_vids
+    where vid in (
+      select id from vids where status=1
+    ) group by entity
+  ) as t on entities.id = t.entity
+  where id in (
+    select entity from xref_entities_vids
+    where vid = '$video_id' and `is`='star'
+  ) and status=1";
+  $db_response = mysqli_query($con, $db_query);
+  while ($db_row = mysqli_fetch_object($db_response))
+    print_star_box($db_row);
+}
+
 require_once($_SERVER["DOCUMENT_ROOT"]."/public/common.php");
 require_once($_SERVER["DOCUMENT_ROOT"]."/public/box-star.php");
 
-$id = $_GET["id"];
-if (!isset($id)) redirectToHomePage();
-$vid = get_vid_from_database($id);
-if (!$vid) redirectToHomePage();
+$video_id = $_GET["id"];
+if (!isset($video_id)) redirectToHomePage();
+$video_data = get_vid_from_database($video_id);
+if (!$video_data) redirectToHomePage();
 
 print_page_header([
   "<link rel=\"stylesheet\" href=\"/styles/page-vid.css\">",
@@ -48,13 +80,13 @@ print_page_header([
   "<link rel=\"stylesheet\" href=\"/styles/videojs.css\">",
   "<link rel=\"stylesheet\" href=\"/styles/videojs-seek-buttons.css\">",
   "<link rel=\"stylesheet\" href=\"/styles/videojs-mobile-ui.css\">",
-  "<title>$vid->id - ".$_SERVER["PROJECT_TITLE"]."</title>"
+  "<title>$video_id - ".$_SERVER["PROJECT_TITLE"]."</title>"
 ]);?>
 
   <div id="main-block">
-    <h4 style="width:100%"><?=$vid->name?></h4><?php
+    <h4 style="width:100%"><?=$video_data->name?></h4><?php
 
-$mp4s = get_mp4s($vid->id);
+$mp4s = get_mp4s($video_data->id);
 if (count($mp4s) > 0) {?>
 
     <video class="video-js vjs-big-play-centered">
@@ -67,7 +99,7 @@ if (count($mp4s) > 0) {?>
 } else {?>
 
     <div id="display-wrapper">
-      <img src="<?=$vid->img?>" style="height:100%">
+      <img src="<?=$video_data->img?>" style="height:100%">
       <p id="display-error-message">Error: No video file(s) found</p>
     </div>
     <?php
@@ -78,11 +110,11 @@ if (count($mp4s) > 1) {?>
 
     <div style="width:100%"><?php
 
-for ($i = 0; $i < count($mp4s); $i++) {?>
+  for ($i = 0; $i < count($mp4s); $i++) {?>
 
       <button onclick="loadVideoPart(<?=$i?>)">PART <?=$mp4s[$i]["part_id"]?></button><?php
 
-}?>
+  }?>
 
       <script>
         $(`button`).first().prop(`disabled`, true)
@@ -102,35 +134,15 @@ for ($i = 0; $i < count($mp4s); $i++) {?>
     <table id="info-table">
       <tr>
         <td><b><?=get_text("release date", "ucwords")?></b></td>
-        <td><?=$vid->release_date?></td>
+        <td><?=$video_data->release_date?></td>
       </tr>
       <tr>
         <td><b><?=get_text("duration", "ucfirst")?></b></td>
-        <td><?=$vid->duration." ".get_text("minutes")?></td>
+        <td><?=$video_data->duration." ".get_text("minutes")?></td>
       </tr>
     </table>
     <div id="stars-box">
-      <div><?php
-
-/** Get list of stars */
-$db_query = "
-select id, name_$language as name, count
-from entities join (
-  select entity, count(*) as count from xref_entities_vids
-  where vid in (
-    select id from vids where status=1
-  ) group by entity
-) as t on entities.id = t.entity
-where id in (
-  select entity from xref_entities_vids
-  where vid = '$vid->id' and `is`='star'
-) and status=1";
-$res = mysqli_query($con, $db_query);
-while ($r = mysqli_fetch_object($res)) {
-  print_star_box($r);
-}
-
-?>
+      <div><?=print_star_boxes($video_id, $language, $con)?>
 
       </div>
     </div>
@@ -139,7 +151,6 @@ while ($r = mysqli_fetch_object($res)) {
   <script src="/scripts/videojs-mobile-ui.min.js"></script>
   <script src="/scripts/videojs-playlist.min.js"></script>
   <script src="/scripts/videojs-seek-buttons.min.js"></script>
-  <!-- <script src="/scripts/video-player.js"></script> -->
   <script>
     const videoId = window.location.pathname.split(`/`)[2]
     const videoPlayer = videojs(document.querySelector(`.video-js`), {
@@ -151,21 +162,7 @@ while ($r = mysqli_fetch_object($res)) {
 
     videoPlayer.mobileUi()
     videoPlayer.seekButtons(<?=get_seek_options()?>)
-    videoPlayer.playlist([<?php
-
-for ($i = 0; $i < count($mp4s); $i++) {?>
-
-      {
-        sources: [{
-          src: `/media/vid/${videoId}~<?=$mp4s[$i]["part_id"]?>`,
-          type: `video/mp4`
-        }],
-        poster: `/media/cover/${videoId}`,
-      },<?php
-
-}?>
-
-    ])
+    videoPlayer.playlist(<?=get_playlist_json($video_id, $mp4s)?>)
   </script><?php
 
 print_page_footer();
