@@ -25,6 +25,15 @@ function get_mp4s($vid_id) {
   return $mp4s;
 }
 
+function get_seek_options() {
+  $options = array("back"=>10, "forward"=>10);
+  if ($_SERVER["SEEK_BTN_RIGHT"]) {
+    $options["backIndex"] = 11;
+    $options["forwardIndex"] = 11;
+  }
+  return json_encode($options);
+}
+
 require_once($_SERVER["DOCUMENT_ROOT"]."/public/common.php");
 require_once($_SERVER["DOCUMENT_ROOT"]."/public/box-star.php");
 
@@ -141,10 +150,7 @@ while ($r = mysqli_fetch_object($res)) {
     })
 
     videoPlayer.mobileUi()
-    videoPlayer.seekButtons({
-      back: 10,
-      forward: 10,
-    })
+    videoPlayer.seekButtons(<?=get_seek_options()?>)
     videoPlayer.playlist([<?php
 
 for ($i = 0; $i < count($mp4s); $i++) {?>

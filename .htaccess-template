@@ -55,6 +55,7 @@ DirectoryIndex index.php
 
 SetEnv PROJECT_TITLE
 SetEnv ACCESS_PASSWORD
+SetEnv SEEK_BTN_RIGHT false
 
 SetEnv MYSQL_HOSTNAME
 SetEnv MYSQL_PORT 3306
