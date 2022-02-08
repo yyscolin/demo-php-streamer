@@ -2,7 +2,7 @@
 
 function get_mp4s($vid_id) {
   global $con;
-  $media_path = $_SERVER['MEDIA_PATH'];
+  $media_path = $_SERVER["MEDIA_PATH"];
   $mp4s = [];
 
   $db_query = "select part_id from vid_media where video_id=?";
@@ -19,14 +19,14 @@ function get_mp4s($vid_id) {
   }
 
   usort($mp4s, function($a, $b) {
-    return $a['part_id'] > $b['part_id'];
+    return $a["part_id"] > $b["part_id"];
   });
 
   return $mp4s;
 }
 
-require_once($_SERVER['DOCUMENT_ROOT']."/public/common.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/public/box-star.php");
+require_once($_SERVER["DOCUMENT_ROOT"]."/public/common.php");
+require_once($_SERVER["DOCUMENT_ROOT"]."/public/box-star.php");
 
 $id = $_GET["id"];
 if (!isset($id)) redirectToHomePage();
@@ -34,76 +34,133 @@ $vid = get_vid_from_database($id);
 if (!$vid) redirectToHomePage();
 
 print_page_header([
-  "<script>const id = '$vid->id'</script>",
-  "<link rel='stylesheet' href='/styles/p-vid.css'>",
-  "<link rel='stylesheet' href='/styles/star-box.css'>",
+  "<link rel=\"stylesheet\" href=\"/styles/page-vid.css\">",
+  "<link rel=\"stylesheet\" href=\"/styles/star-box.css\">",
+  "<link rel=\"stylesheet\" href=\"/styles/videojs.css\">",
+  "<link rel=\"stylesheet\" href=\"/styles/videojs-seek-buttons.css\">",
+  "<link rel=\"stylesheet\" href=\"/styles/videojs-mobile-ui.css\">",
   "<title>$vid->id - ".$_SERVER["PROJECT_TITLE"]."</title>"
-]);
+]);?>
 
-print_line("<div id='main-block'>");
-print_line("<h4 style='width:100%'>$vid->name</h4>", 2);
-print_line("<div id='display' value='$vid->id'>", 2);
+  <div id="main-block">
+    <h4 style="width:100%"><?=$vid->name?></h4><?php
 
 $mp4s = get_mp4s($vid->id);
-if (count($mp4s) > 0) {
-  $vid_path = $mp4s[0]['file_path'];
-  $onclick = "loadVideo(\"$vid_path\")";
-  print_line("<img id='play-btn' src='/images/play.png' onclick='$onclick'>", 3);
-  print_line("<img id='poster' src='$vid->img' onclick='$onclick'>", 3);
-} else {
-  print_line("<img id='poster' src='$vid->img'>", 3);
+if (count($mp4s) > 0) {?>
+
+    <video class="video-js vjs-big-play-centered">
+      <p class="vjs-no-js">
+      To view this video please enable JavaScript, and consider upgrading to a web browser that
+      <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+      </p>
+    </video><?php
+
+} else {?>
+
+    <div id="display-wrapper">
+      <img src="<?=$vid->img?>" style="height:100%">
+      <p id="display-error-message">Error: No video file(s) found</p>
+    </div>
+    <?php
+
 }
 
-print_line("</div>", 2);
+if (count($mp4s) > 1) {?>
 
-if (count($mp4s) > 1) {
-  print_line("<div style='width:100%'>", 2);
-  for ($i = 0; $i < count($mp4s); $i++) {
-    $id = $i == 0 ? "id='selected'" : "";
-    $vid_path = $mp4s[$i]['file_path'];
-    $part_id = $mp4s[$i]['part_id'];
-    print_line("<button ".$id."onclick='loadVideo(\"$vid_path\", this)'>PART $part_id</button>", 3);
-  }
-  print_line("</div>", 2);
-}
+    <div style="width:100%"><?php
 
-echo "
-  <table id='info-table'>
-    <tr>
-      <td><b>".get_text("release date", 'ucwords')."</b></td>
-      <td>$vid->release_date</td>
-    </tr>
-    <tr>
-      <td><b>".get_text("duration", 'ucfirst')."</b></td>
-      <td>$vid->duration ".get_text("minutes")."</td>
-    </tr>
-  </table>
-  <div id='stars-box'>
-    <div>";
+for ($i = 0; $i < count($mp4s); $i++) {?>
 
+      <button onclick="loadVideoPart(<?=$i?>)">PART <?=$mp4s[$i]["part_id"]?></button><?php
+
+}?>
+
+      <script>
+        $(`button`).first().prop(`disabled`, true)
+
+        function loadVideoPart(videoPart) {
+          videoPlayer.playlist.currentItem(videoPart)
+          videoPlayer.play()
+
+          $(`button:not([onclick="loadVideoPart(${videoPart})"])`).prop(`disabled`, false)
+          $(`button[onclick="loadVideoPart(${videoPart})"]`).prop(`disabled`, true)
+        }
+      </script>
+    </div><?php
+
+}?>
+
+    <table id="info-table">
+      <tr>
+        <td><b><?=get_text("release date", "ucwords")?></b></td>
+        <td><?=$vid->release_date?></td>
+      </tr>
+      <tr>
+        <td><b><?=get_text("duration", "ucfirst")?></b></td>
+        <td><?=$vid->duration." ".get_text("minutes")?></td>
+      </tr>
+    </table>
+    <div id="stars-box">
+      <div><?php
 
 /** Get list of stars */
-$db_query = "select id, name_$language as name, count
+$db_query = "
+select id, name_$language as name, count
 from entities join (
-    select entity, count(*) as count from xref_entities_vids
-    where vid in (
-      select id from vids where status=1
-    ) group by entity
+  select entity, count(*) as count from xref_entities_vids
+  where vid in (
+    select id from vids where status=1
+  ) group by entity
 ) as t on entities.id = t.entity
 where id in (
-    select entity from xref_entities_vids
-    where vid = '$vid->id' and `is`='star'
+  select entity from xref_entities_vids
+  where vid = '$vid->id' and `is`='star'
 ) and status=1";
 $res = mysqli_query($con, $db_query);
 while ($r = mysqli_fetch_object($res)) {
-    print_star_box($r);
+  print_star_box($r);
 }
 
-echo "
+?>
+
+      </div>
     </div>
   </div>
-  </div>
-  <script src='/scripts/video-player.js'></script>";
+  <script src="/scripts/videojs.min.js"></script>
+  <script src="/scripts/videojs-mobile-ui.min.js"></script>
+  <script src="/scripts/videojs-playlist.min.js"></script>
+  <script src="/scripts/videojs-seek-buttons.min.js"></script>
+  <!-- <script src="/scripts/video-player.js"></script> -->
+  <script>
+    const videoId = window.location.pathname.split(`/`)[2]
+    const videoPlayer = videojs(document.querySelector(`.video-js`), {
+      controls: true,
+      fluid: true,
+      preload: true,
+      playbackRates: [.5, 1, 1.5, 2],
+    })
+
+    videoPlayer.mobileUi()
+    videoPlayer.seekButtons({
+      back: 10,
+      forward: 10,
+    })
+    videoPlayer.playlist([<?php
+
+for ($i = 0; $i < count($mp4s); $i++) {?>
+
+      {
+        sources: [{
+          src: `/media/vid/${videoId}~<?=$mp4s[$i]["part_id"]?>`,
+          type: `video/mp4`
+        }],
+        poster: `/media/cover/${videoId}`,
+      },<?php
+
+}?>
+
+    ])
+  </script><?php
 
 print_page_footer();
 

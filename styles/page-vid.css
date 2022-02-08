@@ -1,0 +1,51 @@
+#display-wrapper {
+  display:grid;
+  height: 45vw;
+  place-items:center;
+  position: relative;
+  width: 100%;
+}
+#display-wrapper>* {
+  position: absolute;
+}
+#display-error-message {
+  background-color: black;
+  color: white;
+  font-size: 1.5vw;
+  padding: min(5vh, 5vw);
+}
+
+#info-table {
+  border-radius: 12px;
+  color: white;
+  margin: 24px auto;
+  padding: 12px;
+}
+#info-table td {
+  border: 0;
+  padding: 6px;
+  text-align: left;
+}
+
+#stars-box {
+  width: 100%;
+  overflow-y: auto;
+}
+
+@media only screen and (max-width: 720px) {
+  #display-wrapper {
+    height: 53.4375vw;
+  }
+  #display-error-message {
+    font-size: 2vw;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  #display-wrapper {
+    height: 55.6875vw;
+  }
+  #display-error-message {
+    font-size: 2.5vw;
+  }
+}
