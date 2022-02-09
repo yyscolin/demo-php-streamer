@@ -76,8 +76,12 @@ if ($db_response->num_rows < 1) {
     exit();
 }
 
-// http_response_code(404);
-// exit();
+$blob_key = isset($_SERVER["BLOB_KEY"]) ? $_SERVER["BLOB_KEY"] : null;
+$blob_path = isset($_SERVER["BLOB_PATH"]) ? $_SERVER["BLOB_PATH"] : null;
+if (!$blob_key || !$blob_path) {
+    http_response_code(404);
+    exit();
+}
 
 function buffer_bytes($bin_data, $bytes_to_send, $buffer_size) {
     if (strlen($bin_data) > $bytes_to_send) $bin_data = substr($bin_data, 0, $bytes_to_send);
