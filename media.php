@@ -76,6 +76,25 @@ if ($db_response->num_rows < 1) {
     exit();
 }
 
+$db_row = mysqli_fetch_object($db_response);
+$file_id = $db_row->file_id;
+$file_path = "$media_path/vids/$file_id.mp4";
+if (file_exists($file_path)) {
+    $buffer_size = 4 * 1024;
+    $file_size = filesize($file_path);
+    list($content_length, $byte_start, $byte_end) = send_headers($file_size);
+    $fp = fopen($file_path, 'rb');
+    if ($byte_start > 0) fseek($fp, $byte_start);
+    while(!feof($fp) && ($p = ftell($fp)) <= $byte_end) {
+        if ($p + $buffer_size > $byte_end) $buffer_size = $byte_end - $p + 1;
+        set_time_limit(0);
+        echo fread($fp, $buffer_size);
+        flush();
+    }
+    fclose($fp);
+    exit();
+}
+
 $blob_key = isset($_SERVER["BLOB_KEY"]) ? $_SERVER["BLOB_KEY"] : null;
 $blob_path = isset($_SERVER["BLOB_PATH"]) ? $_SERVER["BLOB_PATH"] : null;
 if (!$blob_key || !$blob_path) {
@@ -102,25 +121,6 @@ function get_blob_path($blob_no) {
     $blob_no = strval($blob_no);
     $blob_no = str_repeat("0", 6 - strlen($blob_no)).$blob_no;
     return $_SERVER['BLOB_PATH']."/$blob_no";
-}
-
-$db_row = mysqli_fetch_object($db_response);
-$file_id = $db_row->file_id;
-$file_path = "$media_path/vids/$file_id.mp4";
-if (file_exists($file_path)) {
-    $buffer_size = 4 * 1024;
-    $file_size = filesize($file_path);
-    list($content_length, $byte_start, $byte_end) = send_headers($file_size);
-    $fp = fopen($file_path, 'rb');
-    if ($byte_start > 0) fseek($fp, $byte_start);
-    while(!feof($fp) && ($p = ftell($fp)) <= $byte_end) {
-        if ($p + $buffer_size > $byte_end) $buffer_size = $byte_end - $p + 1;
-        set_time_limit(0);
-        echo fread($fp, $buffer_size);
-        flush();
-    }
-    fclose($fp);
-    exit();
 }
 
 $blob_key = base64_decode($_SERVER["BLOB_KEY"]);
