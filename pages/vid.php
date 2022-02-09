@@ -27,7 +27,8 @@ function get_mp4s($video_id) {
 
 function get_seek_options() {
   $options = array("back"=>10, "forward"=>10);
-  if ($_SERVER["SEEK_BTN_RIGHT"]) {
+  $seek_btn_right = isset($_SERVER["SEEK_BTN_RIGHT"]) ? $_SERVER["SEEK_BTN_RIGHT"] : null;
+  if ($seek_btn_right == "true" || $seek_btn_right == 1) {
     $options["backIndex"] = 11;
     $options["forwardIndex"] = 11;
   }
