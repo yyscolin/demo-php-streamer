@@ -14,7 +14,8 @@ $limit_start = ($current_page - 1) * $items_per_page;
 
 print_line("<div id='main-block'>");
 $vids = get_vids_from_database();
-for ($i = $limit_start; $i < $limit_start+$items_per_page; $i++) {
+$limit_end = min($limit_start + $items_per_page, count($vids));
+for ($i = $limit_start; $i < $limit_end; $i++) {
   $vid = $vids[$i];
   print_vid_box($vid, 2);
 }
