@@ -9,11 +9,6 @@ function get_stars_from_database() {
   global $mysql_connection;
   global $language;
 
-  // $metadata = [];
-  // $db_query = "SELECT * FROM stars_attributes";
-  // $db_response = mysqli_query($mysql_connection, $db_query);
-  // while ($db_row = mysqli_fetch_object($db_response)) $metadata[] = $db_row;
-
   $stars = [];
   $db_query = "
   SELECT id, IFNULL(name_$language, '&ltNo Name&gt') AS name,
@@ -32,15 +27,29 @@ function get_stars_from_database() {
   ORDER BY latest_release_date DESC";
   $db_response = mysqli_query($mysql_connection, $db_query);
   while ($db_row = mysqli_fetch_object($db_response)) {
+    $db_row->attributes = [];
     $db_row->img = "/media/star/$db_row->id";
-
-    // foreach($metadata as $x) if ($x->id == $db_row->id) {
-    //   $attribute = $x->attribute;
-    //   $db_row->$attribute = $x->value;
-    // }
-
     $stars[] = $db_row;
   }
+
+  $db_query = "
+  SELECT star_id, value, name_$language AS name, format_$language AS format
+  FROM stars_attributes JOIN attributes ON attribute_id=attributes.id";
+  $db_response = mysqli_query($mysql_connection, $db_query);
+  while ($db_row = mysqli_fetch_object($db_response)) {
+    $attribute_value = $db_row->format;
+    $sub_values = explode(" ", $db_row->value);
+    for ($i = 1; $i <= count($sub_values); $i++)
+      $attribute_value = str_replace("%$i%", $sub_values[$i-1], $attribute_value);
+    foreach ($stars as $star) if ($star->id == $db_row->star_id) {
+      array_push($star->attributes, (object) array(
+        "key"=>$db_row->name,
+        "value"=>$attribute_value
+      ));
+      break;
+    }
+  }
+
   return $stars;
 }
 

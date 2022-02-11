@@ -32,9 +32,16 @@
 
 #s-pot .inner p {
     color: white;
-    font-size: 30px;
     margin: 0 auto;
     width: 100%;
+}
+
+#s-pot .inner p:first-child {
+    font-size: 30px;
+}
+
+#s-pot .inner p:not(first-child) {
+    font-size: 18px;
 }
 
 @media only screen and (max-width: 1080px) {
@@ -59,8 +66,12 @@
         width: 24vw;
     }
 
-    #s-pot .inner p {
+    #s-pot .inner p:first-child {
         font-size: 3.2vw;
+    }
+
+    #s-pot .inner p:not(first-child) {
+        font-size: 2vw;
     }
 }
 
@@ -85,7 +96,11 @@
         width: 30vw;
     }
 
-    #s-pot .inner p {
+    #s-pot .inner p:first-child {
         font-size: 4vw;
+    }
+
+    #s-pot .inner p:not(first-child) {
+        font-size: 2.5vw;
     }
 }

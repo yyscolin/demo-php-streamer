@@ -19,15 +19,16 @@ function print_search_results() {
   if (count($search_results) > 0) {
     echo "<table id='results-table' class='$type'>";
 
-    foreach ($search_results AS $search_result) {
+    foreach ($search_results as $search_result) {
       if ($type == 'movie') {
         $name = "<p>$search_result->name</p>";
         $subtitle = $search_result->release_date ? "<p class='subtitle'>$search_result->release_date</p>" : "";
         $media_path = $search_result->img;
       } else {
         $name = "<p>$search_result->name</p>";
-        // $subtitle = $search_result->dob ? "<p class='subtitle'>$search_result->dob</p>" : "";
-        $subtitle = "";
+        $subtitle = join(", ", array_map(function($star_attribute) {
+          return "$star_attribute->key: $star_attribute->value";
+        }, $search_result->attributes));
         $media_path = $search_result->img;
       }
     

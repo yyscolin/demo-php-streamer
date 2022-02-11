@@ -8,7 +8,8 @@ function print_star_potrait($star, $star_name) {
   print_line("<img src='$star->img'>", 3);
   print_line("<div class='info'>", 3);
   print_line("<p class='text-ellipsis'>$star_name</p>", 4);
-  // print_line("<p class='text-ellipsis'>$star->dob</p>", 4);
+  foreach ($star->attributes as $star_attribute)
+    print_line("<p class='text-ellipsis'>".$star_attribute->key.": ".$star_attribute->value."</p>", 4);
   print_line("</div>", 3);
   print_line("</div>", 2);
   print_line("</div>");
