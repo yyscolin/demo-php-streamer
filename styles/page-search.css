@@ -19,7 +19,7 @@
   margin: 0;
   width: 100%;
 }
-#results-table.vid p:not(.subtitle) {
+#results-table.movie p:not(.subtitle) {
   font-size: 24px;
 }
 #results-table.star p:not(.subtitle) {
@@ -27,43 +27,43 @@
 }
 
 @media only screen and (max-width: 960px) {
-  #results-table.vid p:not(.subtitle) {
+  #results-table.movie p:not(.subtitle) {
     font-size: 22px;
   }
 }
 
 @media only screen and (max-width: 840px) {
-  #results-table.vid p:not(.subtitle) {
+  #results-table.movie p:not(.subtitle) {
     font-size: 20px;
   }
 }
 
 @media only screen and (max-width: 720px) {
-  #results-table.vid {
+  #results-table.movie {
     margin: 32px 4vw;
   }
 }
 
 @media only screen and (max-width: 680px) {
-  #results-table.vid p:not(.subtitle) {
+  #results-table.movie p:not(.subtitle) {
     font-size: 18px;
   }
 }
 
 @media only screen and (max-width: 600px) {
-  #results-table.vid {
+  #results-table.movie {
     background-color: transparent;
     border: 0;
     margin: 0 4vw;
   }
-  #results-table.vid td {
+  #results-table.movie td {
     background-color: darkslateblue;
     display: block;
   }
-  #results-table.vid tr:not(first-child) td:first-child {
+  #results-table.movie tr:not(first-child) td:first-child {
     margin-top: 32px;
   }
-  #results-table.vid img {
+  #results-table.movie img {
     height: auto;
     width: 100%;
   }
@@ -85,7 +85,7 @@
   #results-table.star p {
     text-align: center;
   }
-  #results-table.vid p:not(.subtitle) {
+  #results-table.movie p:not(.subtitle) {
     font-size: 22px;
   }
   #results-table.star tr:not(first-child) td:first-child {
@@ -95,7 +95,7 @@
     height: auto;
     width: 100%;
   }
-  #results-table.vid p:not(.subtitle) {
+  #results-table.movie p:not(.subtitle) {
     font-size: 14px;
   }
 }

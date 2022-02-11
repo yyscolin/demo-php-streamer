@@ -6,7 +6,7 @@ function throwMysqlError($message) {
     exit();
 }
 
-$con = mysqli_connect(
+$mysql_connection = mysqli_connect(
     $_SERVER['MYSQL_HOSTNAME'],
     $_SERVER['MYSQL_USERNAME'],
     $_SERVER['MYSQL_PASSWORD'],
@@ -16,5 +16,5 @@ $con = mysqli_connect(
 
 if (mysqli_connect_error())
     throwMysqlError(mysqli_connect_error());
-if (!mysqli_set_charset($con, "utf8"))
-    throwMysqlError('set_charset: ' . mysqli_error($con));
+if (!mysqli_set_charset($mysql_connection, "utf8mb4"))
+    throwMysqlError('set_charset: ' . mysqli_error($mysql_connection));

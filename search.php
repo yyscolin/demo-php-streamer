@@ -5,7 +5,7 @@ require_once($_SERVER['DOCUMENT_ROOT']."/public/common.php");
 $type = $_GET['type'];
 $search_query = $_GET['query'];
 
-if (!isset($type) || !isset($search_query) || !in_array($type, ['vid', 'star'])) {
+if (!isset($type) || !isset($search_query) || !in_array($type, ['movie', 'star'])) {
   header("HTTP/1.0 400");
   exit();
 }
@@ -19,18 +19,19 @@ function print_search_results() {
   if (count($search_results) > 0) {
     echo "<table id='results-table' class='$type'>";
 
-    foreach ($search_results as $r) {
-      if ($type == 'vid') {
-        $name = "<p>$r->name</p>";
-        $subtitle = $r->release_date ? "<p class='subtitle'>$r->release_date</p>" : "";
-        $media_path = $r->img;
+    foreach ($search_results AS $search_result) {
+      if ($type == 'movie') {
+        $name = "<p>$search_result->name</p>";
+        $subtitle = $search_result->release_date ? "<p class='subtitle'>$search_result->release_date</p>" : "";
+        $media_path = $search_result->img;
       } else {
-        $name = "<p>$r->name</p>";
-        $subtitle = $r->dob ? "<p class='subtitle'>$r->dob</p>" : "";
-        $media_path = $r->img;
+        $name = "<p>$search_result->name</p>";
+        // $subtitle = $search_result->dob ? "<p class='subtitle'>$search_result->dob</p>" : "";
+        $subtitle = "";
+        $media_path = $search_result->img;
       }
     
-      echo "<tr class='noselect' onclick='window.location.href=\"/$type/$r->id\"'>";
+      echo "<tr class='noselect' onclick='window.location.href=\"/$type/$search_result->id\"'>";
       echo "<td><img src='$media_path'></td>";
       echo "<td style='text-align:left'>$name$subtitle</td>";
       echo "</tr>";
@@ -51,11 +52,11 @@ print_page_header([
   <div id='main-block'>
     <form id='search-form'>
       <select name='type'>
-        <option value='star'<?php if ($type == 'star') echo "selected='selected'"; ?>><?php echo get_text("stars", 'ucfirst'); ?></option>
-        <option value='vid'<?php if ($type == 'vid') echo "selected='selected'"; ?>><?php echo get_text("movies", 'ucfirst'); ?></option>
+        <option value='star'<?php if ($type == 'star') echo "selected='selected'"; ?>><?=get_text("stars", 'ucfirst')?></option>
+        <option value='movie'<?php if ($type == 'movie') echo "selected='selected'"; ?>><?=get_text("movies", 'ucfirst')?></option>
       </select>
-      <input name='query' value='<?php echo $db_query; ?>'>
-      <button type='submit'><?php echo get_text("search", 'ucfirst'); ?></button>
+      <input name='query' value='<?=$search_query?>'>
+      <button type='submit'><?=get_text("search", 'ucfirst')?></button>
     </form>
     <?php print_search_results(); ?>
 

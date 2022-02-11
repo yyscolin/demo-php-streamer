@@ -1,7 +1,7 @@
 <?php
 
 function print_page_navbar($type, $count, $items_per_page, $current_page) {
-  global $con;
+  global $mysql_connection;
   global $is_mobile;
 
   $no_of_pages = ceil($count/$items_per_page);

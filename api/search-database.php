@@ -5,7 +5,7 @@ $results_count = 5;
 $type = $_GET['type'];
 $search_query = $_GET['query'];
 
-if (!isset($type) || !isset($search_query) || !in_array($type, ['vid', 'star'])) {
+if (!isset($type) || !isset($search_query) || !in_array($type, ['movie', 'star'])) {
   header("HTTP/1.0 400");
   exit();
 }

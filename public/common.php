@@ -5,74 +5,81 @@ function redirectToHomePage() {
   exit();
 }
 
-function get_entity_from_database($type, $id = null) {
-  global $con;
+function get_stars_from_database() {
+  global $mysql_connection;
   global $language;
 
-  $metadata = [];
-  $db_query = "select * from entities_metadata";
-  $db_response = mysqli_query($con, $db_query);
-  while ($r = mysqli_fetch_object($db_response)) $metadata[] = $r;
+  // $metadata = [];
+  // $db_query = "SELECT * FROM stars_attributes";
+  // $db_response = mysqli_query($mysql_connection, $db_query);
+  // while ($db_row = mysqli_fetch_object($db_response)) $metadata[] = $db_row;
 
-  $entities = [];
+  $stars = [];
   $db_query = "
-  select id, ifnull(name_$language, '&ltNo Name&gt') as name,
-  ifnull(t2.count, 0) as count, latest_release_date from (
-    select entities.*, max(release_date) as latest_release_date from entities
-    left join xref_entities_vids on entities.id=xref_entities_vids.entity
-    left join vids on vids.id=xref_entities_vids.vid
-    where `is`='$type' group by entities.id
-  ) t1 left join (
-    select entity, count(*) as count
-    from xref_entities_vids where vid in (
-      select id from vids where status=1
-    ) group by entity
-  ) t2 on t1.id=t2.entity
-  where status=1
-  order by latest_release_date desc";
-  $db_response = mysqli_query($con, $db_query);
-  while ($r = mysqli_fetch_object($db_response)) {
-    $r->img = get_img_src($type, $r->id);
+  SELECT id, IFNULL(name_$language, '&ltNo Name&gt') AS name,
+  IFNULL(t2.count, 0) AS count, latest_release_date FROM (
+    SELECT stars.*, MAX(release_date) AS latest_release_date FROM stars
+    LEFT JOIN movies_stars ON stars.id=movies_stars.star_id
+    LEFT JOIN movies ON movies.id=movies_stars.movie_id
+    GROUP BY stars.id
+  ) t1 LEFT JOIN (
+    SELECT star_id, count(*) AS count
+    FROM movies_stars WHERE movie_id IN (
+      SELECT id FROM movies WHERE status=1
+    ) GROUP BY star_id
+  ) t2 ON t1.id=t2.star_id
+  WHERE status=1
+  ORDER BY latest_release_date DESC";
+  $db_response = mysqli_query($mysql_connection, $db_query);
+  while ($db_row = mysqli_fetch_object($db_response)) {
+    $db_row->img = "/media/star/$db_row->id";
 
-    foreach($metadata as $x) if ($x->id == $r->id) {
-      $attribute = $x->attribute;
-      $r->$attribute = $x->value;
-    }
+    // foreach($metadata as $x) if ($x->id == $db_row->id) {
+    //   $attribute = $x->attribute;
+    //   $db_row->$attribute = $x->value;
+    // }
 
-    if ($r->id == $id) return $r;
-    $entities[] = $r;
+    $stars[] = $db_row;
   }
-  return $entities;
+  return $stars;
 }
 
-function get_vids_from_database() {
-  global $con;
+function get_star_from_database($star_id) {
+  $stars = get_stars_from_database();
+  foreach ($stars as $star)
+    if ($star->id == $star_id) return $star;
+  return null;
+}
+
+function get_movies_from_database() {
+  global $mysql_connection;
   global $language;
 
-  $vids = [];
-  $db_query = "select id, ifnull(name_$language, '&ltNo Title&gt') as name, release_date, duration from vids order by db_timestamp desc";
-  $stmt = $con->prepare($db_query);
-  $stmt->execute();
-  $db_response = $stmt->get_result();
-  while ($r = $db_response->fetch_object()) {
-    $r->img = get_img_src('vids', $r->id);
-    $vids[] = $r;
+  $movies = [];
+  $db_query = "
+  SELECT id, IFNULL(name_$language, '&ltNo Title&gt') AS name, release_date, duration
+  FROM movies ORDER BY db_timestamp DESC";
+  $db_statement = $mysql_connection->prepare($db_query);
+  $db_statement->execute();
+  $db_response = $db_statement->get_result();
+  while ($db_row = $db_response->fetch_object()) {
+    $db_row->img = "/media/cover/$db_row->id";
+    $movies[] = $db_row;
   }
-  return $vids;
+  return $movies;
 }
 
-function get_vid_from_database($id) {
-  $vids = get_vids_from_database();
-  foreach ($vids as $vid) {
-    if ($vid->id == $id) return $vid;
-  }
+function get_movie_from_database($movie_id) {
+  $movies = get_movies_from_database();
+  foreach ($movies as $movie)
+    if ($movie->id == $movie_id) return $movie;
   return null;
 }
 
 function search_database_by_query($type, $search_query, $items_count = null) {
-  global $con;
+  global $mysql_connection;
 
-  $search_results = $type == 'vid' ? get_vids_from_database() : get_entity_from_database($type);
+  $search_results = $type == 'movie' ? get_movies_from_database() : get_stars_from_database();
   $search_results = array_filter($search_results, function($x) {
     global $search_query;
     return strpos(strtolower($x->name), strtolower($search_query)) !== false;
@@ -87,28 +94,10 @@ function search_database_by_query($type, $search_query, $items_count = null) {
   return array_slice($search_results, 0, $items_count);
 }
 
-function get_others_star() {
-  global $con;
-
-  $db_query = "select count(*) as count from vids where id not in (select vid from xref_entities_vids) and status=1";
-  $db_response = mysqli_query($con, $db_query);
-  $star = mysqli_fetch_object($db_response);
-  if ($star->count == 0) return null;
-
-  $star->id = 0;
-  $star->name = "Others";
-  return $star;
-}
-
 function print_line($line, $indentation_level=1) {
   echo "\n";
   for ($i = 0 ; $i < $indentation_level; $i++) echo "  ";
   echo $line;
-}
-
-function get_img_src($type, $id) {
-  $type = $type == "vid" || $type == "vids" ? "cover" : "star";
-  return "/media/$type/$id";
 }
 
 function print_page_header($head_items=[]) {

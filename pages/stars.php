@@ -15,7 +15,7 @@ $items_per_page = 50;
 $current_page = isset($_COOKIE["Stars-Page"]) ? $_COOKIE["Stars-Page"] : 1;
 $limit_start = ($current_page - 1) * $items_per_page;
 
-$stars = get_entity_from_database('star');
+$stars = get_stars_from_database();
 
 print_line("<div id='main-block'>");
 for ($i = $limit_start; $i < $limit_start + $items_per_page; $i++) {

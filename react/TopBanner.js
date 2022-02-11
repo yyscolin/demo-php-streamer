@@ -49,13 +49,13 @@ const TopBanner = () => {
     <img id='banner-icon' onClick={() => window.location.href='/'} src='/banner.png' title='Go to homepage'/>
     <div id='menu-bar'>
       <a href='/stars'>{displayText.stars}</a>
-      <a href='/vids'>{displayText.movies}</a>
+      <a href='/movies'>{displayText.movies}</a>
       <a class='short-banner-item' href='/search.php'>SEARCH</a>
       <a class="short-banner-item" onClick={toggleLanguageMenu}>LANGUAGE ▷</a>
       <form class="long-banner-item" action='/search.php'style={{'margin-left':`32px`}}>
         <select id='search-type' ref={searchType} name='type' onChange={searchAjax.get}>
           <option value='star'>{displayText.stars}</option>
-          <option value='vid'>{displayText.movies}</option>
+          <option value='movie'>{displayText.movies}</option>
         </select>
         <input ref={searchField} type='search' name='query' onInput={searchAjax.get} onFocus={searchAjax.get} placeholder={`${displayText.keyword}...`}/>
         <button type='submit' style={{margin: `0 .4vw`}}>{displayText.go}</button>

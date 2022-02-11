@@ -1,10 +1,10 @@
 <?php
 
-function print_vid_box($vid, $default_indentation=1) {
-  if ($vid) {
-    $img = get_img_src('vid', $vid->id);
-    $href = "/vid/$vid->id";
-    $title = $vid->name ? $vid->name : "&ltNo title&gt";
+function print_movie_box($movie, $default_indentation=1) {
+  if ($movie) {
+    $img = "/media/cover/$movie->id";
+    $href = "/movie/$movie->id";
+    $title = $movie->name ? $movie->name : "&ltNo title&gt";
     $style = "";
   } else {
     $img = "";

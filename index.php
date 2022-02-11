@@ -2,7 +2,7 @@
 
 require_once($_SERVER['DOCUMENT_ROOT']."/public/common.php");
 require_once($_SERVER['DOCUMENT_ROOT']."/public/box-star.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/public/box-vid.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/public/box-movie.php");
 print_page_header([
   "<link rel='stylesheet' href='/styles/poster.css'>",
   "<link rel='stylesheet' href='/styles/star-box.css'>",
@@ -12,39 +12,32 @@ print_page_header([
 print_line("<div id='main-block'>");
 
 /** Get random stars */
-$stars = [];
 $random_count = 50;
 print_line("<h2>Random Stars</h2>", 2);
 print_line("<div style='font-size:0;width:100%;overflow-y:auto'>", 2);
 print_line("<div style='text-align:center'>", 3);
 $db_query = "
-  select id, name_$language as name, coalesce(count, 0) as count
-  from entities join (
-    select entity, count(*) as count from xref_entities_vids
-    where vid in (
-      select id from vids where status=1
-    ) and `is`='star' group by entity
-  ) as t on entities.id = t.entity
-  where status = 1
-  order by rand() limit $random_count";
-$db_response = mysqli_query($con, $db_query);
-while ($r = mysqli_fetch_object($db_response)) $stars[] = $r;
-
-/** Add "Others" star to the list */
-$other_stars = get_others_star();
-if ($other_stars) $stars[] = get_others_star();
-
-foreach ($stars as $star) print_star_box($star, 4);
+  SELECT id, name_$language AS name, COALESCE(count, 0) AS count
+  FROM stars LEFT JOIN (
+    SELECT star_id, count(*) AS count FROM movies_stars
+    WHERE movie_id IN (
+      SELECT id FROM movies WHERE status=1
+    ) GROUP BY star_id
+  ) AS t ON stars.id=t.star_id
+  WHERE status=1
+  ORDER BY rand() LIMIT $random_count";
+$db_response = mysqli_query($mysql_connection, $db_query);
+while ($db_row = mysqli_fetch_object($db_response)) print_star_box($db_row, 4);
 
 print_line("</div>", 3);
 print_line("</div>", 2);
 
-/** Get random vids */
+/** Get random movies */
 $random_count = 5;
 print_line("<h2>Random Videos</h2>", 2);
-$vids = get_vids_from_database();
-$random_indexes = array_rand($vids, $random_count);
-foreach ($random_indexes as $i) print_vid_box($vids[$i], 2);
+$movies = get_movies_from_database();
+$random_indexes = array_rand($movies, $random_count);
+foreach ($random_indexes as $i) print_movie_box($movies[$i], 2);
 print_line("</div>");
 
 print_page_footer();

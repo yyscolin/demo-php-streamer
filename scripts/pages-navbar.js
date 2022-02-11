@@ -17,24 +17,24 @@ function openPage(button) {
     const url = `/api/page-items.php`
     const data = {type, 'page-no': pageNo, 'items-count': itemsPerPage}
     const onSuccess = function(response) {
-      let boxClassName = type == 'vid' ? '.poster' : '.star-box'
+      let boxClassName = type == 'movie' ? '.poster' : '.star-box'
       let boxLinks = $(boxClassName)
       for (let i = 0; i < boxLinks.length; i++) {
         let boxLink = boxLinks[i]
         if (response.length > i) {
           $(boxLink).show()
-          if (type == 'vid') {
-            let vid = response[i]
-            $(boxLink).find('.title').html(vid.name)
-            $(boxLink).find('a').attr('href', `/vid/${vid.id}`)
-            $(boxLink).find('img').attr('src', vid.img)
+          if (type == 'movie') {
+            let movie = response[i]
+            $(boxLink).find('.title').html(movie.name)
+            $(boxLink).find('a').attr('href', `/movie/${movie.id}`)
+            $(boxLink).find('img').attr('src', movie.img)
           } else {
             let star = response[i]
             $(boxLink).find('a').attr('href', `/star/${star.id}`)
             $(boxLink).find('img').attr('src', star.img)
             $(boxLink).find('.name').html(star.name)
-            $(boxLink).find('.dob').html(star.dob)
-            $(boxLink).find('.vid-count>span').html(star.count)
+            // $(boxLink).find('.dob').html(star.dob)
+            $(boxLink).find('.movie-count>span').html(star.count)
           }
         } else {
           $(boxLink).hide()

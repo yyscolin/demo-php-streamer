@@ -1,19 +1,19 @@
 <?php
 
-function get_mp4s($video_id) {
-  global $con;
+function get_mp4s($movie_id) {
+  global $mysql_connection;
   $media_path = $_SERVER["MEDIA_PATH"];
   $mp4s = [];
 
-  $db_query = "select part_id from vid_media where video_id=?";
-  $stmt = $con->prepare($db_query);
-  $stmt->bind_param("s", $video_id);
-  $stmt->execute();
-  $db_response = $stmt->get_result();
-  while ($row = mysqli_fetch_object($db_response)) {
-    $part_id = $row->part_id;
+  $db_query = "SELECT part_id FROM movies_media WHERE movie_id=?";
+  $db_statement = $mysql_connection->prepare($db_query);
+  $db_statement->bind_param("s", $movie_id);
+  $db_statement->execute();
+  $db_response = $db_statement->get_result();
+  while ($db_row = mysqli_fetch_object($db_response)) {
+    $part_id = $db_row->part_id;
     array_push($mp4s, array(
-      "file_path"=>"/media/vid/$video_id~$part_id",
+      "file_path"=>"/media/movie/$movie_id~$part_id",
       "part_id"=>intval($part_id)
     ));
   }
@@ -35,59 +35,62 @@ function get_seek_options() {
   return json_encode($options);
 }
 
-function get_playlist_json($video_id, $mp4s) {
+function get_playlist_json($movie_id, $mp4s) {
   $playlist = [];
   foreach ($mp4s as $mp4) {
     array_push($playlist, array(
       "sources"=>[array(
-        "src"=>"/media/vid/$video_id~".$mp4["part_id"],
+        "src"=>"/media/movie/$movie_id~".$mp4["part_id"],
         "type"=>"video/mp4",
       )],
-      "poster"=>"/media/cover/$video_id",
+      "poster"=>"/media/cover/$movie_id",
     ));
   }
   return json_encode($playlist);
 }
 
-function print_star_boxes($video_id, $language, $con) {
+function print_star_boxes($movie_id, $language, $mysql_connection) {
   $db_query = "
-  select id, name_$language as name, count
-  from entities join (
-    select entity, count(*) as count from xref_entities_vids
-    where vid in (
-      select id from vids where status=1
-    ) group by entity
-  ) as t on entities.id = t.entity
-  where id in (
-    select entity from xref_entities_vids
-    where vid = '$video_id' and `is`='star'
-  ) and status=1";
-  $db_response = mysqli_query($con, $db_query);
+  SELECT id, name_$language AS name, count
+  FROM stars JOIN (
+    SELECT star_id, count(*) AS count FROM movies_stars
+    WHERE movie_id IN (
+      SELECT id FROM movies WHERE status=1
+    ) GROUP BY star_id
+  ) AS t ON stars.id=t.star_id
+  WHERE id IN (
+    SELECT star_id FROM movies_stars
+    WHERE movie_id=?
+  ) AND status=1";
+  $db_statement = $mysql_connection->prepare($db_query);
+  $db_statement->bind_param("s", $movie_id);
+  $db_statement->execute();
+  $db_response = $db_statement->get_result();
   while ($db_row = mysqli_fetch_object($db_response))
-    print_star_box($db_row);
+    print_star_box($db_row, 4);
 }
 
 require_once($_SERVER["DOCUMENT_ROOT"]."/public/common.php");
 require_once($_SERVER["DOCUMENT_ROOT"]."/public/box-star.php");
 
-$video_id = $_GET["id"];
-if (!isset($video_id)) redirectToHomePage();
-$video_data = get_vid_from_database($video_id);
-if (!$video_data) redirectToHomePage();
+$movie_id = $_GET["id"];
+if (!isset($movie_id)) redirectToHomePage();
+$movie_data = get_movie_from_database($movie_id);
+if (!$movie_data) redirectToHomePage();
 
 print_page_header([
-  "<link rel=\"stylesheet\" href=\"/styles/page-vid.css\">",
+  "<link rel=\"stylesheet\" href=\"/styles/page-movie.css\">",
   "<link rel=\"stylesheet\" href=\"/styles/star-box.css\">",
   "<link rel=\"stylesheet\" href=\"/styles/videojs.css\">",
   "<link rel=\"stylesheet\" href=\"/styles/videojs-seek-buttons.css\">",
   "<link rel=\"stylesheet\" href=\"/styles/videojs-mobile-ui.css\">",
-  "<title>$video_id - ".$_SERVER["PROJECT_TITLE"]."</title>"
+  "<title>$movie_id - ".$_SERVER["PROJECT_TITLE"]."</title>"
 ]);?>
 
   <div id="main-block">
-    <h4 style="width:100%"><?=$video_data->name?></h4><?php
+    <h4 style="width:100%"><?=$movie_data->name?></h4><?php
 
-$mp4s = get_mp4s($video_data->id);
+$mp4s = get_mp4s($movie_data->id);
 if (count($mp4s) > 0) {?>
 
     <video class="video-js vjs-big-play-centered">
@@ -100,7 +103,7 @@ if (count($mp4s) > 0) {?>
 } else {?>
 
     <div id="display-wrapper">
-      <img src="<?=$video_data->img?>" style="height:100%">
+      <img src="<?=$movie_data->img?>" style="height:100%">
       <p id="display-error-message">Error: No video file(s) found</p>
     </div>
     <?php
@@ -113,19 +116,19 @@ if (count($mp4s) > 1) {?>
 
   for ($i = 0; $i < count($mp4s); $i++) {?>
 
-      <button onclick="loadVideoPart(<?=$i?>)">PART <?=$mp4s[$i]["part_id"]?></button><?php
+      <button onclick="loadMoviePart(<?=$i?>)">PART <?=$mp4s[$i]["part_id"]?></button><?php
 
   }?>
 
       <script>
         $(`button`).first().prop(`disabled`, true)
 
-        function loadVideoPart(videoPart) {
-          videoPlayer.playlist.currentItem(videoPart)
+        function loadMoviePart(moviePart) {
+          videoPlayer.playlist.currentItem(moviePart)
           videoPlayer.play()
 
-          $(`button:not([onclick="loadVideoPart(${videoPart})"])`).prop(`disabled`, false)
-          $(`button[onclick="loadVideoPart(${videoPart})"]`).prop(`disabled`, true)
+          $(`button:not([onclick="loadMoviePart(${moviePart})"])`).prop(`disabled`, false)
+          $(`button[onclick="loadMoviePart(${moviePart})"]`).prop(`disabled`, true)
         }
       </script>
     </div><?php
@@ -135,15 +138,15 @@ if (count($mp4s) > 1) {?>
     <table id="info-table">
       <tr>
         <td><b><?=get_text("release date", "ucwords")?></b></td>
-        <td><?=$video_data->release_date?></td>
+        <td><?=$movie_data->release_date?></td>
       </tr>
       <tr>
         <td><b><?=get_text("duration", "ucfirst")?></b></td>
-        <td><?=$video_data->duration." ".get_text("minutes")?></td>
+        <td><?=$movie_data->duration." ".get_text("minutes")?></td>
       </tr>
     </table>
     <div id="stars-box">
-      <div><?=print_star_boxes($video_id, $language, $con)?>
+      <div><?=print_star_boxes($movie_id, $language, $mysql_connection)?>
 
       </div>
     </div>
@@ -153,7 +156,6 @@ if (count($mp4s) > 1) {?>
   <script src="/scripts/videojs-playlist.min.js"></script>
   <script src="/scripts/videojs-seek-buttons.min.js"></script>
   <script>
-    const videoId = window.location.pathname.split(`/`)[2]
     const videoPlayer = videojs(document.querySelector(`.video-js`), {
       controls: true,
       fluid: true,
@@ -163,7 +165,7 @@ if (count($mp4s) > 1) {?>
 
     videoPlayer.mobileUi()
     videoPlayer.seekButtons(<?=get_seek_options()?>)
-    videoPlayer.playlist(<?=get_playlist_json($video_id, $mp4s)?>)
+    videoPlayer.playlist(<?=get_playlist_json($movie_id, $mp4s)?>)
   </script><?php
 
 print_page_footer();

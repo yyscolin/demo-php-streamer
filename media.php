@@ -60,15 +60,15 @@ if ($_GET["type"] == "star") {
     exit();
 }
 
-if ($_GET["type"] != "vid") {
+if ($_GET["type"] != "movie") {
     http_response_code(400);
     exit();
 }
 
-list($video_id, $part_id) = explode("~", $_GET["file"]);
-$db_query = "select file_id from vid_media where video_id=? and part_id=?";
-$db_statement = $con->prepare($db_query);
-$db_statement->bind_param('ss', $video_id, $part_id);
+list($movie_id, $part_id) = explode("~", $_GET["file"]);
+$db_query = "SELECT file_id FROM movies_media WHERE movie_id=? AND part_id=?";
+$db_statement = $mysql_connection->prepare($db_query);
+$db_statement->bind_param("ss", $movie_id, $part_id);
 $db_statement->execute();
 $db_response = $db_statement->get_result();
 if ($db_response->num_rows < 1) {
@@ -78,7 +78,7 @@ if ($db_response->num_rows < 1) {
 
 $db_row = mysqli_fetch_object($db_response);
 $file_id = $db_row->file_id;
-$file_path = "$media_path/vids/$file_id.mp4";
+$file_path = "$media_path/movies/$file_id.mp4";
 if (file_exists($file_path)) {
     $buffer_size = 4 * 1024;
     $file_size = filesize($file_path);
@@ -128,8 +128,8 @@ function prefix_zeroes($string, $length) {
 }
 
 $blob_key = base64_decode($_SERVER["BLOB_KEY"]);
-$db_query = "select * from media_files where id=$file_id";
-$db_response = $con->query($db_query);
+$db_query = "SELECT * FROM media_files WHERE id=$file_id";
+$db_response = $mysql_connection->query($db_query);
 $db_row = mysqli_fetch_object($db_response);
 $iv_key = $db_row->iv_key;
 
@@ -194,8 +194,8 @@ $padding = $db_row->bytes_special;
 
 $blob_chunks = [];
 $file_size = 0;
-$db_query = "select head_piece, pieces from media_pieces where file_id=$file_id order by sequence";
-$db_response = $con->query($db_query);
+$db_query = "SELECT head_piece, pieces FROM media_pieces WHERE file_id=$file_id ORDER BY sequence";
+$db_response = $mysql_connection->query($db_query);
 while ($db_row = mysqli_fetch_object($db_response)) {
     $db_row->size = $piece_size * $db_row->pieces;
     $file_size += $db_row->size;

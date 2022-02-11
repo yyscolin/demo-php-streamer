@@ -27,9 +27,9 @@ DirectoryIndex index.php
 
   # Rewrite URL
   RewriteRule ^stars/?$ pages/stars.php [L]
-  RewriteRule ^vids/?$ pages/vids.php [L]
+  RewriteRule ^movies/?$ pages/movies.php [L]
   RewriteRule ^star/([0-9]+)$ pages/star.php?id=$1 [L]
-  RewriteRule ^vid/(.+)$ pages/vid.php?id=$1 [L]
+  RewriteRule ^movie/(.+)$ pages/movie.php?id=$1 [L]
   RewriteRule ^media/(.+)/(.+)$ media.php?type=$1&file=$2 [L]
 
   # Update RewriteBase if the app is in a subdirectory.
@@ -64,3 +64,5 @@ SetEnv MYSQL_PASSWORD
 SetEnv MYSQL_DATABASE
 
 SetEnv MEDIA_PATH ./media
+SetEnv BLOB_PATH
+SetEnv BLOB_KEY
