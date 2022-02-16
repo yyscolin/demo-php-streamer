@@ -97,7 +97,8 @@ if (file_exists($file_path)) {
 
 $blob_key = isset($_SERVER["BLOB_KEY"]) ? $_SERVER["BLOB_KEY"] : null;
 $blob_path = isset($_SERVER["BLOB_PATH"]) ? $_SERVER["BLOB_PATH"] : null;
-if (!$blob_key || !$blob_path) {
+$blob_path2 = isset($_SERVER["BLOB_PATH2"]) ? $_SERVER["BLOB_PATH2"] : null;
+if (!$blob_key || (!$blob_path && !$blob_path2)) {
     http_response_code(404);
     exit();
 }
@@ -144,10 +145,10 @@ if ($version_id == 2 || $version_id == 3) {
 
     switch ($version_id) {
         case 2:
-            $blob_folder = $_SERVER['BLOB_PATH']."/".prefix_zeroes($file_id, 4);
+            $blob_folder = $_SERVER['BLOB_PATH2']."/".prefix_zeroes($file_id, 4);
             break;
         case 3:
-            $blob_file = $_SERVER['BLOB_PATH']."/".prefix_zeroes($file_id, 4);
+            $blob_file = $_SERVER['BLOB_PATH2']."/".prefix_zeroes($file_id, 4);
             if (!file_exists($blob_file)) {
                 http_response_code(404);
                 exit();
