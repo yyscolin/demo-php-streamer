@@ -84,7 +84,7 @@ print_page_header([
   "<link rel=\"stylesheet\" href=\"/styles/videojs.css\">",
   "<link rel=\"stylesheet\" href=\"/styles/videojs-seek-buttons.css\">",
   "<link rel=\"stylesheet\" href=\"/styles/videojs-mobile-ui.css\">",
-  "<title>$movie_id - ".$_SERVER["PROJECT_TITLE"]."</title>"
+  "<title>$movie_data->name - ".$_SERVER["PROJECT_TITLE"]."</title>"
 ]);?>
 
   <div id="main-block">
