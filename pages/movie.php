@@ -159,7 +159,7 @@ if (count($mp4s) > 1) {?>
     const videoPlayer = videojs(document.querySelector(`.video-js`), {
       controls: true,
       fluid: true,
-      preload: true,
+      preload: `none`,
       playbackRates: [.5, 1, 1.5, 2],
     })
 
