@@ -8,6 +8,7 @@ const menu2 = {
   set: () => null,
   reset: () => {
     menu2.current = null
+    menu2.style = {}
     menu2.set([])
     $(`#banner`).removeClass(`secondary`)
   }
