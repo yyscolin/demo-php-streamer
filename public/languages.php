@@ -17,6 +17,8 @@ $dictionary = array(
         "en"=>"Featured Movies of Today",
         "jp"=>"今日の注目の映画",
     ),
+    "loading"=>array("jp"=>"読み込み中"),
+    "please wait"=>array("jp"=>"待って下さい"),
 );
 
 function get_text($text_reference, $option_callback=null) {

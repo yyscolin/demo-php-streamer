@@ -1,6 +1,7 @@
 const eventCallbacks = {
   load: [],
-  resize: []
+  resize: [],
+  hashchange: [],
 }
 
 const menu2 = {
@@ -23,13 +24,11 @@ eventCallbacks.load.push(() => $(`body`).click(({target}) => {
   menu2.reset()
 }))
 
-$(window).on(`load`, () => {
-  for (let callback of eventCallbacks.load) callback()
-})
-
-$(window).on(`resize`, () => {
-  for (let callback of eventCallbacks.resize) callback()
-})
+for (const eventName in eventCallbacks) {
+  $(window).on(eventName, () => {
+    for (let callback of eventCallbacks[eventName]) callback()
+  })
+}
 
 const setLanguange = language => {
   document.cookie = `language=${language}; SameSite=Lax;`
