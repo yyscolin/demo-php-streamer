@@ -76,6 +76,7 @@ if ($db_response->num_rows < 1) {
     exit();
 }
 
+set_time_limit(0);
 $db_row = mysqli_fetch_object($db_response);
 $file_id = $db_row->file_id;
 $file_path = "$media_path/movies/$file_id.mp4";
@@ -87,7 +88,6 @@ if (file_exists($file_path)) {
     if ($byte_start > 0) fseek($fp, $byte_start);
     while(!feof($fp) && ($p = ftell($fp)) <= $byte_end) {
         if ($p + $buffer_size > $byte_end) $buffer_size = $byte_end - $p + 1;
-        set_time_limit(0);
         echo fread($fp, $buffer_size);
         flush();
     }
@@ -106,7 +106,6 @@ if (!$blob_key || (!$blob_path && !$blob_path2)) {
 function buffer_bytes($bin_data, $bytes_to_send, $buffer_size) {
     if (strlen($bin_data) > $bytes_to_send) $bin_data = substr($bin_data, 0, $bytes_to_send);
     while ($bin_data) {
-        set_time_limit(0);
         if (strlen($bin_data) > $buffer_size) {
             echo substr($bin_data, 0, $buffer_size);
             $bin_data = substr($bin_data, $buffer_size);
