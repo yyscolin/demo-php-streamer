@@ -12,7 +12,6 @@ $PROJ_CONF = array(
   "MYSQL_DATABASE"=>"",
 
   "MEDIA_PATH"=>"./media",
-  "BLOB_PATH"=>"",
-  "BLOB_PATH2"=>"",
+  "BLOB_DIRS"=>[],
   "BLOB_KEY"=>"",
 );

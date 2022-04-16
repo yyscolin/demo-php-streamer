@@ -96,9 +96,7 @@ if (file_exists($file_path)) {
     exit();
 }
 
-$has_no_key = !$PROJ_CONF["BLOB_KEY"];
-$has_no_paths = !$PROJ_CONF["BLOB_PATH"]  && !$PROJ_CONF["BLOB_PATH2"];
-if ($has_no_key || $has_no_paths) {
+if (!$PROJ_CONF["BLOB_KEY"] || !count($PROJ_CONF["BLOB_DIRS"])) {
     http_response_code(404);
     exit();
 }
@@ -117,11 +115,41 @@ function buffer_bytes($bin_data, $bytes_to_send, $buffer_size) {
     }
 }
 
-function get_blob_path($blob_no) {
+function get_blob_v1_file($blob_no) {
     global $PROJ_CONF;
     $blob_no = strval($blob_no);
     $blob_no = str_repeat("0", 6 - strlen($blob_no)).$blob_no;
-    return $PROJ_CONF["BLOB_PATH"]."/$blob_no";
+    foreach ($PROJ_CONF["BLOB_DIRS"] as $blob_dir) {
+        $blob_file = "$blob_dir/$blob_no";
+        if (file_exists($blob_file)) return $blob_file;
+    }
+
+    http_response_code(404);
+    exit();
+}
+
+function get_blob_v2_folder($file_id) {
+    global $PROJ_CONF;
+    $blob_subfolder = prefix_zeroes($file_id, 4);
+    foreach ($PROJ_CONF["BLOB_DIRS"] as $blob_dir) {
+        $blob_folder = "$blob_dir/$blob_subfolder";
+        if (file_exists($blob_folder)) return $blob_folder;
+    }
+
+    http_response_code(404);
+    exit();
+}
+
+function get_blob_v3_file($file_id) {
+    global $PROJ_CONF;
+    $blob_no = prefix_zeroes($file_id, 4);
+    foreach ($PROJ_CONF["BLOB_DIRS"] as $blob_dir) {
+        $blob_file = "$blob_dir/$blob_no";
+        if (file_exists($blob_file)) return $blob_file;
+    }
+
+    http_response_code(404);
+    exit();
 }
 
 function prefix_zeroes($string, $length) {
@@ -145,14 +173,10 @@ if ($version_id == 2 || $version_id == 3) {
 
     switch ($version_id) {
         case 2:
-            $blob_folder = $PROJ_CONF["BLOB_PATH2"]."/".prefix_zeroes($file_id, 4);
+            $blob_folder = get_blob_v2_folder($file_id);
             break;
         case 3:
-            $blob_file = $PROJ_CONF["BLOB_PATH2"]."/".prefix_zeroes($file_id, 4);
-            if (!file_exists($blob_file)) {
-                http_response_code(404);
-                exit();
-            }
+            $blob_file = get_blob_v3_file($file_id);
             $blob_file = fopen($blob_file, "rb");
             fseek($blob_file, $blob_index * ($blob_size + 1));
     }
@@ -227,7 +251,7 @@ foreach ($blob_chunks as $blob_chunk) {
 
         if (!isset($blob_opened) || $blob_opened !== $blob_no) {
             if (isset($blob_opened)) fclose($blob_stream);
-            $blob_file = get_blob_path($blob_no);
+            $blob_file = get_blob_v1_file($blob_no);
             if (!file_exists($blob_file)) {
                 http_response_code(404);
                 exit();
