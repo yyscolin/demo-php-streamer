@@ -96,10 +96,9 @@ if (file_exists($file_path)) {
     exit();
 }
 
-$blob_key = isset($PROJ_CONF["BLOB_KEY"]) ? $PROJ_CONF["BLOB_KEY"] : null;
-$blob_path = isset($PROJ_CONF["BLOB_PATH"]) ? $PROJ_CONF["BLOB_PATH"] : null;
-$blob_path2 = isset($PROJ_CONF["BLOB_PATH2"]) ? $PROJ_CONF["BLOB_PATH2"] : null;
-if (!$blob_key || (!$blob_path && !$blob_path2)) {
+$has_no_key = !$PROJ_CONF["BLOB_KEY"];
+$has_no_paths = !$PROJ_CONF["BLOB_PATH"]  && !$PROJ_CONF["BLOB_PATH2"];
+if ($has_no_key || $has_no_paths) {
     http_response_code(404);
     exit();
 }

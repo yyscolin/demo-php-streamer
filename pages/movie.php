@@ -32,8 +32,7 @@ function get_mp4s($movie_id) {
 function get_seek_options() {
   global $PROJ_CONF;
   $options = array("back"=>10, "forward"=>10);
-  $seek_btn_right = isset($PROJ_CONF["SEEK_BTN_RIGHT"]) ? $PROJ_CONF["SEEK_BTN_RIGHT"] : null;
-  if ($seek_btn_right == "true" || $seek_btn_right == 1) {
+  if ($PROJ_CONF["SEEK_BTN_RIGHT"]) {
     $options["backIndex"] = 11;
     $options["forwardIndex"] = 11;
   }
