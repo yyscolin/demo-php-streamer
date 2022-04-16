@@ -1,8 +1,12 @@
 <?php
 
+require_once($_SERVER["DOCUMENT_ROOT"]."/public/common.php");
+require_once($_SERVER["DOCUMENT_ROOT"]."/public/box-star.php");
+
 function get_mp4s($movie_id) {
+  global $PROJ_CONF;
   global $mysql_connection;
-  $media_path = $_SERVER["MEDIA_PATH"];
+  $media_path = $PROJ_CONF["MEDIA_PATH"];
   $mp4s = [];
 
   $db_query = "SELECT part_id FROM movies_media WHERE movie_id=?";
@@ -26,8 +30,9 @@ function get_mp4s($movie_id) {
 }
 
 function get_seek_options() {
+  global $PROJ_CONF;
   $options = array("back"=>10, "forward"=>10);
-  $seek_btn_right = isset($_SERVER["SEEK_BTN_RIGHT"]) ? $_SERVER["SEEK_BTN_RIGHT"] : null;
+  $seek_btn_right = isset($PROJ_CONF["SEEK_BTN_RIGHT"]) ? $PROJ_CONF["SEEK_BTN_RIGHT"] : null;
   if ($seek_btn_right == "true" || $seek_btn_right == 1) {
     $options["backIndex"] = 11;
     $options["forwardIndex"] = 11;
@@ -70,9 +75,6 @@ function print_star_boxes($movie_id, $language, $mysql_connection) {
     print_star_box($db_row, 4);
 }
 
-require_once($_SERVER["DOCUMENT_ROOT"]."/public/common.php");
-require_once($_SERVER["DOCUMENT_ROOT"]."/public/box-star.php");
-
 $movie_id = $_GET["id"];
 if (!isset($movie_id)) redirectToHomePage();
 $movie_data = get_movie_from_database($movie_id);
@@ -84,7 +86,7 @@ print_page_header([
   "<link rel=\"stylesheet\" href=\"/styles/videojs.css\">",
   "<link rel=\"stylesheet\" href=\"/styles/videojs-seek-buttons.css\">",
   "<link rel=\"stylesheet\" href=\"/styles/videojs-mobile-ui.css\">",
-  "<title>$movie_data->name - ".$_SERVER["PROJECT_TITLE"]."</title>"
+  "<title>$movie_data->name - ".$PROJ_CONF["PROJECT_TITLE"]."</title>"
 ]);?>
 
   <div id="main-block">

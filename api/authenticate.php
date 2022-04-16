@@ -14,7 +14,7 @@ if (!isset($_POST['password']) || $_POST['password'] == '') {
 }
 
 switch ($_POST['password']) {
-    case $_SERVER['ACCESS_PASSWORD']:
+    case $PROJ_CONF["ACCESS_PASSWORD"]:
         $_SESSION['auth'] = 1;
         exit("Login Successful");
     default:

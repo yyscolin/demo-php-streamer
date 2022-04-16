@@ -1,5 +1,9 @@
 <?php
 
+require_once($_SERVER["DOCUMENT_ROOT"]."/config.php");
+require_once($_SERVER["DOCUMENT_ROOT"]."/public/mysql_connections.php");
+require_once($_SERVER["DOCUMENT_ROOT"]."/public/languages.php");
+
 function redirectToHomePage() {
   header("Location: /");
   exit();
@@ -167,13 +171,11 @@ function print_page_footer() {
 session_start();
 
 /** Verify Login */
-if ($_SERVER['ACCESS_PASSWORD'] && !$_SESSION['auth']) {
-  require_once($_SERVER['DOCUMENT_ROOT']."/public/login.html");
+if ($PROJ_CONF["ACCESS_PASSWORD"] && !$_SESSION['auth']) {
+  require_once($_SERVER["DOCUMENT_ROOT"]."/public/login.html");
   exit();
 }
 
-require_once($_SERVER['DOCUMENT_ROOT']."/public/mysql_connections.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/public/languages.php");
 $language = isset($_COOKIE['language']) ? $_COOKIE['language'] : "en";
 
 $useragent=$_SERVER['HTTP_USER_AGENT'];

@@ -6,7 +6,7 @@ require_once($_SERVER["DOCUMENT_ROOT"]."/public/nav-pages.php");
 
 print_page_header([  
   "<link rel=\"stylesheet\" href=\"/styles/star-box.css\">",
-  "<title>".get_text("stars", "ucfirst")." - ".get_text("loading", "ucfirst")." - ".$_SERVER["PROJECT_TITLE"]."</title>"
+  "<title>".get_text("stars", "ucfirst")." - ".get_text("loading", "ucfirst")." - ".$PROJ_CONF["PROJECT_TITLE"]."</title>"
 ]);
 
 $items_per_page = 50;

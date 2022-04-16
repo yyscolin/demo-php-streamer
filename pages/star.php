@@ -15,8 +15,8 @@ function print_star_potrait($star, $star_name) {
   print_line("</div>");
 }
 
-require_once($_SERVER['DOCUMENT_ROOT']."/public/box-movie.php");
-require_once($_SERVER['DOCUMENT_ROOT']."/public/common.php");
+require_once($_SERVER["DOCUMENT_ROOT"]."/public/box-movie.php");
+require_once($_SERVER["DOCUMENT_ROOT"]."/public/common.php");
 
 $id = $_GET["id"];
 if (!isset($id)) redirectToHomePage();
@@ -32,7 +32,7 @@ if ($id == 0) {
 print_page_header([
   "<link rel='stylesheet' href='/styles/poster.css'>",
   "<link rel='stylesheet' href='/styles/star-potrait.css'>",
-  "<title>$star_name - ".$_SERVER["PROJECT_TITLE"]."</title>"
+  "<title>$star_name - ".$PROJ_CONF["PROJECT_TITLE"]."</title>"
 ]);
 
 print_line("<div id='main-block' style='margin-top:0;overflow:hidden'>");

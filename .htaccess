@@ -52,18 +52,3 @@ DirectoryIndex index.php
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule ^(.*)$ index.php?/$1 [L]
 </IfModule>
-
-SetEnv PROJECT_TITLE
-SetEnv ACCESS_PASSWORD
-SetEnv SEEK_BTN_RIGHT false
-
-SetEnv MYSQL_HOSTNAME
-SetEnv MYSQL_PORT 3306
-SetEnv MYSQL_USERNAME
-SetEnv MYSQL_PASSWORD
-SetEnv MYSQL_DATABASE
-
-SetEnv MEDIA_PATH ./media
-SetEnv BLOB_PATH
-SetEnv BLOB_PATH2
-SetEnv BLOB_KEY

@@ -10,7 +10,7 @@ if (!isset($type) || !isset($search_query) || !in_array($type, ['movie', 'star']
   exit();
 }
 
-require_once($_SERVER['DOCUMENT_ROOT']."/public/common.php");
+require_once($_SERVER["DOCUMENT_ROOT"]."/public/common.php");
 
 $payload = new stdClass();
 $payload->type = $type;

@@ -1,9 +1,10 @@
 <?php
 
-$project_root = $_SERVER['DOCUMENT_ROOT'];
-$media_path = $_SERVER['MEDIA_PATH'];
+require_once($_SERVER["DOCUMENT_ROOT"]."/config.php");
+require_once($_SERVER["DOCUMENT_ROOT"]."/public/mysql_connections.php");
 
-require_once($_SERVER['DOCUMENT_ROOT']."/public/mysql_connections.php");
+$project_root = $_SERVER["DOCUMENT_ROOT"];
+$media_path = $PROJ_CONF["MEDIA_PATH"];
 
 function send_headers($file_size) {
     $content_length = $file_size;
@@ -95,9 +96,9 @@ if (file_exists($file_path)) {
     exit();
 }
 
-$blob_key = isset($_SERVER["BLOB_KEY"]) ? $_SERVER["BLOB_KEY"] : null;
-$blob_path = isset($_SERVER["BLOB_PATH"]) ? $_SERVER["BLOB_PATH"] : null;
-$blob_path2 = isset($_SERVER["BLOB_PATH2"]) ? $_SERVER["BLOB_PATH2"] : null;
+$blob_key = isset($PROJ_CONF["BLOB_KEY"]) ? $PROJ_CONF["BLOB_KEY"] : null;
+$blob_path = isset($PROJ_CONF["BLOB_PATH"]) ? $PROJ_CONF["BLOB_PATH"] : null;
+$blob_path2 = isset($PROJ_CONF["BLOB_PATH2"]) ? $PROJ_CONF["BLOB_PATH2"] : null;
 if (!$blob_key || (!$blob_path && !$blob_path2)) {
     http_response_code(404);
     exit();
@@ -118,16 +119,17 @@ function buffer_bytes($bin_data, $bytes_to_send, $buffer_size) {
 }
 
 function get_blob_path($blob_no) {
+    global $PROJ_CONF;
     $blob_no = strval($blob_no);
     $blob_no = str_repeat("0", 6 - strlen($blob_no)).$blob_no;
-    return $_SERVER['BLOB_PATH']."/$blob_no";
+    return $PROJ_CONF["BLOB_PATH"]."/$blob_no";
 }
 
 function prefix_zeroes($string, $length) {
     return str_repeat(0, $length - strlen($string)).$string;
 }
 
-$blob_key = base64_decode($_SERVER["BLOB_KEY"]);
+$blob_key = base64_decode($PROJ_CONF["BLOB_KEY"]);
 $db_query = "SELECT * FROM media_files WHERE id=$file_id";
 $db_response = $mysql_connection->query($db_query);
 $db_row = mysqli_fetch_object($db_response);
@@ -144,10 +146,10 @@ if ($version_id == 2 || $version_id == 3) {
 
     switch ($version_id) {
         case 2:
-            $blob_folder = $_SERVER['BLOB_PATH2']."/".prefix_zeroes($file_id, 4);
+            $blob_folder = $PROJ_CONF["BLOB_PATH2"]."/".prefix_zeroes($file_id, 4);
             break;
         case 3:
-            $blob_file = $_SERVER['BLOB_PATH2']."/".prefix_zeroes($file_id, 4);
+            $blob_file = $PROJ_CONF["BLOB_PATH2"]."/".prefix_zeroes($file_id, 4);
             if (!file_exists($blob_file)) {
                 http_response_code(404);
                 exit();
