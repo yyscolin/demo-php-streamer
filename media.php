@@ -45,19 +45,21 @@ function send_headers($file_size) {
     return array($content_length, $byte_start, $byte_end);
 }
 
-if ($_GET["type"] == "cover") {
+$is_image_file = in_array($_GET["type"], ["cover", "star"]);
+if ($is_image_file) {
     header("Content-Type:image/jpeg");
-    $media_file = "$media_path/covers/".$_GET["file"].".jpg";
-    if (!file_exists($media_file)) $media_file = "$project_root/images/default-cover.jpg";
-    readfile($media_file);
-    exit();
-}
-
-if ($_GET["type"] == "star") {
-    header("Content-Type:image/jpeg");
-    $media_file = "$media_path/stars/".$_GET["file"].".jpg";
-    if (!file_exists($media_file)) $media_file = "$project_root/images/default-star.jpg";
-    readfile($media_file);
+    $media_file = "$media_path/".$_GET["type"]."s/".$_GET["file"];
+    if ($PROJ_CONF["BLOB_KEY"] && file_exists("$media_file.eif")) {
+        $raw_binary = file_get_contents("$media_file.eif");
+        $iv_key = substr($raw_binary, -16);
+        $bin_data = substr($raw_binary, 0, -16);
+        $blob_key = base64_decode($PROJ_CONF["BLOB_KEY"]);
+        $bin_data =  openssl_decrypt($bin_data, "AES-256-CBC", $blob_key, OPENSSL_RAW_DATA, $iv_key);
+        echo $bin_data;
+        exit();
+    }
+    if (!file_exists("$media_file.jpg")) $media_file = "$project_root/images/default-".$_GET["type"];
+    readfile("$media_file.jpg");
     exit();
 }
 
