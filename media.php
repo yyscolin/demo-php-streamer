@@ -168,7 +168,7 @@ $version_id = $db_row->ver_id;
 if ($version_id == 2 || $version_id == 3) {
     $blob_size = 512 * 1024 - 1;
 
-    $file_size = $db_row->bytes_special;
+    $file_size = $db_row->file_size;
     list($content_remaining, $byte_start, $byte_end) = send_headers($file_size);
     $blob_index = floor($byte_start / $blob_size);
     $bytes_displacement = $byte_start - $blob_index * $blob_size;
@@ -217,7 +217,7 @@ $buffer_size = 4 * 1024;
 $pieces_per_blob = 256;
 $piece_size = 512 * 1024 - 1;
 
-$padding = $db_row->bytes_special;
+$padding = $db_row->file_size;
 
 $blob_chunks = [];
 $file_size = 0;
