@@ -71,7 +71,9 @@ function get_movies_from_database() {
   $movies = [];
   $db_query = "
   SELECT id, IFNULL(name_$language, '&ltNo Title&gt') AS name, release_date, duration
-  FROM movies ORDER BY db_timestamp DESC";
+  FROM movies
+  WHERE status=1
+  ORDER BY db_timestamp DESC";
   $db_statement = $mysql_connection->prepare($db_query);
   $db_statement->execute();
   $db_response = $db_statement->get_result();
