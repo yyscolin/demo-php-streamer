@@ -58,14 +58,18 @@ function print_star_boxes($movie_id, $language, $mysql_connection) {
   SELECT id, name_$language AS name, count
   FROM stars JOIN (
     SELECT star_id, count(*) AS count FROM movies_stars
-    WHERE movie_id IN (
+    WHERE status=1
+    AND movie_id IN (
       SELECT id FROM movies WHERE status=1
-    ) GROUP BY star_id
+    )
+    GROUP BY star_id
   ) AS t ON stars.id=t.star_id
-  WHERE id IN (
+  WHERE status=1
+  AND id IN (
     SELECT star_id FROM movies_stars
-    WHERE movie_id=?
-  ) AND status=1";
+    WHERE status=1
+    AND movie_id=?
+  )";
   $db_statement = $mysql_connection->prepare($db_query);
   $db_statement->bind_param("s", $movie_id);
   $db_statement->execute();

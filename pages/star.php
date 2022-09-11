@@ -40,18 +40,22 @@ print_line("<div id='main-block' style='margin-top:0;overflow:hidden'>");
 if ($id == 0) {
   $db_query = "
   SELECT id, name_$language AS name
-  FROM movies WHERE id NOT IN (
+  FROM movies WHERE status=1
+  AND id NOT IN (
     SELECT movie_id FROM movies_stars
-  ) AND status=1 ORDER BY release_date DESC";
+    WHERE status=1
+  ) ORDER BY release_date DESC";
   $db_response = $mysql_connection->query($db_query);
 } else {
   print_star_potrait($star, $star_name);
 
   $db_query = "
   SELECT id, name_$language AS name
-  FROM movies WHERE id IN (
-    SELECT movie_id FROM movies_stars WHERE star_id=?
-  ) AND status=1 ORDER BY release_date DESC";
+  FROM movies WHERE status=1
+  AND id IN (
+    SELECT movie_id FROM movies_stars
+    WHERE status=1 AND star_id=?
+  ) ORDER BY release_date DESC";
   $db_statement = $mysql_connection->prepare($db_query);
   $db_statement->bind_param("s", $star->id);
   $db_statement->execute();

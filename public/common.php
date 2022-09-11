@@ -18,12 +18,18 @@ function get_stars_from_database() {
   SELECT id, IFNULL(name_$language, '&ltNo Name&gt') AS name,
   IFNULL(t2.count, 0) AS count, latest_release_date FROM (
     SELECT stars.*, MAX(release_date) AS latest_release_date FROM stars
-    LEFT JOIN movies_stars ON stars.id=movies_stars.star_id
-    LEFT JOIN movies ON movies.id=movies_stars.movie_id
+    LEFT JOIN (
+      SELECT * from movies_stars WHERE status=1
+    ) t1 ON stars.id=t1.star_id
+    LEFT JOIN (
+      SELECT * FROM movies WHERE status=1
+    ) t2 ON t2.id=t1.movie_id
     GROUP BY stars.id
   ) t1 LEFT JOIN (
     SELECT star_id, count(*) AS count
-    FROM movies_stars WHERE movie_id IN (
+    FROM movies_stars
+    WHERE status=1
+    AND movie_id IN (
       SELECT id FROM movies WHERE status=1
     ) GROUP BY star_id
   ) t2 ON t1.id=t2.star_id

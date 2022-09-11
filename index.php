@@ -25,9 +25,11 @@ $db_query = "
   SELECT id, name_$language AS name, COALESCE(count, 0) AS count
   FROM stars LEFT JOIN (
     SELECT star_id, count(*) AS count FROM movies_stars
-    WHERE movie_id IN (
+    WHERE status=1
+    AND movie_id IN (
       SELECT id FROM movies WHERE status=1
-    ) GROUP BY star_id
+    )
+    GROUP BY star_id
   ) AS t ON stars.id=t.star_id
   WHERE id IN (
     SELECT id FROM (
