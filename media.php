@@ -6,6 +6,18 @@ require_once($_SERVER["DOCUMENT_ROOT"]."/public/mysql_connections.php");
 $project_root = $_SERVER["DOCUMENT_ROOT"];
 $media_path = $PROJ_CONF["MEDIA_PATH"];
 
+function find_blob_file($file_name) {
+    global $PROJ_CONF;
+    foreach ($PROJ_CONF["BLOB_DIRS"] as $blob_dir) {
+        $blob_file = "$blob_dir/$file_name";
+        if (file_exists($blob_file)) return $blob_file;
+    }
+}
+
+function prefix_zeroes($string, $length) {
+    return str_repeat(0, $length - strlen($string)).$string;
+}
+
 function send_headers($file_size) {
     $content_length = $file_size;
     $byte_start = 0;
@@ -45,29 +57,6 @@ function send_headers($file_size) {
     return array($content_length, $byte_start, $byte_end);
 }
 
-$is_image_file = in_array($_GET["type"], ["cover", "star"]);
-if ($is_image_file) {
-    header("Content-Type:image/jpeg");
-    $media_file = "$media_path/".$_GET["type"]."s/".$_GET["file"];
-    if ($PROJ_CONF["BLOB_KEY"] && file_exists("$media_file.eif")) {
-        $raw_binary = file_get_contents("$media_file.eif");
-        $iv_key = substr($raw_binary, -16);
-        $bin_data = substr($raw_binary, 0, -16);
-        $blob_key = base64_decode($PROJ_CONF["BLOB_KEY"]);
-        $bin_data =  openssl_decrypt($bin_data, "AES-256-CBC", $blob_key, OPENSSL_RAW_DATA, $iv_key);
-        echo $bin_data;
-        exit();
-    }
-    if (!file_exists("$media_file.jpg")) $media_file = "$project_root/images/default-".$_GET["type"];
-    readfile("$media_file.jpg");
-    exit();
-}
-
-if ($_GET["type"] != "movie") {
-    http_response_code(400);
-    exit();
-}
-
 function send_media_file($file_path, $crypt_key) {
     set_time_limit(0);
 
@@ -92,6 +81,29 @@ function send_media_file($file_path, $crypt_key) {
         flush();
     }
     fclose($read_stream);
+}
+
+$is_image_file = in_array($_GET["type"], ["cover", "star"]);
+if ($is_image_file) {
+    header("Content-Type:image/jpeg");
+    $media_file = "$media_path/".$_GET["type"]."s/".$_GET["file"];
+    if ($PROJ_CONF["BLOB_KEY"] && file_exists("$media_file.eif")) {
+        $raw_binary = file_get_contents("$media_file.eif");
+        $iv_key = substr($raw_binary, -16);
+        $bin_data = substr($raw_binary, 0, -16);
+        $blob_key = base64_decode($PROJ_CONF["BLOB_KEY"]);
+        $bin_data =  openssl_decrypt($bin_data, "AES-256-CBC", $blob_key, OPENSSL_RAW_DATA, $iv_key);
+        echo $bin_data;
+        exit();
+    }
+    if (!file_exists("$media_file.jpg")) $media_file = "$project_root/images/default-".$_GET["type"];
+    readfile("$media_file.jpg");
+    exit();
+}
+
+if ($_GET["type"] != "movie") {
+    http_response_code(400);
+    exit();
 }
 
 list($movie_id, $part_id) = explode("~", $_GET["file"]);
@@ -119,18 +131,6 @@ $file_path = "$media_path/movies/$file_id.mp4";
 if (file_exists($file_path)) {
     send_media_file($file_path);
     exit();
-}
-
-function find_blob_file($file_name) {
-    global $PROJ_CONF;
-    foreach ($PROJ_CONF["BLOB_DIRS"] as $blob_dir) {
-        $blob_file = "$blob_dir/$file_name";
-        if (file_exists($blob_file)) return $blob_file;
-    }
-}
-
-function prefix_zeroes($string, $length) {
-    return str_repeat(0, $length - strlen($string)).$string;
 }
 
 $blob_key = base64_decode($PROJ_CONF["BLOB_KEY"]);
