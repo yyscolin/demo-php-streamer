@@ -57,7 +57,7 @@ function send_headers($file_size) {
     return array($content_length, $byte_start, $byte_end);
 }
 
-function send_media_file($file_path, $crypt_key) {
+function send_media_file($file_path, $crypt_key=null) {
     set_time_limit(0);
 
     $buffer_size = 4 * 1024;
@@ -112,6 +112,21 @@ $file_v4 = prefix_zeroes($movie_id, 6)."~".prefix_zeroes($part_id, 3);
 $file_v4 = find_blob_file($file_v4);
 if ($PROJ_CONF["CRYPT_V4_KEY"] && $file_v4) {
     send_media_file($file_v4, $PROJ_CONF["CRYPT_V4_KEY"]);
+    exit();
+}
+
+$db_query = "
+    SELECT SUBSTRING_INDEX(name_en, ' ', 1) as name FROM movies WHERE id=?";
+$db_statement = $mysql_connection->prepare($db_query);
+$db_statement->bind_param("s", $movie_id);
+$db_statement->execute();
+$db_response = $db_statement->get_result();
+$db_row = mysqli_fetch_object($db_response);
+
+$movie_title_first_word = $db_row->name;
+$file_path = "$media_path/movies/$movie_title_first_word"."_$part_id.mp4";
+if (file_exists($file_path)) {
+    send_media_file($file_path);
     exit();
 }
 
