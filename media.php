@@ -68,7 +68,41 @@ if ($_GET["type"] != "movie") {
     exit();
 }
 
+function send_media_file($file_path, $crypt_key) {
+    set_time_limit(0);
+
+    $buffer_size = 4 * 1024;
+    $file_size = filesize($file_path);
+    list($content_length, $byte_start, $byte_end) = send_headers($file_size);
+    $read_stream = fopen($file_path, "rb");
+    if ($byte_start > 0) fseek($read_stream, $byte_start);
+
+    while(!feof($read_stream) && ($p = ftell($read_stream)) <= $byte_end) {
+        if ($p + $buffer_size > $byte_end) $buffer_size = $byte_end - $p + 1;
+        $chunk = fread($read_stream, $buffer_size);
+        if ($crypt_key) {
+            $decrypt_maps = str_split(file_get_contents($crypt_key), 256);
+            $map_index = $byte_start % count($decrypt_maps);
+            for ($i = 0; $i < $buffer_size; $i++) {
+                echo $decrypt_maps[$map_index][ord($chunk[$i])];
+                $map_index = $map_index + 1;
+                if ($map_index == count($decrypt_maps)) $map_index = 0;
+            }
+        } else echo $chunk;
+        flush();
+    }
+    fclose($read_stream);
+}
+
 list($movie_id, $part_id) = explode("~", $_GET["file"]);
+
+$file_v4 = prefix_zeroes($movie_id, 6)."~".prefix_zeroes($part_id, 3);
+$file_v4 = find_blob_file($file_v4);
+if ($PROJ_CONF["CRYPT_V4_KEY"] && $file_v4) {
+    send_media_file($file_v4, $PROJ_CONF["CRYPT_V4_KEY"]);
+    exit();
+}
+
 $db_query = "SELECT file_id FROM movies_media WHERE movie_id=? AND part_id=?";
 $db_statement = $mysql_connection->prepare($db_query);
 $db_statement->bind_param("ss", $movie_id, $part_id);
@@ -78,41 +112,21 @@ if ($db_response->num_rows < 1) {
     http_response_code(404);
     exit();
 }
-
-set_time_limit(0);
 $db_row = mysqli_fetch_object($db_response);
+
 $file_id = $db_row->file_id;
 $file_path = "$media_path/movies/$file_id.mp4";
 if (file_exists($file_path)) {
-    $buffer_size = 4 * 1024;
-    $file_size = filesize($file_path);
-    list($content_length, $byte_start, $byte_end) = send_headers($file_size);
-    $fp = fopen($file_path, 'rb');
-    if ($byte_start > 0) fseek($fp, $byte_start);
-    while(!feof($fp) && ($p = ftell($fp)) <= $byte_end) {
-        if ($p + $buffer_size > $byte_end) $buffer_size = $byte_end - $p + 1;
-        echo fread($fp, $buffer_size);
-        flush();
-    }
-    fclose($fp);
+    send_media_file($file_path);
     exit();
 }
 
-if (!$PROJ_CONF["BLOB_KEY"] || !count($PROJ_CONF["BLOB_DIRS"])) {
-    http_response_code(404);
-    exit();
-}
-
-function get_blob_v3_file($file_id) {
+function find_blob_file($file_name) {
     global $PROJ_CONF;
-    $blob_no = prefix_zeroes($file_id, 4);
     foreach ($PROJ_CONF["BLOB_DIRS"] as $blob_dir) {
-        $blob_file = "$blob_dir/$blob_no";
+        $blob_file = "$blob_dir/$file_name";
         if (file_exists($blob_file)) return $blob_file;
     }
-
-    http_response_code(404);
-    exit();
 }
 
 function prefix_zeroes($string, $length) {
@@ -125,8 +139,15 @@ $db_response = $mysql_connection->query($db_query);
 $db_row = mysqli_fetch_object($db_response);
 $iv_key = $db_row->iv_key;
 
+set_time_limit(0);
 $version_id = $db_row->ver_id;
 if ($version_id == 3) {
+    $blob_file = find_blob_file(prefix_zeroes($file_id, 4));
+    if (!$PROJ_CONF["BLOB_KEY"] || !$blob_file) {
+        http_response_code(404);
+        exit();
+    }
+
     $blob_size = 512 * 1024 - 1;
 
     $file_size = $db_row->file_size;
@@ -134,7 +155,6 @@ if ($version_id == 3) {
     $blob_index = floor($byte_start / $blob_size);
     $bytes_displacement = $byte_start - $blob_index * $blob_size;
 
-    $blob_file = get_blob_v3_file($file_id);
     $blob_file = fopen($blob_file, "rb");
     fseek($blob_file, $blob_index * ($blob_size + 1));
 

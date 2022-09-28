@@ -14,4 +14,5 @@ $PROJ_CONF = array(
   "MEDIA_PATH"=>"./media",
   "BLOB_DIRS"=>[],
   "BLOB_KEY"=>"",
+  "CRYPT_V4_KEY"=>"",
 );
