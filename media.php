@@ -103,45 +103,6 @@ if (!$PROJ_CONF["BLOB_KEY"] || !count($PROJ_CONF["BLOB_DIRS"])) {
     exit();
 }
 
-function buffer_bytes($bin_data, $bytes_to_send, $buffer_size) {
-    if (strlen($bin_data) > $bytes_to_send) $bin_data = substr($bin_data, 0, $bytes_to_send);
-    while ($bin_data) {
-        if (strlen($bin_data) > $buffer_size) {
-            echo substr($bin_data, 0, $buffer_size);
-            $bin_data = substr($bin_data, $buffer_size);
-        } else {
-            echo $bin_data;
-            $bin_data = null;
-        }
-        flush();
-    }
-}
-
-function get_blob_v1_file($blob_no) {
-    global $PROJ_CONF;
-    $blob_no = strval($blob_no);
-    $blob_no = str_repeat("0", 6 - strlen($blob_no)).$blob_no;
-    foreach ($PROJ_CONF["BLOB_DIRS"] as $blob_dir) {
-        $blob_file = "$blob_dir/$blob_no";
-        if (file_exists($blob_file)) return $blob_file;
-    }
-
-    http_response_code(404);
-    exit();
-}
-
-function get_blob_v2_folder($file_id) {
-    global $PROJ_CONF;
-    $blob_subfolder = prefix_zeroes($file_id, 4);
-    foreach ($PROJ_CONF["BLOB_DIRS"] as $blob_dir) {
-        $blob_folder = "$blob_dir/$blob_subfolder";
-        if (file_exists($blob_folder)) return $blob_folder;
-    }
-
-    http_response_code(404);
-    exit();
-}
-
 function get_blob_v3_file($file_id) {
     global $PROJ_CONF;
     $blob_no = prefix_zeroes($file_id, 4);
@@ -165,7 +126,7 @@ $db_row = mysqli_fetch_object($db_response);
 $iv_key = $db_row->iv_key;
 
 $version_id = $db_row->ver_id;
-if ($version_id == 2 || $version_id == 3) {
+if ($version_id == 3) {
     $blob_size = 512 * 1024 - 1;
 
     $file_size = $db_row->file_size;
@@ -173,29 +134,12 @@ if ($version_id == 2 || $version_id == 3) {
     $blob_index = floor($byte_start / $blob_size);
     $bytes_displacement = $byte_start - $blob_index * $blob_size;
 
-    switch ($version_id) {
-        case 2:
-            $blob_folder = get_blob_v2_folder($file_id);
-            break;
-        case 3:
-            $blob_file = get_blob_v3_file($file_id);
-            $blob_file = fopen($blob_file, "rb");
-            fseek($blob_file, $blob_index * ($blob_size + 1));
-    }
+    $blob_file = get_blob_v3_file($file_id);
+    $blob_file = fopen($blob_file, "rb");
+    fseek($blob_file, $blob_index * ($blob_size + 1));
 
     do {
-        switch ($version_id) {
-            case 2:
-                $blob_file = "$blob_folder/".prefix_zeroes($blob_index, 5);
-                if (!file_exists($blob_file)) {
-                    http_response_code(404);
-                    exit();
-                }
-                $bin_data = file_get_contents($blob_file);
-                break;
-            case 3:
-                $bin_data = fread($blob_file, $blob_size + 1);
-        }
+        $bin_data = fread($blob_file, $blob_size + 1);
         $bin_data =  openssl_decrypt($bin_data, "AES-256-CBC", $blob_key, OPENSSL_RAW_DATA, $iv_key);
         if ($bytes_displacement > 0) {
             $bin_data = substr($bin_data, $bytes_displacement);
@@ -211,75 +155,4 @@ if ($version_id == 2 || $version_id == 3) {
     } while ($content_remaining > 0);
 
     exit();
-}
-
-$buffer_size = 4 * 1024;
-$pieces_per_blob = 256;
-$piece_size = 512 * 1024 - 1;
-
-$padding = $db_row->file_size;
-
-$blob_chunks = [];
-$file_size = 0;
-$db_query = "SELECT head_piece, pieces FROM media_pieces WHERE file_id=$file_id ORDER BY sequence";
-$db_response = $mysql_connection->query($db_query);
-while ($db_row = mysqli_fetch_object($db_response)) {
-    $db_row->size = $piece_size * $db_row->pieces;
-    $file_size += $db_row->size;
-    $blob_chunks[] = $db_row;
-}
-$file_size -= $padding;
-$blob_chunks[count($blob_chunks) - 1]->size -= $padding;
-
-list($content_remaining, $bytes_displacement, $byte_end) = send_headers($file_size);
-
-foreach ($blob_chunks as $blob_chunk) {
-    if ($bytes_displacement > $blob_chunk->size) {
-        $bytes_displacement -= $blob_chunk->size;
-        continue;
-    }
-
-    $chunk_remaining = $blob_chunk->size;
-    $piece_no = $blob_chunk->head_piece;
-    if ($bytes_displacement > 0) {
-        $pieces_to_skip = floor($bytes_displacement / $piece_size);
-        $piece_no += $pieces_to_skip;
-        $chunk_remaining -= $pieces_to_skip * $piece_size;
-        $bytes_displacement = $bytes_displacement - $pieces_to_skip * $piece_size;
-    }
-
-    while ($content_remaining > 0 && $chunk_remaining > 0) {
-        $blob_no = floor($piece_no / $pieces_per_blob);
-
-        if (!isset($blob_opened) || $blob_opened !== $blob_no) {
-            if (isset($blob_opened)) fclose($blob_stream);
-            $blob_file = get_blob_v1_file($blob_no);
-            if (!file_exists($blob_file)) {
-                http_response_code(404);
-                exit();
-            }
-            $blob_stream = fopen($blob_file, "rb");
-            $blob_opened = $blob_no;
-            $piece_displacement = $piece_no - $blob_no * $pieces_per_blob;
-            if ($piece_displacement > 0) fseek($blob_stream, $piece_displacement * ($piece_size + 1));
-        }
-
-        $bin_data = fread($blob_stream, $piece_size + 1);
-        $bin_data =  openssl_decrypt($bin_data, "AES-256-CBC", $blob_key, OPENSSL_RAW_DATA, $iv_key);
-
-        if ($bytes_displacement > 0) {
-            $bin_data = substr($bin_data, $bytes_displacement);
-            $bytes_displacement = 0;
-        }
-
-        $bytes_to_send = min($content_remaining, $chunk_remaining, $piece_size);
-        buffer_bytes($bin_data, $bytes_to_send, $buffer_size);
-
-        $content_remaining -= $bytes_to_send;
-        $chunk_remaining -= $bytes_to_send;
-        $piece_no++;
-    }
-
-    fclose($blob_stream);
-    unset($blob_opened);
 }
