@@ -12,6 +12,7 @@ $PROJ_CONF = array(
   "MYSQL_DATABASE"=>"",
 
   "MEDIA_PATH"=>"./media",
+  "MP4_DIRS"=>["./media/movies"],
   "BLOB_DIRS"=>[],
   "BLOB_KEY"=>"",
   "CRYPT_V4_KEY"=>"",

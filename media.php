@@ -6,11 +6,11 @@ require_once($_SERVER["DOCUMENT_ROOT"]."/public/mysql_connections.php");
 $project_root = $_SERVER["DOCUMENT_ROOT"];
 $media_path = $PROJ_CONF["MEDIA_PATH"];
 
-function find_blob_file($file_name) {
+function find_file($file_type, $file_name) {
     global $PROJ_CONF;
-    foreach ($PROJ_CONF["BLOB_DIRS"] as $blob_dir) {
-        $blob_file = "$blob_dir/$file_name";
-        if (file_exists($blob_file)) return $blob_file;
+    foreach ($PROJ_CONF[$file_type."_DIRS"] as $directory) {
+        $file_path = "$directory/$file_name";
+        if (file_exists($file_path)) return $file_path;
     }
 }
 
@@ -116,7 +116,7 @@ $db_response = $db_statement->get_result();
 $db_row = mysqli_fetch_object($db_response);
 
 $movie_title_first_word = $db_row->name;
-$file_path = "$media_path/movies/$movie_title_first_word"."_$part_id.mp4";
+$file_path = find_file("MP4", "$movie_title_first_word"."_$part_id.mp4");
 if (file_exists($file_path)) {
     send_media_file($file_path);
     exit();
@@ -134,7 +134,7 @@ if ($db_response->num_rows < 1) {
 $db_row = mysqli_fetch_object($db_response);
 
 $file_id = $db_row->file_id;
-$file_path = "$media_path/movies/$file_id.mp4";
+$file_path = find_file("MP4", "$file_id.mp4");
 if (file_exists($file_path)) {
     send_media_file($file_path);
     exit();
@@ -146,7 +146,7 @@ $db_row = mysqli_fetch_object($db_response);
 
 $version_id = $db_row->ver_id;
 if ($version_id == 3) {
-    $blob_file = find_blob_file(prefix_zeroes($file_id, 4));
+    $blob_file = find_file("BLOB", prefix_zeroes($file_id, 4));
     if (!$PROJ_CONF["BLOB_KEY"] || !$blob_file) {
         http_response_code(404);
         exit();
@@ -182,7 +182,7 @@ if ($version_id == 3) {
 
     exit();
 } elseif ($version_id == 4) {
-    $blob_file = find_blob_file(prefix_zeroes($file_id, 4));
+    $blob_file = find_file("BLOB", prefix_zeroes($file_id, 4));
     if ($PROJ_CONF["CRYPT_V4_KEY"] && $blob_file) {
         send_media_file($blob_file, $PROJ_CONF["CRYPT_V4_KEY"]);
         exit();
