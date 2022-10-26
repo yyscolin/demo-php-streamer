@@ -108,15 +108,7 @@ if ($_GET["type"] != "movie") {
 
 list($movie_id, $part_id) = explode("~", $_GET["file"]);
 
-$file_v4 = prefix_zeroes($movie_id, 6)."~".prefix_zeroes($part_id, 3);
-$file_v4 = find_blob_file($file_v4);
-if ($PROJ_CONF["CRYPT_V4_KEY"] && $file_v4) {
-    send_media_file($file_v4, $PROJ_CONF["CRYPT_V4_KEY"]);
-    exit();
-}
-
-$db_query = "
-    SELECT SUBSTRING_INDEX(name_en, ' ', 1) as name FROM movies WHERE id=?";
+$db_query = "SELECT SUBSTRING_INDEX(name_en, ' ', 1) as name FROM movies WHERE id=?";
 $db_statement = $mysql_connection->prepare($db_query);
 $db_statement->bind_param("s", $movie_id);
 $db_statement->execute();
@@ -148,13 +140,10 @@ if (file_exists($file_path)) {
     exit();
 }
 
-$blob_key = base64_decode($PROJ_CONF["BLOB_KEY"]);
 $db_query = "SELECT * FROM media_files WHERE id=$file_id";
 $db_response = $mysql_connection->query($db_query);
 $db_row = mysqli_fetch_object($db_response);
-$iv_key = $db_row->iv_key;
 
-set_time_limit(0);
 $version_id = $db_row->ver_id;
 if ($version_id == 3) {
     $blob_file = find_blob_file(prefix_zeroes($file_id, 4));
@@ -163,6 +152,8 @@ if ($version_id == 3) {
         exit();
     }
 
+    $blob_key = base64_decode($PROJ_CONF["BLOB_KEY"]);
+    $iv_key = $db_row->iv_key;
     $blob_size = 512 * 1024 - 1;
 
     $file_size = $db_row->file_size;
@@ -189,5 +180,14 @@ if ($version_id == 3) {
         $blob_index++;
     } while ($content_remaining > 0);
 
+    exit();
+} elseif ($version_id == 4) {
+    $blob_file = find_blob_file(prefix_zeroes($file_id, 4));
+    if ($PROJ_CONF["CRYPT_V4_KEY"] && $blob_file) {
+        send_media_file($blob_file, $PROJ_CONF["CRYPT_V4_KEY"]);
+        exit();
+    }
+
+    http_response_code(404);
     exit();
 }
