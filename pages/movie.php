@@ -7,7 +7,24 @@ function get_mp4s($movie_id) {
   global $PROJ_CONF;
   global $mysql_connection;
   $media_path = $PROJ_CONF["MEDIA_PATH"];
-  $mp4s = [];
+  $movie_parts = [];
+
+  $db_query = "SELECT SUBSTRING_INDEX(name_en, ' ', 1) as name FROM movies WHERE id=?";
+  $db_statement = $mysql_connection->prepare($db_query);
+  $db_statement->bind_param("s", $movie_id);
+  $db_statement->execute();
+  $db_response = $db_statement->get_result();
+  $db_row = mysqli_fetch_object($db_response);
+  $movie_title_first_word = $db_row->name;
+  foreach ($PROJ_CONF["MP4_DIRS"] as $directory) {
+    $matching_files = glob("$directory/$movie_title_first_word"."_*.mp4");
+    foreach ($matching_files as $file_name) {
+      $str_splits = explode(".", $file_name);
+      $str_splits = explode("_", $str_splits[count($str_splits) - 2]);
+      $part_id = $str_splits[count($str_splits) - 1];
+      array_push($movie_parts, intval($part_id));
+    }
+  }
 
   $db_query = "SELECT part_id FROM movies_media WHERE movie_id=?";
   $db_statement = $mysql_connection->prepare($db_query);
@@ -16,17 +33,16 @@ function get_mp4s($movie_id) {
   $db_response = $db_statement->get_result();
   while ($db_row = mysqli_fetch_object($db_response)) {
     $part_id = $db_row->part_id;
-    array_push($mp4s, array(
-      "file_path"=>"/media/movie/$movie_id~$part_id",
-      "part_id"=>intval($part_id)
-    ));
+    array_push($movie_parts, intval($part_id));
   }
 
-  usort($mp4s, function($a, $b) {
-    return $a["part_id"] > $b["part_id"];
-  });
+  $movie_parts = array_unique($movie_parts, SORT_NUMERIC);
+  for ($i = 0; $i < count($movie_parts); $i++) $movie_parts[$i] = array(
+    "file_path"=>"/media/movie/$movie_id~$movie_parts[$i]",
+    "part_id"=>$movie_parts[$i]
+  );
 
-  return $mp4s;
+  return $movie_parts;
 }
 
 function get_seek_options() {
