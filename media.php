@@ -9,8 +9,10 @@ $media_path = $PROJ_CONF["MEDIA_PATH"];
 function find_file($file_type, $file_name) {
     global $PROJ_CONF;
     foreach ($PROJ_CONF[$file_type."_DIRS"] as $directory) {
-        $file_path = "$directory/$file_name";
-        if (file_exists($file_path)) return $file_path;
+        if (file_exists("$directory/$file_name")) return "$directory/$file_name";
+
+        $matching_files = glob("$directory/*/$file_name");
+        if (count($matching_files)) return $matching_files[0];
     }
 }
 

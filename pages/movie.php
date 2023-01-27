@@ -8,8 +8,11 @@ function get_mp4s($movie_id) {
     global $PROJ_CONF;
     $all_matches = [];
     foreach ($PROJ_CONF[$file_type."_DIRS"] as $directory) {
-      $matching_files = glob("$directory/$file_pattern");
-      $all_matches = array_merge($all_matches, $matching_files);
+      $all_matches = array_merge(
+        $all_matches,
+        glob("$directory/$file_pattern"),
+        glob("$directory/*/$file_pattern"),
+      );
     }
     return $all_matches;
   }
