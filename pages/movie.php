@@ -7,7 +7,7 @@ function get_mp4s($movie_id) {
   function find_files($file_type, $file_pattern) {
     global $PROJ_CONF;
     $all_matches = [];
-    foreach ($PROJ_CONF[$file_type."_DIRS"] as $directory) {
+    foreach ($PROJ_CONF["MEDIA_DIRS"][$file_type] as $directory) {
       $all_matches = array_merge(
         $all_matches,
         glob("$directory/$file_pattern"),
@@ -19,7 +19,6 @@ function get_mp4s($movie_id) {
 
   global $PROJ_CONF;
   global $mysql_connection;
-  $media_path = $PROJ_CONF["MEDIA_PATH"];
   $movie_parts = [];
 
   $db_query = "SELECT SUBSTRING_INDEX(name_en, ' ', 1) as name FROM movies WHERE id=?";
@@ -29,7 +28,7 @@ function get_mp4s($movie_id) {
   $db_response = $db_statement->get_result();
   $db_row = mysqli_fetch_object($db_response);
   $movie_title_first_word = $db_row->name;
-  $matching_files = find_files("MP4", "$movie_title_first_word"."_*.mp4");
+  $matching_files = find_files("mp4", "$movie_title_first_word"."_*.mp4");
   foreach ($matching_files as $file_name) {
     $str_splits = explode(".", $file_name);
     $str_splits = explode("_", $str_splits[count($str_splits) - 2]);
@@ -44,9 +43,9 @@ function get_mp4s($movie_id) {
   $db_response = $db_statement->get_result();
   while ($db_row = mysqli_fetch_object($db_response)) {
     $file_id = $db_row->file_id;
-    $matching_files = find_files("MP4", "$file_id.mp4");
+    $matching_files = find_files("mp4", "$file_id.mp4");
     if (!count($matching_files))
-      $matching_files = find_files("BLOB", $file_id);
+      $matching_files = find_files("blob", $file_id);
 
     if (count($matching_files))
       array_push($movie_parts, intval($db_row->part_id));
