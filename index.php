@@ -62,7 +62,7 @@ FROM movies WHERE id IN (
     SELECT ROW_NUMBER() OVER(ORDER BY id) % $featured_group_count AS group_id, id, name_en
     FROM movies WHERE status=1
   ) t1 WHERE group_id=$todays_group_id
-) ORDER BY db_timestamp DESC";
+) ORDER BY update_timestamp DESC";
 $db_response = mysqli_query($mysql_connection, $db_query);
 if (mysqli_num_rows($db_response)) {
   print_line("<h2>".get_text("movies of the day")."</h2>", 2);
