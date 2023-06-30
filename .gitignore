@@ -2,6 +2,3 @@ config.php
 
 media/*/*
 !media/*/readme.txt
-
-banner.png
-favicon.ico
