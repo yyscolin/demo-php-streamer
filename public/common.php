@@ -9,6 +9,19 @@ function redirectToHomePage() {
   exit();
 }
 
+function get_first_word_of_movie_title($movie_id) {
+  global $mysql_connection;
+  $db_query = "SELECT name_en FROM movies WHERE id=?";
+  $db_statement = $mysql_connection->prepare($db_query);
+  $db_statement->bind_param("s", $movie_id);
+  $db_statement->execute();
+  $db_response = $db_statement->get_result();
+  $db_row = mysqli_fetch_object($db_response);
+  $movie_title = $db_row->name_en;
+  $movie_title_first_word = explode(" ", $movie_title)[0];
+  return $movie_title_first_word;
+}
+
 function get_stars_from_database() {
   global $mysql_connection;
   global $language;

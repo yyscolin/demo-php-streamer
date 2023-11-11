@@ -13,10 +13,7 @@ $PROJ_CONF = array(
 
   "MEDIA_DIRS"=>[
     "mp4"=>[],
-    "blob"=>[],
     "cover"=>[],
     "star"=>[],
   ],
-  "BLOB_KEY"=>"===================SAMPLE===================",
-  "CRYPT_V4_KEY"=>"",
 );

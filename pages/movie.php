@@ -4,51 +4,37 @@ require_once($_SERVER["DOCUMENT_ROOT"]."/public/common.php");
 require_once($_SERVER["DOCUMENT_ROOT"]."/public/box-star.php");
 
 function get_mp4s($movie_id) {
-  function find_files($file_type, $file_pattern) {
-    global $PROJ_CONF;
-    $all_matches = [];
-    foreach ($PROJ_CONF["MEDIA_DIRS"][$file_type] as $directory) {
-      $all_matches = array_merge(
-        $all_matches,
-        glob("$directory/$file_pattern"),
-        glob("$directory/*/$file_pattern"),
-      );
-    }
-    return $all_matches;
-  }
-
   global $PROJ_CONF;
   global $mysql_connection;
   $movie_parts = [];
 
-  $db_query = "SELECT SUBSTRING_INDEX(name_en, ' ', 1) as name FROM movies WHERE id=?";
+  /** Try to get the number of parts of this movie from the database */
+  $db_query = "SELECT part_id FROM movies_media WHERE movie_id=?";
   $db_statement = $mysql_connection->prepare($db_query);
   $db_statement->bind_param("s", $movie_id);
   $db_statement->execute();
   $db_response = $db_statement->get_result();
-  $db_row = mysqli_fetch_object($db_response);
-  $movie_title_first_word = $db_row->name;
-  $matching_files = find_files("mp4", "$movie_title_first_word"."_*.mp4");
-  foreach ($matching_files as $file_name) {
-    $str_splits = explode(".", $file_name);
-    $str_splits = explode("_", $str_splits[count($str_splits) - 2]);
-    $part_id = $str_splits[count($str_splits) - 1];
-    array_push($movie_parts, intval($part_id));
+  if ($db_response->num_rows > 0) {
+    while ($db_row = mysqli_fetch_object($db_response)) {
+      array_push($movie_parts, intval($db_row->part_id));
+    }
   }
 
-  $db_query = "SELECT part_id, file_id FROM movies_media WHERE movie_id=?";
-  $db_statement = $mysql_connection->prepare($db_query);
-  $db_statement->bind_param("s", $movie_id);
-  $db_statement->execute();
-  $db_response = $db_statement->get_result();
-  while ($db_row = mysqli_fetch_object($db_response)) {
-    $file_id = $db_row->file_id;
-    $matching_files = find_files("mp4", "$file_id.mp4");
-    if (!count($matching_files))
-      $matching_files = find_files("blob", $file_id);
-
-    if (count($matching_files))
-      array_push($movie_parts, intval($db_row->part_id));
+  /** If data is not in database, find files with special naming convention */
+  else {
+    $movie_title_first_word = get_first_word_of_movie_title($movie_id);
+    $file_pattern = $movie_title_first_word."_[0-9].mp4";
+    foreach ($PROJ_CONF["MEDIA_DIRS"]["mp4"] as $directory) {
+      foreach(["", "/*"] as $subdir) {
+        $matching_files = glob($directory.$subdir."/$file_pattern");
+        foreach ($matching_files as $file_name) {
+          $str_splits = explode(".", $file_name);
+          $str_splits = explode("_", $str_splits[count($str_splits) - 2]);
+          $part_id = $str_splits[count($str_splits) - 1];
+          array_push($movie_parts, intval($part_id));
+        }
+      }
+    }
   }
 
   $movie_parts = array_unique($movie_parts, SORT_NUMERIC);
