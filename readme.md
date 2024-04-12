@@ -12,4 +12,4 @@ This project demostrates the ability to create a streaming website using PHP.
 
 ### For Microsoft Azure
 Run command at startup
-`cp /home/site/wwwroot/nginx.conf /etc/nginx/sites-available/default`
+`cp /home/site/wwwroot/nginx.conf /etc/nginx/sites-available/default; service nginx reload`
