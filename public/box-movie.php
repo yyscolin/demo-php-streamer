@@ -2,7 +2,7 @@
 
 function print_movie_box($movie, $default_indentation=1) {
   if ($movie) {
-    $img = "/media/cover/$movie->id";
+    $img = "/mediafile/cover/$movie->id";
     $href = "/movie/$movie->id";
     $title = $movie->name ? $movie->name : "&ltNo title&gt";
     $style = "";

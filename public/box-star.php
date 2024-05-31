@@ -2,7 +2,7 @@
 
 function print_star_box($star=null, $default_indentation=3) {
   if ($star) {
-    $img = "/media/star/$star->id";
+    $img = "/mediafile/star/$star->id";
     $star_name = $star->name ? $star->name : "&ltNo Name&gt";
     $href = "/star/$star->id";
     $style = "";

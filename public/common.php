@@ -51,7 +51,7 @@ function get_stars_from_database() {
   $db_response = mysqli_query($mysql_connection, $db_query);
   while ($db_row = mysqli_fetch_object($db_response)) {
     $db_row->attributes = [];
-    $db_row->img = "/media/star/$db_row->id";
+    $db_row->img = "/mediafile/star/$db_row->id";
     $stars[] = $db_row;
   }
 
@@ -97,7 +97,7 @@ function get_movies_from_database() {
   $db_statement->execute();
   $db_response = $db_statement->get_result();
   while ($db_row = $db_response->fetch_object()) {
-    $db_row->img = "/media/cover/$db_row->id";
+    $db_row->img = "/mediafile/cover/$db_row->id";
     $movies[] = $db_row;
   }
   return $movies;

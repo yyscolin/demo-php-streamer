@@ -16,32 +16,58 @@ function get_mp4s($movie_id) {
   $db_response = $db_statement->get_result();
   if ($db_response->num_rows > 0) {
     while ($db_row = mysqli_fetch_object($db_response)) {
-      array_push($movie_parts, intval($db_row->part_id));
+      $part_id = intval($db_row->part_id);
+      $movie_parts[$part_id] = array(
+        "file_path"=>"/mediafile/movie/$movie_id~$part_id",
+        "part_id"=>$part_id,
+      );
     }
   }
 
   /** If data is not in database, find files with special naming convention */
   else {
     $movie_title_first_word = get_first_word_of_movie_title($movie_id);
-    $file_pattern = $movie_title_first_word."_[0-9].mp4";
+    $file_pattern = $movie_title_first_word."[_~][0-9].*";
     foreach ($PROJ_CONF["MEDIA_DIRS"]["mp4"] as $directory) {
+      $is_dir_fullpath = preg_match("/^(\/|[a-zA-Z]\:).+/", $directory);
+      if (!$is_dir_fullpath) {
+        $directory = $_SERVER["DOCUMENT_ROOT"]."/".$directory;
+      }
+
       foreach(["", "/*"] as $subdir) {
         $matching_files = glob($directory.$subdir."/$file_pattern");
         foreach ($matching_files as $file_name) {
+          $fullpath = realpath($file_name);
+          $str_splits = preg_split("[\/]", $fullpath);
+          $file_name = array_pop($str_splits);
+          $dir_full = join("/", $str_splits);
+
+          /** Get file extension */
           $str_splits = explode(".", $file_name);
-          $str_splits = explode("_", $str_splits[count($str_splits) - 2]);
-          $part_id = $str_splits[count($str_splits) - 1];
-          array_push($movie_parts, intval($part_id));
+          $file_ext = array_pop($str_splits);
+
+          $file_name = join(".", $str_splits); // without file extension
+          $str_splits = preg_split("[_~]", $file_name);
+          $part_id = intval(array_pop($str_splits));
+
+          /** Check if media file is within document root */
+          $dir_rel = str_replace($_SERVER["DOCUMENT_ROOT"], "", $dir_full);
+          if ($dir_rel == $dir_full) {
+            $file_path = "/mediafile/movie/$movie_id~$part_id";
+          } else {
+            $file_path = "$dir_rel/$file_name.$file_ext";
+          }
+
+          if (!$movie_parts[$part_id]) {
+            $movie_parts[$part_id] = array(
+              "file_path"=>$file_path,
+              "part_id"=>$part_id,
+            );
+          }
         }
       }
     }
   }
-
-  $movie_parts = array_unique($movie_parts, SORT_NUMERIC);
-  for ($i = 0; $i < count($movie_parts); $i++) $movie_parts[$i] = array(
-    "file_path"=>"/media/movie/$movie_id~$movie_parts[$i]",
-    "part_id"=>$movie_parts[$i]
-  );
 
   return $movie_parts;
 }
@@ -59,12 +85,19 @@ function get_seek_options() {
 function get_playlist_json($movie_id, $mp4s) {
   $playlist = [];
   foreach ($mp4s as $mp4) {
+    $file_path = $mp4["file_path"];
+    if (preg_match("/^\/mediafile\/movie\//", $file_path)) {
+      $file_ext = "mp4";
+    } else {
+      $file_ext = array_pop(explode(".", $file_path));
+    }
+
     array_push($playlist, array(
       "sources"=>[array(
-        "src"=>"/media/movie/$movie_id~".$mp4["part_id"],
-        "type"=>"video/mp4",
+        "src"=>$mp4["file_path"],
+        "type"=>"video/$file_ext",
       )],
-      "poster"=>"/media/cover/$movie_id",
+      "poster"=>"/mediafile/cover/$movie_id",
     ));
   }
   return json_encode($playlist);
