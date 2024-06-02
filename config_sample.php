@@ -14,22 +14,4 @@ $PROJ_CONF = array(
   "MYSQL_USERNAME"=>"",
   "MYSQL_PASSWORD"=>"",
   "MYSQL_DATABASE"=>"",
-
-  /** Using full paths recommended instead of relative */
-  "MEDIA_DIRS"=>[
-    /** Where the mp4 files of your movies should be located */
-    "mp4"=>[
-      $_SERVER["DOCUMENT_ROOT"]."media/movies",
-    ],
-
-    /** Where the media cover art for your movies should be located */
-    "cover"=>[
-      $_SERVER["DOCUMENT_ROOT"]."media/covers",
-    ],
-
-    /** Where the profile pictures for your stars should be located */
-    "star"=>[
-      $_SERVER["DOCUMENT_ROOT"]."media/stars",
-    ],
-  ],
 );

@@ -4,77 +4,54 @@ require_once($_SERVER["DOCUMENT_ROOT"]."/public/common.php");
 require_once($_SERVER["DOCUMENT_ROOT"]."/public/box-star.php");
 
 function get_mp4s($movie_id) {
-  global $PROJ_CONF;
   global $mysql_connection;
+
+  $doc_root = $_SERVER["DOCUMENT_ROOT"];
   $movie_parts = [];
 
   /** Try to get the number of parts of this movie from the database */
-  $db_query = "SELECT part_id FROM movies_media WHERE movie_id=?";
+  $db_query = "SELECT part_id, file_name FROM movies_media WHERE movie_id=?";
   $db_statement = $mysql_connection->prepare($db_query);
   $db_statement->bind_param("s", $movie_id);
   $db_statement->execute();
   $db_response = $db_statement->get_result();
   if ($db_response->num_rows > 0) {
     while ($db_row = mysqli_fetch_object($db_response)) {
+      $file_name = $db_row->file_name;
       $part_id = intval($db_row->part_id);
-      $movie_parts[$part_id] = array(
-        "file_path"=>"/mediafile/movie/$movie_id~$part_id",
+      array_push($movie_parts, array(
+        "file_path"=>"/media/movies/$file_name",
         "part_id"=>$part_id,
-      );
+      ));
     }
     return $movie_parts;
   }
 
   /** Find m3u8 files */
-  $file_pattern = "$movie_id/[0-9]*.m3u8";
-  foreach ($PROJ_CONF["MEDIA_DIRS"]["mp4"] as $directory) {
-    $matching_files = glob("$directory/$file_pattern");
-    foreach ($matching_files as $file_path) {
-      $file_path = str_replace($_SERVER["DOCUMENT_ROOT"], "", $file_path);
-      $file_name = array_pop(explode("/", $file_path));
-      $part_id = intval(explode(".", $file_name)[0]);
-      $movie_parts[$part_id] = array(
-        "file_path"=>$file_path,
-        "part_id"=>$part_id,
-      );
-    }
+  $file_pattern = "$movie_id/[0-9].m3u8";
+  $matching_files = glob("$doc_root/media/movies/$file_pattern");
+  foreach ($matching_files as $file_path) {
+    $file_name = array_pop(explode("/", $file_path));
+    $part_id = intval(explode(".", $file_name)[0]);
+    array_push($movie_parts, array(
+      "file_path"=>"/media/movies/$movie_id/$part_id.m3u8",
+      "part_id"=>$part_id,
+    ));
   }
   if (count($movie_parts)) return $movie_parts;
 
   /** Find files with special naming convention (mp4/ webm) */
   $movie_title_first_word = get_first_word_of_movie_title($movie_id);
-  $file_pattern = $movie_title_first_word."[_~][0-9]+.*";
-  foreach ($PROJ_CONF["MEDIA_DIRS"]["mp4"] as $directory) {
-    $matching_files = glob("$directory/$file_pattern");
-    foreach ($matching_files as $file_name) {
-      $fullpath = realpath($file_name);
-      $str_splits = preg_split("[\/]", $fullpath);
-      $file_name = array_pop($str_splits);
-
-      /** Get file extension */
-      $str_splits = explode(".", $file_name);
-      $file_ext = array_pop($str_splits);
-
-      $dir_full = join("/", $str_splits);
-
-      $file_name = join(".", $str_splits); // without file extension
-      $str_splits = preg_split("[_~]", $file_name);
-      $part_id = intval(array_pop($str_splits));
-
-      /** Check if media file is within document root */
-      $dir_rel = str_replace($_SERVER["DOCUMENT_ROOT"], "", $dir_full);
-      if ($dir_rel == $dir_full) {
-        $file_path = "/mediafile/movie/$movie_id~$part_id";
-      } else {
-        $file_path = "$dir_rel/$file_name.$file_ext";
-      }
-
-      if (!$movie_parts[$part_id]) {
-        $movie_parts[$part_id] = array(
-          "file_path"=>$file_path,
-          "part_id"=>$part_id,
-        );
-      }
+  $file_pattern = "$movie_title_first_word~[0-9]+\.(mp4|webm)";
+  $matching_files = glob("$doc_root/media/movies/*");
+  foreach ($matching_files as $file_name) {
+    $file_name = array_pop(explode("/", $file_name));
+    if (preg_match("/$file_pattern/", $file_name)) {
+      $part_id = array_pop(explode("~", explode(".", $file_name)[0]));
+      array_push($movie_parts, array(
+        "file_path"=>"/media/movies/$file_name",
+        "part_id"=>intval($part_id),
+      ));
     }
   }
   return $movie_parts;
@@ -94,11 +71,7 @@ function get_playlist_json($movie_id, $mp4s) {
   $playlist = [];
   foreach ($mp4s as $mp4) {
     $file_path = $mp4["file_path"];
-    if (preg_match("/^\/mediafile\/movie\//", $file_path)) {
-      $file_ext = "mp4";
-    } else {
-      $file_ext = array_pop(explode(".", $file_path));
-    }
+    $file_ext = array_pop(explode(".", $file_path));
 
     $is_m3u8 = $file_ext == "m3u8";
     $file_type = $is_m3u8 ? "application/x-mpegURL" : "video/$file_ext";
@@ -108,7 +81,7 @@ function get_playlist_json($movie_id, $mp4s) {
         "src"=>$mp4["file_path"],
         "type"=>$file_type,
       )],
-      "poster"=>"/mediafile/cover/$movie_id",
+      "poster"=>"/media/covers/$movie_id.jpg",
     ));
   }
   return json_encode($playlist);
@@ -168,12 +141,29 @@ if (count($mp4s) > 0) {?>
       To view this video please enable JavaScript, and consider upgrading to a web browser that
       <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
       </p>
-    </video><?php
+    </video>
+    <script src="https://cdn.jsdelivr.net/npm/video.js@7.21.6/dist/video.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@videojs/http-streaming@3.10.0/dist/videojs-http-streaming.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/videojs-mobile-ui@1.1.1/dist/videojs-mobile-ui.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/videojs-playlist@5.1.2/dist/videojs-playlist.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/videojs-seek-buttons@3.0.1/dist/videojs-seek-buttons.min.js"></script> -->
+    <script>
+      const playlist = <?=get_playlist_json($movie_id, $mp4s)?>;
+      const videoPlayer = videojs(document.querySelector(`.video-js`), {
+        controls: true,
+        fluid: true,
+        preload: `none`,
+        playbackRates: [.5, 1, 1.5, 2],
+      })
+      // videoPlayer.mobileUi()
+      // videoPlayer.seekButtons(<?=get_seek_options()?>)
+      videoPlayer.playlist(playlist)
+    </script><?php
 
 } else {?>
 
     <div id="display-wrapper">
-      <img src="<?=$movie_data->img?>" style="height:100%">
+      <img src="<?="/media/covers/$movie_id.jpg"?>" style="height:100%">
       <p id="display-error-message">Error: No video file(s) found</p>
     </div>
     <?php
@@ -220,25 +210,7 @@ if (count($mp4s) > 1) {?>
 
       </div>
     </div>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/video.js@7.21.6/dist/video.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@videojs/http-streaming@3.10.0/dist/videojs-http-streaming.min.js"></script>
-  <!-- <script src="https://cdn.jsdelivr.net/npm/videojs-mobile-ui@1.1.1/dist/videojs-mobile-ui.min.js"></script> -->
-  <script src="https://cdn.jsdelivr.net/npm/videojs-playlist@5.1.2/dist/videojs-playlist.min.js"></script>
-  <!-- <script src="https://cdn.jsdelivr.net/npm/videojs-seek-buttons@3.0.1/dist/videojs-seek-buttons.min.js"></script> -->
-  <script>
-    const videoPlayer = videojs(document.querySelector(`.video-js`), {
-      controls: true,
-      fluid: true,
-      preload: `none`,
-      playbackRates: [.5, 1, 1.5, 2],
-    })
-
-    // videoPlayer.mobileUi()
-    // videoPlayer.seekButtons(<?=get_seek_options()?>)
-    const playlist = <?=get_playlist_json($movie_id, $mp4s)?>;
-    if (playlist.length) videoPlayer.playlist(playlist)
-  </script><?php
+  </div><?php
 
 print_page_footer();
 
