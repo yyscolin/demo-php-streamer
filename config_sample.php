@@ -19,17 +19,17 @@ $PROJ_CONF = array(
   "MEDIA_DIRS"=>[
     /** Where the mp4 files of your movies should be located */
     "mp4"=>[
-      "media/movies",
+      $_SERVER["DOCUMENT_ROOT"]."media/movies",
     ],
 
     /** Where the media cover art for your movies should be located */
     "cover"=>[
-      "media/covers",
+      $_SERVER["DOCUMENT_ROOT"]."media/covers",
     ],
 
     /** Where the profile pictures for your stars should be located */
     "star"=>[
-      "media/stars",
+      $_SERVER["DOCUMENT_ROOT"]."media/stars",
     ],
   ],
 );
