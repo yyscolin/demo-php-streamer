@@ -3,6 +3,9 @@
 function print_movie_box($movie, $default_indentation=1) {
   if ($movie) {
     $img = "/media/covers/$movie->id.jpg";
+    if (!file_exists($_SERVER["DOCUMENT_ROOT"].$img)) {
+      $img = "/images/default-cover.jpg";
+    }
     $href = "/movie/$movie->id";
     $title = $movie->name ? $movie->name : "&ltNo title&gt";
     $style = "";
