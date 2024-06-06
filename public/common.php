@@ -51,7 +51,7 @@ function get_stars_from_database() {
   $db_response = mysqli_query($mysql_connection, $db_query);
   while ($db_row = mysqli_fetch_object($db_response)) {
     $db_row->attributes = [];
-    $db_row->img = "/media/stars/$db_row->id.jpg";
+    $db_row->img = "/media/profile_pics/$db_row->id.jpg";
     if (!file_exists($_SERVER["DOCUMENT_ROOT"].$db_row->img)) {
       $db_row->img = "/images/default-star.jpg";
     }
@@ -100,7 +100,7 @@ function get_movies_from_database() {
   $db_statement->execute();
   $db_response = $db_statement->get_result();
   while ($db_row = $db_response->fetch_object()) {
-    $db_row->img = "/media/covers/$db_row->id.jpg";
+    $db_row->img = "/media/movie_covers/$db_row->id.jpg";
     if (!file_exists($_SERVER["DOCUMENT_ROOT"].$db_row->img)) {
       $db_row->img = "/images/default-cover.jpg";
     }

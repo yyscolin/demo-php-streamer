@@ -20,36 +20,26 @@ function get_mp4s($movie_id) {
       $file_name = $db_row->file_name;
       $part_id = intval($db_row->part_id);
       array_push($movie_parts, array(
-        "file_path"=>"/media/movies/$file_name",
+        "file_path"=>"/media/video_files/$file_name",
         "part_id"=>$part_id,
       ));
     }
     return $movie_parts;
   }
 
-  /** Find m3u8 files */
-  $file_pattern = "$movie_id/[0-9].m3u8";
-  $matching_files = glob("$doc_root/media/movies/$file_pattern");
-  foreach ($matching_files as $file_path) {
-    $file_name = array_pop(explode("/", $file_path));
-    $part_id = intval(explode(".", $file_name)[0]);
-    array_push($movie_parts, array(
-      "file_path"=>"/media/movies/$movie_id/$part_id.m3u8",
-      "part_id"=>$part_id,
-    ));
-  }
-  if (count($movie_parts)) return $movie_parts;
-
-  /** Find files with special naming convention (mp4/ webm) */
+  /** Find files with special naming convention */
   $movie_title_first_word = get_first_word_of_movie_title($movie_id);
-  $file_pattern = "$movie_title_first_word~[0-9]+\.(mp4|webm)";
-  $matching_files = glob("$doc_root/media/movies/*");
+  $file_pattern1 = "^$movie_title_first_word~[0-9]+\.(mp4|webm|m3u8)$";
+  $file_pattern2 = "^$movie_id~[0-9]+\.(mp4|webm|m3u8)$";
+  $matching_files = glob("$doc_root/media/video_files/*");
   foreach ($matching_files as $file_name) {
     $file_name = array_pop(explode("/", $file_name));
-    if (preg_match("/$file_pattern/", $file_name)) {
+    $is_match_pattern1 = preg_match("/$file_pattern1/", $file_name);
+    $is_match_pattern2 = preg_match("/$file_pattern2/", $file_name);
+    if ($is_match_pattern1 || $is_match_pattern2) {
       $part_id = array_pop(explode("~", explode(".", $file_name)[0]));
       array_push($movie_parts, array(
-        "file_path"=>"/media/movies/$file_name",
+        "file_path"=>"/media/video_files/$file_name",
         "part_id"=>intval($part_id),
       ));
     }
@@ -76,7 +66,7 @@ function get_playlist_json($movie_id, $mp4s) {
     $is_m3u8 = $file_ext == "m3u8";
     $file_type = $is_m3u8 ? "application/x-mpegURL" : "video/$file_ext";
 
-    $poster = "/media/covers/$movie_id.jpg";
+    $poster = "/media/movie_covers/$movie_id.jpg";
     if (!file_exists($_SERVER["DOCUMENT_ROOT"].$poster)) {
       $poster = "/images/default-cover.jpg";
     }
@@ -166,7 +156,7 @@ if (count($mp4s) > 0) {?>
     </script><?php
 
 } else {
-  $poster = "/media/covers/$movie_id.jpg";
+  $poster = "/media/movie_covers/$movie_id.jpg";
   if (!file_exists($_SERVER["DOCUMENT_ROOT"].$poster)) {
     $poster = "/images/default-cover.jpg";
   }?>

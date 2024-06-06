@@ -2,7 +2,7 @@
 
 function print_star_box($star=null, $default_indentation=3) {
   if ($star) {
-    $img = "/media/stars/$star->id.jpg";
+    $img = "/media/profile_pics/$star->id.jpg";
     if (!file_exists($_SERVER["DOCUMENT_ROOT"].$img)) {
       $img = "/images/default-star.jpg";
     }
