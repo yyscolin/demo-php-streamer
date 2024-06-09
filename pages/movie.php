@@ -28,21 +28,26 @@ function get_mp4s($movie_id) {
   }
 
   /** Find files with special naming convention */
+  $file_exts = ["m3u8", "webm", "mp4"];
   $movie_title_first_word = get_first_word_of_movie_title($movie_id);
-  $file_pattern1 = "^$movie_title_first_word~[0-9]+\.(mp4|webm|m3u8)$";
-  $file_pattern2 = "^$movie_id~[0-9]+\.(mp4|webm|m3u8)$";
-  $matching_files = glob("$doc_root/media/video_files/*");
-  foreach ($matching_files as $file_name) {
-    $file_name = array_pop(explode("/", $file_name));
-    $is_match_pattern1 = preg_match("/$file_pattern1/", $file_name);
-    $is_match_pattern2 = preg_match("/$file_pattern2/", $file_name);
-    if ($is_match_pattern1 || $is_match_pattern2) {
-      $part_id = array_pop(explode("~", explode(".", $file_name)[0]));
-      array_push($movie_parts, array(
-        "file_path"=>"/media/video_files/$file_name",
-        "part_id"=>intval($part_id),
-      ));
+  foreach ($file_exts as $ext) {
+    $file_pattern1 = "^$movie_title_first_word~[0-9]+\.$ext$";
+    $file_pattern2 = "^$movie_id~[0-9]+\.$ext$";
+    $matching_files = glob("$doc_root/media/video_files/*");
+    foreach ($matching_files as $file_name) {
+      $file_name = array_pop(explode("/", $file_name));
+      $is_match_pattern1 = preg_match("/$file_pattern1/", $file_name);
+      $is_match_pattern2 = preg_match("/$file_pattern2/", $file_name);
+      if ($is_match_pattern1 || $is_match_pattern2) {
+        $part_id = array_pop(explode("~", explode(".", $file_name)[0]));
+        array_push($movie_parts, array(
+          "file_path"=>"/media/video_files/$file_name",
+          "part_id"=>intval($part_id),
+        ));
+      }
     }
+
+    if (count($movie_parts) > 0) break;
   }
   return $movie_parts;
 }
