@@ -101,6 +101,7 @@ CREATE TABLE `movies` (
   `name_jp` varchar(512) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `release_date` date DEFAULT NULL,
   `duration` smallint unsigned DEFAULT NULL,
+  `img_src` varchar(512) DEFAULT NULL,
   `status` tinyint unsigned NOT NULL DEFAULT '0',
   `insert_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

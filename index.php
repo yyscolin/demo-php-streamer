@@ -56,7 +56,12 @@ $featured_group_count = $db_row->count;
 $todays_group_id = $epoch_days % $featured_group_count;
 
 $db_query = "
-SELECT id, IFNULL(name_$language, '&ltNo Title&gt') AS name, release_date, duration
+SELECT
+  id,
+  IFNULL(name_$language, '&ltNo Title&gt') AS name,
+  release_date,
+  duration,
+  IFNULL(img_src, '/images/default-cover.jpg') AS img
 FROM movies WHERE id IN (
   SELECT id FROM (
     SELECT ROW_NUMBER() OVER(ORDER BY id) % $featured_group_count AS group_id, id, name_en

@@ -65,6 +65,8 @@ function get_seek_options() {
 }
 
 function get_playlist_json($movie_id, $mp4s) {
+  global $movie_data;
+
   $playlist = [];
   foreach ($mp4s as $mp4) {
     $file_path = $mp4["file_path"];
@@ -74,17 +76,12 @@ function get_playlist_json($movie_id, $mp4s) {
     $is_m3u8 = $file_ext == "m3u8";
     $file_type = $is_m3u8 ? "application/x-mpegURL" : "video/$file_ext";
 
-    $poster = "/media/movie_covers/$movie_id.jpg";
-    if (!file_exists($_SERVER["DOCUMENT_ROOT"].$poster)) {
-      $poster = "/images/default-cover.jpg";
-    }
-
     array_push($playlist, array(
       "sources"=>[array(
         "src"=>$mp4["file_path"],
         "type"=>$file_type,
       )],
-      "poster"=>$poster,
+      "poster"=>$movie_data->img,
     ));
   }
   return json_encode($playlist);
@@ -163,14 +160,10 @@ if (count($mp4s) > 0) {?>
       videoPlayer.playlist(playlist)
     </script><?php
 
-} else {
-  $poster = "/media/movie_covers/$movie_id.jpg";
-  if (!file_exists($_SERVER["DOCUMENT_ROOT"].$poster)) {
-    $poster = "/images/default-cover.jpg";
-  }?>
+} else {?>
 
     <div id="display-wrapper">
-      <img src="<?=$poster?>" style="height:100%">
+      <img src="<?=$movie_data->img?>" onerror="this.src=`/images/default-cover.jpg`" style="height:100%">
       <p id="display-error-message">Error: No video file(s) found</p>
     </div>
     <?php

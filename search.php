@@ -31,7 +31,7 @@ function print_search_results($type, $search_query) {
         }?>
 
       <tr class="noselect" onclick="window.location.href=`/<?=$type?>/<?=$search_result->id?>`">
-      <td><img src="<?=$media_path?>"></td>
+      <td><img src="<?=$media_path?>" onerror="this.src=`/images/default-cover.jpg`"></td>
       <td style="text-align:left"><?=$name.$subtitle?></td>
       </tr><?php
 

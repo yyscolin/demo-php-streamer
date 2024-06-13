@@ -92,7 +92,12 @@ function get_movies_from_database() {
 
   $movies = [];
   $db_query = "
-  SELECT id, IFNULL(name_$language, '&ltNo Title&gt') AS name, release_date, duration
+  SELECT
+    id,
+    IFNULL(name_$language, '&ltNo Title&gt') AS name,
+    release_date,
+    duration,
+    IFNULL(img_src, '/images/default-cover.jpg') AS img
   FROM movies
   WHERE status=1
   ORDER BY update_timestamp DESC";
@@ -100,10 +105,6 @@ function get_movies_from_database() {
   $db_statement->execute();
   $db_response = $db_statement->get_result();
   while ($db_row = $db_response->fetch_object()) {
-    $db_row->img = "/media/movie_covers/$db_row->id.jpg";
-    if (!file_exists($_SERVER["DOCUMENT_ROOT"].$db_row->img)) {
-      $db_row->img = "/images/default-cover.jpg";
-    }
     $movies[] = $db_row;
   }
   return $movies;

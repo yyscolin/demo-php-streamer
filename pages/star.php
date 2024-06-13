@@ -39,7 +39,10 @@ print_line("<div id='main-block' style='margin-top:0;overflow:hidden'>");
 
 if ($id == 0) {
   $db_query = "
-  SELECT id, name_$language AS name
+  SELECT
+    id,
+    name_$language AS name,
+    IFNULL(img_src, '/images/default-cover.jpg') AS img
   FROM movies WHERE status=1
   AND id NOT IN (
     SELECT movie_id FROM movies_stars
@@ -50,7 +53,10 @@ if ($id == 0) {
   print_star_potrait($star, $star_name);
 
   $db_query = "
-  SELECT id, name_$language AS name
+  SELECT
+    id,
+    name_$language AS name,
+    IFNULL(img_src, '/images/default-cover.jpg') AS img
   FROM movies WHERE status=1
   AND id IN (
     SELECT movie_id FROM movies_stars
