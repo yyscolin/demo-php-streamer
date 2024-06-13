@@ -35,11 +35,13 @@ function get_mp4s($movie_id) {
     $file_pattern2 = "^$movie_id~[0-9]+\.$ext$";
     $matching_files = glob("$doc_root/media/video_files/*");
     foreach ($matching_files as $file_name) {
-      $file_name = array_pop(explode("/", $file_name));
+      $file_splits = explode("/", $file_name);
+      $file_name = array_pop($file_splits);
       $is_match_pattern1 = preg_match("/$file_pattern1/", $file_name);
       $is_match_pattern2 = preg_match("/$file_pattern2/", $file_name);
       if ($is_match_pattern1 || $is_match_pattern2) {
-        $part_id = array_pop(explode("~", explode(".", $file_name)[0]));
+        $file_stem = explode(".", $file_name)[0];
+        $part_id = explode("~", $file_stem)[1];
         array_push($movie_parts, array(
           "file_path"=>"/media/video_files/$file_name",
           "part_id"=>intval($part_id),
@@ -66,7 +68,8 @@ function get_playlist_json($movie_id, $mp4s) {
   $playlist = [];
   foreach ($mp4s as $mp4) {
     $file_path = $mp4["file_path"];
-    $file_ext = array_pop(explode(".", $file_path));
+    $file_splits = explode(".", $file_path);
+    $file_ext = array_pop($file_splits);
 
     $is_m3u8 = $file_ext == "m3u8";
     $file_type = $is_m3u8 ? "application/x-mpegURL" : "video/$file_ext";
