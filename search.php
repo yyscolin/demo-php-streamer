@@ -30,7 +30,7 @@ function print_search_results($type, $search_query) {
           $media_path = $search_result->img;
         }?>
 
-      <tr class="noselect" onclick="window.location.href=`/<?=$type?>/<?=$search_result->id?>`">
+      <tr class="noselect" onclick="window.location.href=`/pages/<?=$type?>.php?id=<?=$search_result->id?>`">
       <td><img src="<?=$media_path?>" onerror="this.src=`/images/default-cover.jpg`"></td>
       <td style="text-align:left"><?=$name.$subtitle?></td>
       </tr><?php

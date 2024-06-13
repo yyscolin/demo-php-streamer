@@ -47,11 +47,11 @@ function openPage() {
           if (isMovie) {
             const movie = ajaxResponse[i]
             $(boxLink).find(`.title`).html(movie.name)
-            $(boxLink).find(`a`).attr(`href`, `/movie/${movie.id}`)
+            $(boxLink).find(`a`).attr(`href`, `/pages/movie.php?id=${movie.id}`)
             $(boxLink).find(`img`).attr(`src`, movie.img)
           } else {
             const star = ajaxResponse[i]
-            $(boxLink).find(`a`).attr(`href`, `/star/${star.id}`)
+            $(boxLink).find(`a`).attr(`href`, `/pages/star.php?id=${star.id}`)
             $(boxLink).find(`img`).attr(`src`, star.img)
             $(boxLink).find(`.name`).html(star.name)
             // $(boxLink).find(`.dob`).html(star.dob)

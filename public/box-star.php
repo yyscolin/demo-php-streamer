@@ -7,7 +7,7 @@ function print_star_box($star=null, $default_indentation=3) {
       $img = "/images/default-star.jpg";
     }
     $star_name = $star->name ? $star->name : "&ltNo Name&gt";
-    $href = "/star/$star->id";
+    $href = "/pages/star.php?id=$star->id";
     $style = "";
     $movies_count = $star->count;
   } else {

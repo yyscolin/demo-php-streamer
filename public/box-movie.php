@@ -3,7 +3,7 @@
 function print_movie_box($movie, $default_indentation=1) {
   if ($movie) {
     $img = $movie->img;
-    $href = "/movie/$movie->id";
+    $href = "/pages/movie.php?id=$movie->id";
     $title = $movie->name ? $movie->name : "&ltNo title&gt";
     $style = "";
   } else {

@@ -54,7 +54,7 @@ const TopBanner = () => {
           "top": `65px`,
         }
         menu2.set(results.map(({id, name}) => {
-          const redirect = () => window.location.href = `/${type}/${id}`
+          const redirect = () => window.location.href = `/pages/${type}.php?id=${id}`
           return <li onClick={redirect}>{name}</li>
         }))
       })
@@ -71,8 +71,8 @@ const TopBanner = () => {
     <button id="menu-button" onClick={() => $(`body`).toggleClass(`menu-active`)}>☰</button>
     <img id="banner-icon" onClick={() => window.location.href=`/`} src="/banner.png" title="Go to homepage"/>
     <div id="menu-bar">
-      <a href="/stars">{displayText.stars}</a>
-      <a href="/movies">{displayText.movies}</a>
+      <a href="/pages/stars.php">{displayText.stars}</a>
+      <a href="/pages/movies.php">{displayText.movies}</a>
       <a class="short-banner-item" href="/search.php">SEARCH</a>
       <a class="short-banner-item" onClick={toggleLanguageMenu2}>LANGUAGE ▷</a>
       <form class="long-banner-item" action="/search.php" style={{"margin-left":`32px`}}>
