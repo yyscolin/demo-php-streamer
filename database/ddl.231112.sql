@@ -176,7 +176,7 @@ DROP TABLE IF EXISTS `movies_media`;
 CREATE TABLE `movies_media` (
   `movie_id` int unsigned NOT NULL,
   `part_id` smallint unsigned NOT NULL,
-  `file_name` varchar(240) NOT NULL,
+  `file_path` varchar(240) NOT NULL,
   `insert_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`movie_id`,`part_id`),

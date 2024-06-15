@@ -10,18 +10,16 @@ function get_mp4s($movie_id) {
   $movie_parts = [];
 
   /** Try to get the number of parts of this movie from the database */
-  $db_query = "SELECT part_id, file_name FROM movies_media WHERE movie_id=?";
+  $db_query = "SELECT part_id, file_path FROM movies_media WHERE movie_id=?";
   $db_statement = $mysql_connection->prepare($db_query);
   $db_statement->bind_param("s", $movie_id);
   $db_statement->execute();
   $db_response = $db_statement->get_result();
   if ($db_response->num_rows > 0) {
     while ($db_row = mysqli_fetch_object($db_response)) {
-      $file_name = $db_row->file_name;
-      $part_id = intval($db_row->part_id);
       array_push($movie_parts, array(
-        "file_path"=>"/media/video_files/$file_name",
-        "part_id"=>$part_id,
+        "file_path"=>$db_row->file_path,
+        "part_id"=>intval($db_row->part_id),
       ));
     }
     return $movie_parts;
