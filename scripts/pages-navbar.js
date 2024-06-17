@@ -1,9 +1,9 @@
 let middleNavWidthCoefficient
 let pageNavAjax = null
 
-eventCallbacks.load.push(resizeNavbarMiddle)
-eventCallbacks.load.push(adjustNavCss)
-eventCallbacks.load.push(openPage)
+resizeNavbarMiddle()
+adjustNavCss()
+openPage()
 eventCallbacks.resize.push(resizeNavbarMiddle)
 eventCallbacks.resize.push(adjustNavCss)
 eventCallbacks.hashchange.push(openPage)

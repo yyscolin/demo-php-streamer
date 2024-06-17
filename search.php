@@ -43,9 +43,26 @@ function print_search_results($type, $search_query) {
   }
 }
 
+function search_database_by_query($type, $search_query, $items_count = null) {
+  global $mysql_connection;
+
+  $search_results = $type == 'movie' ? get_movies_from_database() : get_stars_from_database();
+  $search_results = array_filter($search_results, function($x) {
+    global $search_query;
+    return strpos(strtolower($x->name), strtolower($search_query)) !== false;
+  });
+
+  usort($search_results, function($a, $b) {
+    return $a->name <=> $b->name;
+  });
+
+  if (!$items_count) return $search_results;
+
+  return array_slice($search_results, 0, $items_count);
+}
+
 print_page_header([
   "<link rel=\"stylesheet\" href=\"/styles/page-search.css\">",
-  !$is_mobile && !$is_iPad ? "<link rel=\"stylesheet\" href=\"/styles/page-search-web.css\">" : null,
   "<title>".get_text("search", "ucfirst")." - ".$PROJ_CONF["PROJECT_TITLE"]."</title>"
 ]);
 
@@ -57,8 +74,8 @@ print_page_header([
         <option value="star"<?php if ($type == "star") echo " selected=\"selected\""; ?>><?=get_text("stars", "ucfirst")?></option>
         <option value="movie"<?php if ($type == "movie") echo " selected=\"selected\""; ?>><?=get_text("movies", "ucfirst")?></option>
       </select>
-      <input name="query" value="<?=$search_query?>">
-      <button type="submit"><?=get_text("search", "ucfirst")?></button>
+      <input name="query" value="<?=$search_query?>" placeholder="<?=get_text("search", "ucfirst")?>">
+      <button type="submit"><?=get_text("go", "ucfirst")?></button>
     </form><?=print_search_results($type, $search_query)?>
 
   </div><?php

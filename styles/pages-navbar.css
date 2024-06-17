@@ -41,6 +41,9 @@
   background-color: darkblue;
   cursor: default;
 }
+.nav-item:not(.selected):hover {
+  background-color: darkmagenta;
+}
 
 @media only screen and (max-width: 600px) {
   .nav-item-box {

@@ -2,7 +2,6 @@
 
 function print_page_navbar($type, $count, $items_per_page) {
   global $mysql_connection;
-  global $is_mobile;
 
   $no_of_pages = ceil($count / $items_per_page);
   if ($no_of_pages > 1) {
@@ -32,10 +31,7 @@ function print_page_navbar($type, $count, $items_per_page) {
     const itemsPerPage = $items_per_page
     const noOfPages = $no_of_pages
   </script>
-  <script src=\"/scripts/pages-navbar.js\"></script>
+  <script src=\"/scripts/pages-navbar.js\" defer></script>
   <link rel=\"stylesheet\" href=\"/styles/pages-navbar.css\">";
-  
-  if (!$is_mobile)
-    print_line("<link rel=\"stylesheet\" href=\"/styles/pages-navbar-web.css\">");
 }
   

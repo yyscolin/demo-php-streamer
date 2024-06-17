@@ -3,7 +3,6 @@
 $dictionary = array(
     "stars"=>array("jp"=>"キャスト"),
     "movies"=>array("jp"=>"作品"),
-    "keyword"=>array("jp"=>"キーワード"),
     "go"=>array("jp"=>"行く"),
     "release date"=>array("jp"=>"発売日"),
     "duration"=>array("jp"=>"収録時間"),

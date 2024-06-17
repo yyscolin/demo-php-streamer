@@ -7,6 +7,10 @@
 #results-table tr {
   cursor: pointer;
 }
+#results-table tr:hover {
+  background-color: black;
+  color: white;
+}
 #results-table img {
   height: 125px;
 }
