@@ -119,8 +119,8 @@ print_page_header([
   "<link rel=\"stylesheet\" href=\"/styles/page-movie.css\">",
   "<link rel=\"stylesheet\" href=\"/styles/star-box.css\">",
   "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/video.js@7.21.6/dist/video-js.min.css\">",
-  // "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/videojs-mobile-ui@1.1.1/dist/videojs-mobile-ui.min.css\">",
-  // "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/videojs-seek-buttons@3.0.1/dist/videojs-seek-buttons.min.css\">",
+  "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/videojs-mobile-ui@latest7/dist/videojs-mobile-ui.min.css\">",
+  "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/videojs-seek-buttons@3.0.1/dist/videojs-seek-buttons.min.css\">",
   "<title>$movie_data->name - ".$PROJ_CONF["PROJECT_TITLE"]."</title>"
 ]);?>
 
@@ -142,9 +142,9 @@ if (count($mp4s) > 0) {?>
     </video>
     <script src="https://cdn.jsdelivr.net/npm/video.js@7.21.6/dist/video.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@videojs/http-streaming@3.10.0/dist/videojs-http-streaming.min.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/videojs-mobile-ui@1.1.1/dist/videojs-mobile-ui.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/videojs-mobile-ui@latest7/dist/videojs-mobile-ui.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/videojs-playlist@5.1.2/dist/videojs-playlist.min.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/videojs-seek-buttons@3.0.1/dist/videojs-seek-buttons.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/videojs-seek-buttons@3.0.1/dist/videojs-seek-buttons.min.js"></script>
     <script>
       const playlist = <?=get_playlist_json($movie_id, $mp4s)?>;
       const videoPlayer = videojs(document.querySelector(`.video-js`), {
@@ -153,8 +153,8 @@ if (count($mp4s) > 0) {?>
         preload: `none`,
         playbackRates: [.5, 1, 1.5, 2],
       })
-      // videoPlayer.mobileUi()
-      // videoPlayer.seekButtons(<?=get_seek_options()?>)
+      videoPlayer.mobileUi()
+      videoPlayer.seekButtons(<?=get_seek_options()?>)
       videoPlayer.playlist(playlist)
     </script><?php
 
