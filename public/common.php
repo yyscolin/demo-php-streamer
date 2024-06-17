@@ -152,28 +152,8 @@ function print_page_header($head_items=[]) {
   <meta charset='UTF-8'>
   <meta name='viewport' content='width=device-width, initial-scale=1.0'>
   <meta http-equiv='X-UA-Compatible' content='ie=edge'>
-  <script src='/scripts/jquery.min.3.4.1.js'></script>
-  <script src="https://unpkg.com/react@17/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src='/scripts/main.js'></script>
-  <script>
-    const isAndroid = <?php echo $is_Android ? "true" : "false"; ?>;
-    const languages = [{
-      code: `en`,
-      name: `English`
-    }, {
-      code: `jp`,
-      name: `日本語`
-    }]
-    const displayText = {
-      stars: `<?php echo get_text('stars', "strtoupper"); ?>`,
-      movies: `<?php echo get_text('movies', "strtoupper"); ?>`,
-      keyword: `<?php echo get_text('keyword', "strtoupper"); ?>`,
-      go: `<?php echo get_text('go', "strtoupper"); ?>`,
-    }
-  </script>
-  <script src="/react/TopBanner.js" type="text/babel"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="/scripts/main.js" defer></script>
   <link rel="stylesheet" href="/styles/main.css">
   <link rel="stylesheet" href="/styles/banner.css"><?php
 
@@ -188,7 +168,33 @@ function print_page_header($head_items=[]) {
 
 </head>
 <body>
-  <nav id='banner'></nav><?php
+  <nav id='banner'>
+    <button id="menu-button" onClick="$(`body`).toggleClass(`menu-active`)">☰</button>
+    <a id="banner-icon" href="/" style="margin: auto">
+      <img src="/banner.png" style="height: 70px" title="Go to homepage"/>
+    </a>
+    <div id="menu-bar">
+      <a href="/pages/stars.php"><?=get_text("stars", "strtoupper")?></a>
+      <a href="/pages/movies.php"><?=get_text("movies", "strtoupper")?></a>
+      <a class="short-banner-item" href="/search.php">SEARCH</a>
+      <form class="long-banner-item" action="/search.php" style="margin: 0 32px">
+        <select name="type">
+          <option value="star"><?=get_text("stars", "strtoupper")?></option>
+          <option value="movie"><?=get_text("movies", "strtoupper")?></option>
+        </select>
+        <input type="search" name="query" placeholder="<?=get_text("keyword", "strtoupper")?>"/>
+        <button type="submit"><?=get_text('go', "strtoupper")?></button>
+      </form>
+      <select
+        id="lang-select"
+        onchange="setLanguange(this.value)"
+        style="color: black; margin: 20px; width: 90px;"
+      >
+        <option value="en">English</option>
+        <option value="jp">日本語</option>
+      </select>
+    </div>
+  </nav><?php
 }
 
 function print_page_footer() {
