@@ -145,6 +145,7 @@ if (count($mp4s) > 0) {?>
     <script src="https://cdn.jsdelivr.net/npm/videojs-mobile-ui@latest7/dist/videojs-mobile-ui.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/videojs-playlist@5.1.2/dist/videojs-playlist.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/videojs-seek-buttons@3.0.1/dist/videojs-seek-buttons.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/videojs-hotkeys@0.2/videojs.hotkeys.min.js"></script>
     <script>
       const playlist = <?=get_playlist_json($movie_id, $mp4s)?>;
       const videoPlayer = videojs(document.querySelector(`.video-js`), {
@@ -156,6 +157,11 @@ if (count($mp4s) > 0) {?>
       videoPlayer.mobileUi()
       videoPlayer.seekButtons(<?=get_seek_options()?>)
       videoPlayer.playlist(playlist)
+      videoPlayer.ready(function() {
+        this.hotkeys({
+          seekStep: 3,
+        })
+      })
     </script><?php
 
 } else {?>
