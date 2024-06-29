@@ -7,11 +7,11 @@ function throwMysqlError($message) {
 }
 
 $mysql_connection = mysqli_connect(
-    $PROJ_CONF["MYSQL_HOSTNAME"],
-    $PROJ_CONF["MYSQL_USERNAME"],
-    $PROJ_CONF["MYSQL_PASSWORD"],
-    $PROJ_CONF["MYSQL_DATABASE"],
-    $PROJ_CONF["MYSQL_PORT"]
+    $_SERVER["MYSQL_HOSTNAME"],
+    $_SERVER["MYSQL_USERNAME"],
+    $_SERVER["MYSQL_PASSWORD"],
+    $_SERVER["MYSQL_DATABASE"],
+    $_SERVER["MYSQL_PORT"],
 );
 
 if (mysqli_connect_error())

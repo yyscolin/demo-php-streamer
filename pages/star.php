@@ -32,7 +32,7 @@ if ($id == 0) {
 print_page_header([
   "<link rel='stylesheet' href='/styles/poster.css'>",
   "<link rel='stylesheet' href='/styles/star-potrait.css'>",
-  "<title>$star_name - ".$PROJ_CONF["PROJECT_TITLE"]."</title>"
+  "<title>$star_name - ".$_SERVER["PROJECT_TITLE"]."</title>"
 ]);
 
 print_line("<div id='main-block' style='margin-top:0;overflow:hidden'>");

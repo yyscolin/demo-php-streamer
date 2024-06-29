@@ -63,7 +63,7 @@ function search_database_by_query($type, $search_query, $items_count = null) {
 
 print_page_header([
   "<link rel=\"stylesheet\" href=\"/styles/page-search.css\">",
-  "<title>".get_text("search", "ucfirst")." - ".$PROJ_CONF["PROJECT_TITLE"]."</title>"
+  "<title>".get_text("search", "ucfirst")." - ".$_SERVER["PROJECT_TITLE"]."</title>"
 ]);
 
 ?>

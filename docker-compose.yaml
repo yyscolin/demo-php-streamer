@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  nginx:
+    build: ./docker/nginx/
+    ports:
+      - ${HTTP_PORT}:8080
+    volumes:
+      - ./:/home/site/wwwroot
+      - ./docker/nginx/templates/:/etc/nginx/templates/
+    environment:
+      NGINX_ENVSUBST_TEMPLATE_SUFFIX: ".template"
+      MYSQL_HOSTNAME: ${MYSQL_HOSTNAME}
+      MYSQL_USERNAME: ${MYSQL_USERNAME}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_PORT: ${MYSQL_PORT}
+      ACCESS_PASSWORD: ${ACCESS_PASSWORD}
+      PROJECT_TITLE: ${PROJECT_TITLE}
+      SEEK_BTN_RIGHT: ${SEEK_BTN_RIGHT}
+
+  php:
+    build: ./docker/php/
+    expose:
+      - 9000
+    volumes:
+      - ./:/home/site/wwwroot

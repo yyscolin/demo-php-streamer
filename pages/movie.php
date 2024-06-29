@@ -53,9 +53,8 @@ function get_mp4s($movie_id) {
 }
 
 function get_seek_options() {
-  global $PROJ_CONF;
   $options = array("back"=>10, "forward"=>10);
-  if ($PROJ_CONF["SEEK_BTN_RIGHT"]) {
+  if ($_SERVER["SEEK_BTN_RIGHT"] == "true") {
     $options["backIndex"] = 11;
     $options["forwardIndex"] = 11;
   }
@@ -121,7 +120,7 @@ print_page_header([
   "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/video.js@7.21.6/dist/video-js.min.css\">",
   "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/videojs-mobile-ui@latest7/dist/videojs-mobile-ui.min.css\">",
   "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/videojs-seek-buttons@3.0.1/dist/videojs-seek-buttons.min.css\">",
-  "<title>$movie_data->name - ".$PROJ_CONF["PROJECT_TITLE"]."</title>"
+  "<title>$movie_data->name - ".$_SERVER["PROJECT_TITLE"]."</title>"
 ]);?>
 
   <div id="main-block">
