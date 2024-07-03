@@ -1,11 +1,13 @@
 version: "3.9"
 services:
   nginx:
-    build: ./docker/nginx/
+    build:
+      dockerfile: ./docker/nginx/Dockerfile
+      context: "."
+    user: root
     ports:
       - ${HTTP_PORT}:8080
     volumes:
-      - ./:/home/site/wwwroot
       - ./docker/nginx/templates/:/etc/nginx/templates/
     environment:
       NGINX_ENVSUBST_TEMPLATE_SUFFIX: ".template"
@@ -19,8 +21,8 @@ services:
       SEEK_BTN_RIGHT: ${SEEK_BTN_RIGHT}
 
   php:
-    build: ./docker/php/
+    build:
+      dockerfile: ./docker/php/Dockerfile
+      context: "."
     expose:
       - 9000
-    volumes:
-      - ./:/home/site/wwwroot
